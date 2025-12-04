@@ -43,11 +43,11 @@ En esta fase, crearemos la estructura de archivos básica para nuestro módulo d
 
 Aquí implementaremos el flujo completo para que un nuevo usuario pueda registrarse y verificar su cuenta mediante un PIN enviado a su correo electrónico.
 
-- [ ] **Tarea 3.1**: Crear los DTOs (Data Transfer Objects) `RegisterAuthDto` y `VerifyAccountDto` con las validaciones correspondientes usando `class-validator`.
-- [ ] **Tarea 3.2**: Implementar el método `register` en `AuthService`. Este método se encargará de hashear la contraseña con `bcrypt`, crear el usuario en la base de datos y generar el PIN de verificación.
-- [ ] **Tarea 3.3**: Crear y configurar un `EmailService` (inyectable) que utilice `nodemailer` para enviar el correo con el PIN. Se deben usar variables de entorno para las credenciales del servicio de correo.
-- [ ] **Tarea 3.4**: Implementar el método `verifyAccount` en `AuthService` para validar el PIN y actualizar el estado `verified` del usuario.
-- [ ] **Tarea 3.5**: Crear los endpoints `POST /auth/register` y `POST /auth/verify` en `AuthController` y conectarlos con sus respectivos métodos del servicio.
+- [x] **Tarea 3.1**: Crear los DTOs (Data Transfer Objects) `RegisterAuthDto` y `VerifyAccountDto` con las validaciones correspondientes usando `class-validator`.
+- [x] **Tarea 3.2**: Implementar el método `register` en `AuthService`. Este método se encargará de hashear la contraseña con `bcrypt`, crear el usuario en la base de datos y generar el PIN de verificación.
+- [x] **Tarea 3.3**: Crear y configurar un `EmailService` (inyectable) que utilice `nodemailer` para enviar el correo con el PIN. Se deben usar variables de entorno para las credenciales del servicio de correo.
+- [x] **Tarea 3.4**: Implementar el método `verifyAccount` en `AuthService` para validar el PIN y actualizar el estado `verified` del usuario.
+- [x] **Tarea 3.5**: Crear los endpoints `POST /auth/register` y `POST /auth/verify` en `AuthController` y conectarlos con sus respectivos métodos del servicio.
 
 ## Fase 4: Lógica de Login y Sesión con JWT
 
