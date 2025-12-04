@@ -35,9 +35,9 @@ El objetivo de esta fase es preparar el proyecto, eliminando código innecesario
 
 En esta fase, crearemos la estructura de archivos básica para nuestro módulo de autenticación, siguiendo las convenciones de NestJS.
 
-- [ ] **Tarea 2.1**: Crear un nuevo módulo `AuthModule` para encapsular toda la lógica de autenticación.
-- [ ] **Tarea 2.2**: Crear un nuevo servicio `AuthService` donde residirá la lógica de negocio.
-- [ ] **Tarea 2.3**: Crear un nuevo controlador `AuthController` que manejará las rutas HTTP (`/register`, `/login`, etc.).
+- [x] **Tarea 2.1**: Crear un nuevo módulo `AuthModule` para encapsular toda la lógica de autenticación.
+- [x] **Tarea 2.2**: Crear un nuevo servicio `AuthService` donde residirá la lógica de negocio.
+- [x] **Tarea 2.3**: Crear un nuevo controlador `AuthController` que manejará las rutas HTTP (`/register`, `/login`, etc.).
 
 ## Fase 3: Lógica de Registro y Verificación de Cuenta
 
