@@ -63,7 +63,7 @@ Esta fase se centra en permitir que un usuario verificado inicie sesión y obten
 
 La última fase consiste en utilizar el JWT para proteger rutas específicas de la API, asegurando que solo usuarios autenticados puedan acceder a ellas.
 
-- [ ] **Tarea 5.1**: Crear una `JwtStrategy` de Passport. Esta estrategia se encargará de extraer el token del encabezado `Authorization`, verificar su validez y extraer el payload.
-- [ ] **Tarea 5.2**: Crear una ruta de ejemplo protegida, como `GET /auth/profile`, en `AuthController` y aplicarle el `JwtAuthGuard` para requerir un token válido.
-- [ ] **Tarea 5.3**: Implementar la lógica en el endpoint `/profile` para que devuelva los datos del usuario autenticado (obtenidos desde el payload del token).
-- [ ] **Tarea 5.4**: Realizar pruebas para confirmar que la ruta protegida solo es accesible al proporcionar un JWT válido en el encabezado `Authorization: Bearer <token>`.
+- [x] **Tarea 5.1**: Crear una `JwtStrategy` de Passport. Esta estrategia se encargará de extraer el token del encabezado `Authorization`, verificar su validez y extraer el payload.
+- [x] **Tarea 5.2**: Crear una ruta de ejemplo protegida, como `GET /auth/profile`, en `AuthController` y aplicarle el `JwtAuthGuard` para requerir un token válido.
+- [x] **Tarea 5.3**: Implementar la lógica en el endpoint `/profile` para que devuelva los datos del usuario autenticado (obtenidos desde el payload del token).
+- [x] **Tarea 5.4**: Realizar pruebas para confirmar que la ruta protegida solo es accesible al proporcionar un JWT válido en el encabezado `Authorization: Bearer <token>`.
