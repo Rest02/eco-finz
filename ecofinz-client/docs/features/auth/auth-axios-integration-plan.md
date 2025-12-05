@@ -39,12 +39,12 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 ### Fase 1: Configuración Inicial y Axios
 
-*   [ ] **Tarea 1.1: Instalar Axios.**
+*   [x] **Tarea 1.1: Instalar Axios.**
     - **Acción:** Ejecutar el siguiente comando en la terminal del proyecto.
     - **Comando:** `npm install axios`
 
-*   [ ] **Tarea 1.2: Configurar Variable de Entorno.**
-    - **Acción:** Crear un archivo llamado `.env.local` en la raíz del proyecto.
+*   [x] **Tarea 1.2: Configurar Variable de Entorno.**
+    - **Acción:** Crear un archivo llamado `.env` en la raíz del proyecto.
     - **Contenido:**
       ```
       NEXT_PUBLIC_API_URL=http://localhost:3001
