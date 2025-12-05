@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
@@ -9,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { EmailService } from '../email/email.service';
 import { VerifyAccountDto } from './dto/verify-account.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +18,33 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
+    private readonly jwtService: JwtService,
   ) {}
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user || !(await bcrypt.compare(pass, user.password))) {
+      return null;
+    }
+
+    if (!user.verified) {
+      throw new UnauthorizedException(
+        'Tu cuenta no ha sido verificada. Por favor, revisa tu correo electrónico.',
+      );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async login(user: any) {
+    const payload = { email: user.email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 
   async register(registerAuthDto: RegisterAuthDto) {
     const { email, password, name } = registerAuthDto;

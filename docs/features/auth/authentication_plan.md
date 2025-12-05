@@ -53,11 +53,11 @@ Aquí implementaremos el flujo completo para que un nuevo usuario pueda registra
 
 Esta fase se centra en permitir que un usuario verificado inicie sesión y obtenga un JSON Web Token (JWT) para autenticar solicitudes posteriores.
 
-- [ ] **Tarea 4.1**: Crear una `LocalStrategy` de Passport. Esta estrategia utilizará `AuthService` para validar las credenciales (email y contraseña) del usuario.
-- [ ] **Tarea 4.2**: Implementar el método `validateUser` en `AuthService`, que busca al usuario por email y compara la contraseña usando `bcrypt.compare`.
-- [ ] **Tarea 4.3**: Implementar el método `login` en `AuthService`, que, tras una validación exitosa, genera un JWT con el payload del usuario (ej. `userId`, `email`).
-- [ ] **Tarea 4.4**: Configurar `JwtModule.register` dentro de `AuthModule`, proveyendo el `secret` para firmar el token y un tiempo de `expiresIn`. El secreto debe cargarse desde variables de entorno.
-- [ ] **Tarea 4.5**: Crear el endpoint `POST /auth/login` en `AuthController`, protegiéndolo con el `LocalAuthGuard` de Passport para activar la `LocalStrategy`.
+- [x] **Tarea 4.1**: Crear una `LocalStrategy` de Passport. Esta estrategia utilizará `AuthService` para validar las credenciales (email y contraseña) del usuario.
+- [x] **Tarea 4.2**: Implementar el método `validateUser` en `AuthService`, que busca al usuario por email y compara la contraseña usando `bcrypt.compare`.
+- [x] **Tarea 4.3**: Implementar el método `login` en `AuthService`, que, tras una validación exitosa, genera un JWT con el payload del usuario (ej. `userId`, `email`).
+- [x] **Tarea 4.4**: Configurar `JwtModule.register` dentro de `AuthModule`, proveyendo el `secret` para firmar el token y un tiempo de `expiresIn`. El secreto debe cargarse desde variables de entorno.
+- [x] **Tarea 4.5**: Crear el endpoint `POST /auth/login` en `AuthController`, protegiéndolo con el `LocalAuthGuard` de Passport para activar la `LocalStrategy`.
 
 ## Fase 5: Protección de Rutas y Verificación de Autenticación
 
