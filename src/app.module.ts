@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { PostsModule } from './posts/posts.module';
     }),
     PrismaModule,
     UsersModule,
-    PostsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
