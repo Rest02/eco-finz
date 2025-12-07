@@ -187,7 +187,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 ### Fase 5: Implementación de la Verificación de Usuario
 
-*   [ ] **Tarea 5.1: Crear la página de verificación (`/verify`).**
+*   [x] **Tarea 5.1: Crear la página de verificación (`/verify`).**
     - **Acción:** Crear el archivo `src/app/verify/page.tsx`.
     - **Propósito:** Implementar la UI para que el usuario ingrese su email y el PIN de verificación.
     - **Lógica:**
@@ -197,7 +197,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
         - En caso de éxito, redirigir al usuario a `/login`.
         - Mostrar un mensaje de error si la verificación falla.
 
-*   [ ] **Tarea 5.2: Actualizar el flujo de registro.**
+*   [x] **Tarea 5.2: Actualizar el flujo de registro.**
     - **Acción:** Modificar el archivo `src/app/register/page.tsx`.
     - **Propósito:** Cambiar la redirección post-registro para dirigir al usuario a la página de verificación.
     - **Lógica:** Reemplazar la redirección `router.push('/login')` por `router.push(`/verify?email=${email}`)`.

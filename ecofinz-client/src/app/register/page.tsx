@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setError(null);
     try {
       await authService.registerUser({ name, email, password });
-      router.push('/login');
+      router.push(`/verify?email=${email}`);
     } catch (err) {
       if (axios.isAxiosError(err) && !err.response) {
         const errorMessage = 'Network Error: Could not connect to the server. Please ensure the backend is running and that CORS is configured correctly.';
