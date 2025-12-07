@@ -69,11 +69,11 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 ### Fase 2: Creación del Servicio de Autenticación (`authService`)
 
-*   [ ] **Tarea 2.1: Crear el archivo del servicio.**
+*   [x] **Tarea 2.1: Crear el archivo del servicio.**
     - **Acción:** Crear la carpeta `services` en la raíz si no existe. Dentro, crear el archivo `services/authService.js`.
     - **Propósito:** Encapsular toda la lógica de llamadas a la API de autenticación.
 
-*   [ ] **Tarea 2.2: Implementar funciones de autenticación.**
+*   [x] **Tarea 2.2: Implementar funciones de autenticación.**
     - **Acción:** Añadir el siguiente contenido a `services/authService.js`. Se importa el `apiClient` de la fase anterior.
     - **Contenido:**
       ```javascript
