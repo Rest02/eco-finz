@@ -50,7 +50,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
       NEXT_PUBLIC_API_URL=http://localhost:3001
       ```
 
-*   [ ] **Tarea 1.3: Crear Instancia Centralizada de Axios.**
+*   [x] **Tarea 1.3: Crear Instancia Centralizada de Axios.**
     - **Acción:** Crear la carpeta `lib` en la raíz si no existe. Dentro, crear el archivo `lib/apiClient.js`.
     - **Propósito:** Centraliza la configuración de Axios, permitiendo definir la URL base y futuros interceptores en un solo lugar.
     - **Contenido:**
