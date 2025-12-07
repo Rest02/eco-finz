@@ -23,3 +23,8 @@ export interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
 }
+
+export interface AuthContextType extends AuthState {
+    login: (credentials: AuthCredentials) => Promise<void>;
+    logout: () => void;
+}

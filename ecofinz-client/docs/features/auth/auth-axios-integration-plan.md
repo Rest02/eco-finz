@@ -138,7 +138,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 ### Fase 4: Integración con la UI y Estado Global (React Context)
 
-*   [ ] **Tarea 4.1: Crear el `AuthContext`.**
+*   [x] **Tarea 4.1: Crear el `AuthContext`.**
     - **Acción:** Crear la carpeta `context` en la raíz. Dentro, crear `context/AuthContext.js`.
     - **Propósito:** Proveer un estado global para la autenticación (datos del usuario, token) y las funciones para manipularlo (`login`, `logout`).
     - **Contenido:**
@@ -158,7 +158,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
       export const useAuth = () => useContext(AuthContext);
       ```
 
-*   [ ] **Tarea 4.2: Envolver la aplicación con el `AuthProvider`.**
+*   [x] **Tarea 4.2: Envolver la aplicación con el `AuthProvider`.**
     - **Acción:** Modificar el archivo `pages/_app.js`.
     - **Contenido:**
       ```javascript
@@ -175,17 +175,34 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
       export default MyApp;
       ```
 
-*   [ ] **Tarea 4.3: Conectar el `AuthContext` con el `apiClient`.**
+*   [x] **Tarea 4.3: Conectar el `AuthContext` con el `apiClient`.**
     - **Acción:** Modificar de nuevo `pages/_app.js` para pasar la función que obtiene el token al `apiClient`.
     - **Propósito:** Cierra el círculo entre el estado de autenticación y el interceptor de Axios.
 
-*   [ ] **Tarea 4.4: Crear y conectar las páginas de UI.**
+*   [x] **Tarea 4.4: Crear y conectar las páginas de UI.**
     - **Acción:** Crear los archivos `pages/register.js`, `pages/login.js` y `pages/profile.js`.
     - **Propósito:** Implementar los formularios y la lógica de UI para llamar a las funciones del `AuthContext` (que a su vez llamarán al `authService`).
     - **Lógica para `login.js`:** Un formulario que al enviarse llame a la función `login` del `useAuth()`.
     - **Lógica para `profile.js`:** Usar `useAuth()` para obtener los datos del usuario. Si no hay usuario, redirigir a `/login`.
 
-### Fase 5: Verificación Manual por el Usuario
+### Fase 5: Implementación de la Verificación de Usuario
+
+*   [ ] **Tarea 5.1: Crear la página de verificación (`/verify`).**
+    - **Acción:** Crear el archivo `src/app/verify/page.tsx`.
+    - **Propósito:** Implementar la UI para que el usuario ingrese su email y el PIN de verificación.
+    - **Lógica:**
+        - Un formulario con campos para "email" y "verifyPin".
+        - El campo de email se pre-rellenará usando los parámetros de la URL.
+        - Al enviar, se llamará a la función `verifyUser` del `authService`.
+        - En caso de éxito, redirigir al usuario a `/login`.
+        - Mostrar un mensaje de error si la verificación falla.
+
+*   [ ] **Tarea 5.2: Actualizar el flujo de registro.**
+    - **Acción:** Modificar el archivo `src/app/register/page.tsx`.
+    - **Propósito:** Cambiar la redirección post-registro para dirigir al usuario a la página de verificación.
+    - **Lógica:** Reemplazar la redirección `router.push('/login')` por `router.push(`/verify?email=${email}`)`.
+
+### Fase 6: Verificación Manual por el Usuario
 
 *   [ ] **Tarea 5.1: El usuario debe verificar la implementación.**
     - **Acción:** Una vez completadas las fases anteriores, el usuario debe probar manualmente el flujo completo en la aplicación web:
