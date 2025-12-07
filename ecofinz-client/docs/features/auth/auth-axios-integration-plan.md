@@ -98,7 +98,7 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 ### Fase 3: Gestión del JWT y Peticiones Autenticadas
 
-*   [ ] **Tarea 3.1: Configurar Interceptor de Axios para JWT.**
+*   [x] **Tarea 3.1: Configurar Interceptor de Axios para JWT.**
     - **Acción:** Modificar el archivo `lib/apiClient.js` para que intercepte las peticiones y añada el token de autenticación si existe.
     - **Nota:** La función `getToken` será una función auxiliar que obtendrá el token del estado global (que se creará en la Fase 4). Por ahora, el código se prepara para ello.
     - **Contenido Actualizado para `lib/apiClient.js`:**
