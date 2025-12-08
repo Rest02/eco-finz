@@ -91,7 +91,7 @@ Estos archivos definirán la estructura de los datos que esperamos en nuestras n
 
 Implementaremos el endpoint y el servicio para que el usuario solicite el enlace de restablecimiento.
 
-#### [ ] **Tarea 2.1: Crear Endpoint `forgot-password`**
+#### [x] **Tarea 2.1: Crear Endpoint `forgot-password`**
 
 *   **Archivo a modificar:** `src/auth/auth.controller.ts`
 *   **Acción:** Añade un nuevo método público en `AuthController`.
@@ -105,7 +105,7 @@ async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordAuthDto) {
 ```
 *No olvides importar `ForgotPasswordAuthDto` y `Post` si aún no están.*
 
-#### [ ] **Tarea 2.2: Implementar Lógica en `auth.service`**
+#### [x] **Tarea 2.2: Implementar Lógica en `auth.service`**
 
 *   **Archivo a modificar:** `src/auth/auth.service.ts`
 *   **Acción:** Añade el método `forgotPassword`. Necesitarás importar el módulo `crypto` de Node.js.
@@ -160,7 +160,7 @@ async forgotPassword(email: string) {
 }
 ```
 
-#### [ ] **Tarea 2.3: Implementar Envío de Correo**
+#### [x] **Tarea 2.3: Implementar Envío de Correo**
 
 *   **Archivo a modificar:** `src/email/email.service.ts`
 *   **Acción:** Crea un método para enviar el correo de restablecimiento.
@@ -192,7 +192,7 @@ async sendPasswordResetEmail(user: { email: string; name: string }, token: strin
 
 Implementaremos la lógica para verificar el token y actualizar la contraseña.
 
-#### [ ] **Tarea 3.1: Crear Endpoint `reset-password`**
+#### [x] **Tarea 3.1: Crear Endpoint `reset-password`**
 
 *   **Archivo a modificar:** `src/auth/auth.controller.ts`
 *   **Acción:** Añade el siguiente método público.
@@ -209,7 +209,7 @@ async resetPassword(@Body() resetPasswordDto: ResetPasswordAuthDto) {
 ```
 *No olvides importar `ResetPasswordAuthDto`.*
 
-#### [ ] **Tarea 3.2: Implementar Lógica en `auth.service`**
+#### [x] **Tarea 3.2: Implementar Lógica en `auth.service`**
 
 *   **Archivo a modificar:** `src/auth/auth.service.ts`
 *   **Acción:** Añade el método `resetPassword`.
@@ -249,3 +249,24 @@ async resetPassword(token: string, newPass: string) {
 }
 ```
 *Asegúrate de tener `bcrypt` y `UnauthorizedException` importados.*
+
+
+## Fase 4: Pruebas con Postman
+
+Esta sección detalla cómo simular el flujo completo de recuperación de contraseña para verificar que la implementación funcione correctamente.
+
+**Prerrequisitos:**
+*   Asegúrate de tener la aplicación corriendo.
+*   Necesitas al menos un usuario registrado y verificado en tu base de datos.
+*   Para observar el token enviado, revisa la consola donde se recibe el correo (si usas un servicio como Ethereal) o tu bandeja de entrada real.
+
+### Prueba 1: Solicitar Restablecimiento de Contraseña (Flujo Exitoso)
+
+1.  **Request:**
+    *   **Método:** `POST`
+    *   **URL:** `http://localhost:3000/auth/forgot-password` (ajusta el puerto si es necesario).
+    *   **Body:** `raw` (JSON)
+        ```json
+        {
+            "email": "tu_usuario@ejemplo.com"
+        }
