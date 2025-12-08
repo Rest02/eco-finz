@@ -12,12 +12,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-      setIsAuthenticated(true);
-      // You might want to fetch the user profile here
-    }
+    const fetchUserProfile = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        try {
+          setToken(storedToken);
+          setAuthTokenProvider(() => storedToken); // Ensure apiClient is configured before request
+          const profileResponse = await authService.getUserProfile();
+          setUser(profileResponse.data);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('Failed to fetch profile with stored token', error);
+          // Token might be invalid/expired, so log out
+          logout();
+        }
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   useEffect(() => {
@@ -26,7 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: AuthCredentials) => {
     const response = await authService.loginUser(credentials);
-    const { token } = response.data;
+    const { access_token: token } = response.data;
+    
+    // Immediately update the API client with the new token before the next request
+    setAuthTokenProvider(() => token);
+
     setToken(token);
     setIsAuthenticated(true);
     localStorage.setItem('token', token);
