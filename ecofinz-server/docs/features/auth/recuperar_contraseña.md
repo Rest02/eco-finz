@@ -3,6 +3,9 @@
 > **Contexto de la Funcionalidad:**
 > Esta funcionalidad permitirá a los usuarios que han olvidado su contraseña solicitar un restablecimiento de la misma. El sistema enviará un enlace seguro y de tiempo limitado a su correo electrónico registrado. Al hacer clic en el enlace, el usuario podrá establecer una nueva contraseña y recuperar el acceso a su cuenta.
 
+### Principios de Implementación
+**Es fundamental seguir las convenciones y la estructura existentes del proyecto.** Asegúrate de que el nuevo código sea coherente con el estilo actual, reutilice los servicios y módulos de forma adecuada (como `PrismaService` y `EmailService`) y siga las buenas prácticas para mantener la calidad y la mantenibilidad de la base del código.
+
 ---
 
 ### **Nota Importante sobre Comandos**
@@ -21,7 +24,7 @@ npx prisma migrate dev --name add_reset_password_fields
 
 En esta fase, prepararemos la base de datos para almacenar la información necesaria y crearemos los archivos básicos para la nueva lógica.
 
-#### **Tarea 1.1: Modificar el Esquema de Prisma**
+#### [x] **Tarea 1.1: Modificar el Esquema de Prisma**
 
 Necesitamos añadir campos al modelo `User` para gestionar el token de restablecimiento.
 
@@ -37,7 +40,7 @@ model User {
 }
 ```
 
-#### **Tarea 1.2: Crear y Aplicar la Migración**
+#### [x] **Tarea 1.2: Crear y Aplicar la Migración**
 
 Con el esquema actualizado, genera y aplica la migración a tu base de datos.
 
@@ -48,7 +51,7 @@ npx prisma migrate dev --name add_reset_password_fields
 ```
 *   **Verificación:** Asegúrate de que la migración se haya aplicado correctamente y que la carpeta de migración correspondiente se haya creado en `prisma/migrations`.
 
-#### **Tarea 1.3: Crear Archivos DTO (Data Transfer Objects)**
+#### [x] **Tarea 1.3: Crear Archivos DTO (Data Transfer Objects)**
 
 Estos archivos definirán la estructura de los datos que esperamos en nuestras nuevas rutas.
 
@@ -88,7 +91,7 @@ Estos archivos definirán la estructura de los datos que esperamos en nuestras n
 
 Implementaremos el endpoint y el servicio para que el usuario solicite el enlace de restablecimiento.
 
-#### **Tarea 2.1: Crear Endpoint `forgot-password`**
+#### [ ] **Tarea 2.1: Crear Endpoint `forgot-password`**
 
 *   **Archivo a modificar:** `src/auth/auth.controller.ts`
 *   **Acción:** Añade un nuevo método público en `AuthController`.
@@ -102,7 +105,7 @@ async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordAuthDto) {
 ```
 *No olvides importar `ForgotPasswordAuthDto` y `Post` si aún no están.*
 
-#### **Tarea 2.2: Implementar Lógica en `auth.service`**
+#### [ ] **Tarea 2.2: Implementar Lógica en `auth.service`**
 
 *   **Archivo a modificar:** `src/auth/auth.service.ts`
 *   **Acción:** Añade el método `forgotPassword`. Necesitarás importar el módulo `crypto` de Node.js.
@@ -157,7 +160,7 @@ async forgotPassword(email: string) {
 }
 ```
 
-#### **Tarea 2.3: Implementar Envío de Correo**
+#### [ ] **Tarea 2.3: Implementar Envío de Correo**
 
 *   **Archivo a modificar:** `src/email/email.service.ts`
 *   **Acción:** Crea un método para enviar el correo de restablecimiento.
@@ -189,7 +192,7 @@ async sendPasswordResetEmail(user: { email: string; name: string }, token: strin
 
 Implementaremos la lógica para verificar el token y actualizar la contraseña.
 
-#### **Tarea 3.1: Crear Endpoint `reset-password`**
+#### [ ] **Tarea 3.1: Crear Endpoint `reset-password`**
 
 *   **Archivo a modificar:** `src/auth/auth.controller.ts`
 *   **Acción:** Añade el siguiente método público.
@@ -206,7 +209,7 @@ async resetPassword(@Body() resetPasswordDto: ResetPasswordAuthDto) {
 ```
 *No olvides importar `ResetPasswordAuthDto`.*
 
-#### **Tarea 3.2: Implementar Lógica en `auth.service`**
+#### [ ] **Tarea 3.2: Implementar Lógica en `auth.service`**
 
 *   **Archivo a modificar:** `src/auth/auth.service.ts`
 *   **Acción:** Añade el método `resetPassword`.
