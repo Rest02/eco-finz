@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-      router.push('/profile');
+      router.push('/home');
     } catch (error) {
       console.error('Failed to login', error);
     }
