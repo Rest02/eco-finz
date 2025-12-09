@@ -33,8 +33,8 @@ export class EmailService {
     user: { email: string; name: string | null },
     token: string,
   ) {
-    // El URL debe apuntar a tu aplicación frontend
-    const resetUrl = `http://localhost:3001/auth/reset-password?token=${token}`;
+    const baseUrl = this.configService.get<string>('FRONTEND_URL');
+    const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`;
 
     const mailOptions = {
       to: user.email,
