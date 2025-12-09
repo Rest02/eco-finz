@@ -27,7 +27,7 @@ function VerifyPageContent() {
       await authService.verifyUser({ email, verifyPin });
       setMessage('Verification successful! Redirecting to login...');
       setTimeout(() => {
-        router.push('/login');
+        router.push('/auth/login');
       }, 2000);
     } catch (err) {
       if (axios.isAxiosError(err)) {

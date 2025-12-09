@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
                 </button>
                 
                 {/* Back to Login Button (Secondary) */}
-                <Link href="/login">
+                <Link href="/auth/login">
                   <button 
                     type="button" 
                     className="w-full bg-transparent border border-white/10 text-white font-medium text-base py-3 px-4 rounded-lg hover:bg-white/5 active:scale-[0.98] transition-all duration-200"
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
         
         {/* Footer Links */}
         <p className="mt-8 text-center text-sm text-neutral-500">
-          ¿Recordaste tu contraseña? <Link href="/login" className="text-neutral-300 hover:text-white transition-colors underline decoration-neutral-700 underline-offset-4">Inicia sesión</Link>
+          ¿Recordaste tu contraseña? <Link href="/auth/login" className="text-neutral-300 hover:text-white transition-colors underline decoration-neutral-700 underline-offset-4">Inicia sesión</Link>
         </p>
 
       </main>

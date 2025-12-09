@@ -29,7 +29,7 @@ export default function ResetPasswordForm() {
     if (success) {
       toast.success('¡Contraseña cambiada con éxito! Redirigiendo al login...');
       const timer = setTimeout(() => {
-        router.push('/login');
+        router.push('/auth/login');
       }, 3000);
       return () => clearTimeout(timer);
     }

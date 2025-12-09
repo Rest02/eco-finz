@@ -1,33 +1,22 @@
 "use client";
 import { useState } from 'react';
-import * as authService from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
 
-export default function RegisterPage() {
-  const [name, setName] = useState('');
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     try {
-      await authService.registerUser({ name, email, password });
-      router.push(`/verify?email=${email}`);
-    } catch (err) {
-      if (axios.isAxiosError(err) && !err.response) {
-        const errorMessage = 'Network Error: Could not connect to the server. Please ensure the backend is running and that CORS is configured correctly.';
-        console.error(errorMessage, err);
-        setError(errorMessage);
-      } else {
-        const errorMessage = 'Failed to register. Please check the console for more details.';
-        console.error(errorMessage, err);
-        setError(errorMessage);
-      }
+      await login({ email, password });
+      router.push('/profile');
+    } catch (error) {
+      console.error('Failed to login', error);
     }
   };
 
@@ -60,48 +49,24 @@ export default function RegisterPage() {
             {/* Icon */}
             <div className="mb-6 p-3 rounded-xl bg-white/5 border border-white/10 shadow-inner">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M11 20H2"></path>
+                <path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"></path>
+                <path d="M11 4H8a2 2 0 0 0-2 2v14"></path>
+                <path d="M14 12h.01"></path>
+                <path d="M22 20h-3"></path>
               </svg>
             </div>
 
             {/* Titles */}
-            <h1 className="text-2xl font-semibold text-white tracking-tight text-center mb-2">Crea tu Cuenta</h1>
+            <h1 className="text-2xl font-semibold text-white tracking-tight text-center mb-2">Bienvenido a Ecofinz</h1>
             <p className="text-base text-neutral-400 text-center mb-8 leading-relaxed">
-              Únete a Ecofinz y comienza a<br />
-              gestionar tus finanzas.
+              Por favor inicia sesión o crea una cuenta<br />
+              para continuar.
             </p>
-
-            {/* Error Message */}
-            {error && (
-              <div className="w-full mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="w-full space-y-5">
               
-              {/* Name Field */}
-              <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-medium text-neutral-300 ml-1">
-                  Nombre Completo
-                </label>
-                <div className="relative group/input">
-                  <input 
-                    type="text" 
-                    id="name" 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre" 
-                    className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-base text-white placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-white/20 transition-all duration-200 shadow-sm"
-                    required
-                  />
-                  {/* Subtle border gradient on hover */}
-                  <div className="absolute inset-0 rounded-lg ring-1 ring-white/0 group-hover/input:ring-white/10 pointer-events-none transition-all"></div>
-                </div>
-              </div>
-
               {/* Email Field */}
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-neutral-300 ml-1">
@@ -142,15 +107,23 @@ export default function RegisterPage() {
 
               {/* Actions */}
               <div className="space-y-3 pt-2">
-                {/* Register Button (Primary) */}
+                {/* Login Button (Primary) */}
                 <button 
                   type="submit" 
                   className="w-full bg-white text-black font-medium text-base py-3 px-4 rounded-lg hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                 >
-                  Crear Cuenta
+                  Iniciar Sesión
                 </button>
                 
-
+                {/* Register Button (Secondary) */}
+                <Link href="/auth/register">
+                  <button 
+                    type="button" 
+                    className="w-full bg-transparent border border-white/10 text-white font-medium text-base py-3 px-4 rounded-lg hover:bg-white/5 active:scale-[0.98] transition-all duration-200"
+                  >
+                    Registrar Cuenta
+                  </button>
+                </Link>
               </div>
             </form>
 
@@ -180,7 +153,7 @@ export default function RegisterPage() {
         
         {/* Footer Links */}
         <p className="mt-8 text-center text-sm text-neutral-500">
-          ¿Ya tienes cuenta? <Link href="/login" className="text-neutral-300 hover:text-white transition-colors underline decoration-neutral-700 underline-offset-4">Inicia sesión</Link>
+          ¿Olvidaste tu contraseña? <Link href="/auth/forgot-password" className="text-neutral-300 hover:text-white transition-colors underline decoration-neutral-700 underline-offset-4">Recuperar</Link>
         </p>
 
       </main>

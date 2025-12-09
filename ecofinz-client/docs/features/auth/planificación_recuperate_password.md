@@ -223,7 +223,7 @@ Este documento es una guía paso a paso para implementar la funcionalidad de rec
         {success ? (
           <div>
             <p style={{ color: 'green' }}>¡Tu contraseña ha sido cambiada con éxito!</p>
-            <a href="/login" style={{ textDecoration: 'underline' }}>Ir a Iniciar Sesión</a>
+            <a href="/auth/login" style={{ textDecoration: 'underline' }}>Ir a Iniciar Sesión</a>
           </div>
         ) : (
           <form onSubmit={handleResetPassword}>
@@ -274,7 +274,7 @@ Este documento es una guía paso a paso para implementar la funcionalidad de rec
       ```tsx
       if (success) {
         setTimeout(() => {
-          router.push('/login');
+          router.push('/auth/login');
         }, 3000); // Redirige después de 3 segundos
       }
       ```

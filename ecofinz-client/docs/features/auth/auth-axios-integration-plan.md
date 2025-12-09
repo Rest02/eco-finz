@@ -11,27 +11,22 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 
 - **Objetivo:** Implementar un flujo de autenticación de usuario (Registro, Verificación, Login, Perfil) en una aplicación Next.js.
 - **Arquitectura:**
-  - **Frontend:** Next.js
+  - **Frontend:** Next.js (App Router)
   - **Backend:** NestJS
 - **Endpoints del Backend (API):**
   - Se asume que el backend corre en `http://localhost:3001`. Si la URL es diferente, deberá ser ajustada en el archivo de entorno (`.env.local`).
   - **Registro:**
     - **Método:** `POST`
     - **Ruta:** `/auth/register`
-    - **Cuerpo (Body):** `{ "name": "string", "email": "string", "password": "string" }`
   - **Verificación de PIN:**
     - **Método:** `POST`
     - **Ruta:** `/auth/verify`
-    - **Cuerpo (Body):** `{ "email": "string", "verifyPin": "string" }`
   - **Inicio de Sesión:**
     - **Método:** `POST`
     - **Ruta:** `/auth/login`
-    - **Cuerpo (Body):** `{ "email": "string", "password": "string" }`
-    - **Respuesta Exitosa:** Devuelve un objeto con el token, ej: `{ "token": "ey..." }`
   - **Perfil de Usuario:**
     - **Método:** `GET`
     - **Ruta:** `/auth/profile`
-    - **Autenticación:** Requiere un JSON Web Token (JWT) en el encabezado `Authorization` como `Bearer <token>`.
 
 ---
 
@@ -40,174 +35,63 @@ Este documento detalla el plan de acción para integrar la librería `axios` en 
 ### Fase 1: Configuración Inicial y Axios
 
 *   [x] **Tarea 1.1: Instalar Axios.**
-    - **Acción:** Ejecutar el siguiente comando en la terminal del proyecto.
     - **Comando:** `npm install axios`
 
 *   [x] **Tarea 1.2: Configurar Variable de Entorno.**
     - **Acción:** Crear un archivo llamado `.env` en la raíz del proyecto.
-    - **Contenido:**
-      ```
-      NEXT_PUBLIC_API_URL=http://localhost:3001
-      ```
+    - **Contenido:** `NEXT_PUBLIC_API_URL=http://localhost:3001`
 
 *   [x] **Tarea 1.3: Crear Instancia Centralizada de Axios.**
-    - **Acción:** Crear la carpeta `lib` en la raíz si no existe. Dentro, crear el archivo `lib/apiClient.js`.
-    - **Propósito:** Centraliza la configuración de Axios, permitiendo definir la URL base y futuros interceptores en un solo lugar.
-    - **Contenido:**
-      ```javascript
-      import axios from 'axios';
-
-      const apiClient = axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      export default apiClient;
-      ```
+    - **Acción:** Crear el archivo `src/lib/apiClient.ts`.
+    - **Propósito:** Centraliza la configuración de Axios.
 
 ### Fase 2: Creación del Servicio de Autenticación (`authService`)
 
 *   [x] **Tarea 2.1: Crear el archivo del servicio.**
-    - **Acción:** Crear la carpeta `services` en la raíz si no existe. Dentro, crear el archivo `services/authService.js`.
+    - **Acción:** Crear el archivo `src/services/authService.ts`.
     - **Propósito:** Encapsular toda la lógica de llamadas a la API de autenticación.
-
-*   [x] **Tarea 2.2: Implementar funciones de autenticación.**
-    - **Acción:** Añadir el siguiente contenido a `services/authService.js`. Se importa el `apiClient` de la fase anterior.
-    - **Contenido:**
-      ```javascript
-      import apiClient from '../lib/apiClient';
-
-      export const registerUser = (name, email, password) => {
-        return apiClient.post('/auth/register', { name, email, password });
-      };
-
-      export const verifyUser = (email, verifyPin) => {
-        return apiClient.post('/auth/verify', { email, verifyPin });
-      };
-
-      export const loginUser = (email, password) => {
-        return apiClient.post('/auth/login', { email, password });
-      };
-      
-      export const getUserProfile = () => {
-        return apiClient.get('/auth/profile');
-      };
-      ```
 
 ### Fase 3: Gestión del JWT y Peticiones Autenticadas
 
 *   [x] **Tarea 3.1: Configurar Interceptor de Axios para JWT.**
-    - **Acción:** Modificar el archivo `lib/apiClient.js` para que intercepte las peticiones y añada el token de autenticación si existe.
-    - **Nota:** La función `getToken` será una función auxiliar que obtendrá el token del estado global (que se creará en la Fase 4). Por ahora, el código se prepara para ello.
-    - **Contenido Actualizado para `lib/apiClient.js`:**
-      ```javascript
-      import axios from 'axios';
-
-      // Esta función es un placeholder. Se conectará al estado global más adelante.
-      let getToken = () => null;
-
-      export const setAuthTokenProvider = (tokenProvider) => {
-        getToken = tokenProvider;
-      };
-      
-      const apiClient = axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Interceptor para añadir el token a cada petición
-      apiClient.interceptors.request.use(
-        (config) => {
-          const token = getToken();
-          if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-          }
-          return config;
-        },
-        (error) => {
-          return Promise.reject(error);
-        }
-      );
-
-      export default apiClient;
-      ```
+    - **Acción:** Modificar el archivo `src/lib/apiClient.ts` para que intercepte las peticiones y añada el token de autenticación.
 
 ### Fase 4: Integración con la UI y Estado Global (React Context)
 
 *   [x] **Tarea 4.1: Crear el `AuthContext`.**
-    - **Acción:** Crear la carpeta `context` en la raíz. Dentro, crear `context/AuthContext.js`.
-    - **Propósito:** Proveer un estado global para la autenticación (datos del usuario, token) y las funciones para manipularlo (`login`, `logout`).
-    - **Contenido:**
-      ```javascript
-      // Contenido inicial para context/AuthContext.js
-      // Se completará la lógica en la implementación.
-      import { createContext, useContext } from 'react';
-
-      const AuthContext = createContext(null);
-
-      export function AuthProvider({ children }) {
-        // Lógica para user, token, login, logout, etc. irá aquí.
-        const value = {}; // Placeholder
-        return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-      }
-
-      export const useAuth = () => useContext(AuthContext);
-      ```
+    - **Acción:** Crear el archivo `src/context/AuthContext.tsx`.
 
 *   [x] **Tarea 4.2: Envolver la aplicación con el `AuthProvider`.**
-    - **Acción:** Modificar el archivo `pages/_app.js`.
-    - **Contenido:**
-      ```javascript
-      import { AuthProvider } from '../context/AuthContext';
-
-      function MyApp({ Component, pageProps }) {
-        return (
-          <AuthProvider>
-            <Component {...pageProps} />
-          </AuthProvider>
-        );
-      }
-
-      export default MyApp;
-      ```
+    - **Acción:** Modificar el archivo `src/app/layout.tsx`.
 
 *   [x] **Tarea 4.3: Conectar el `AuthContext` con el `apiClient`.**
-    - **Acción:** Modificar de nuevo `pages/_app.js` para pasar la función que obtiene el token al `apiClient`.
-    - **Propósito:** Cierra el círculo entre el estado de autenticación y el interceptor de Axios.
+    - **Acción:** Modificar `src/app/layout.tsx` o un componente cliente de alto nivel para pasar la función que obtiene el token al `apiClient`.
 
 *   [x] **Tarea 4.4: Crear y conectar las páginas de UI.**
-    - **Acción:** Crear los archivos `pages/register.js`, `pages/login.js` y `pages/profile.js`.
-    - **Propósito:** Implementar los formularios y la lógica de UI para llamar a las funciones del `AuthContext` (que a su vez llamarán al `authService`).
-    - **Lógica para `login.js`:** Un formulario que al enviarse llame a la función `login` del `useAuth()`.
-    - **Lógica para `profile.js`:** Usar `useAuth()` para obtener los datos del usuario. Si no hay usuario, redirigir a `/login`.
+    - **Acción:** Crear los archivos `src/app/auth/register/page.tsx`, `src/app/auth/login/page.tsx` y `src/app/profile/page.tsx`.
+    - **Lógica para `login`:** Un formulario que al enviarse llame a la función `login` del `useAuth()`.
+    - **Lógica para `profile`:** Usar `useAuth()` para obtener los datos del usuario. Si no hay usuario, redirigir a `/auth/login`.
 
 ### Fase 5: Implementación de la Verificación de Usuario
 
-*   [x] **Tarea 5.1: Crear la página de verificación (`/verify`).**
-    - **Acción:** Crear el archivo `src/app/verify/page.tsx`.
-    - **Propósito:** Implementar la UI para que el usuario ingrese su email y el PIN de verificación.
+*   [x] **Tarea 5.1: Crear la página de verificación (`/auth/verify`).**
+    - **Acción:** Crear el archivo `src/app/auth/verify/page.tsx`.
     - **Lógica:**
         - Un formulario con campos para "email" y "verifyPin".
-        - El campo de email se pre-rellenará usando los parámetros de la URL.
         - Al enviar, se llamará a la función `verifyUser` del `authService`.
-        - En caso de éxito, redirigir al usuario a `/login`.
-        - Mostrar un mensaje de error si la verificación falla.
+        - En caso de éxito, redirigir al usuario a `/auth/login`.
 
 *   [x] **Tarea 5.2: Actualizar el flujo de registro.**
-    - **Acción:** Modificar el archivo `src/app/register/page.tsx`.
+    - **Acción:** Modificar el archivo `src/app/auth/register/page.tsx`.
     - **Propósito:** Cambiar la redirección post-registro para dirigir al usuario a la página de verificación.
-    - **Lógica:** Reemplazar la redirección `router.push('/login')` por `router.push(`/verify?email=${email}`)`.
+    - **Lógica:** La redirección debe ser `router.push(`/auth/verify?email=${email}`)`.
 
 ### Fase 6: Verificación Manual por el Usuario
 
-*   [ ] **Tarea 5.1: El usuario debe verificar la implementación.**
-    - **Acción:** Una vez completadas las fases anteriores, el usuario debe probar manualmente el flujo completo en la aplicación web:
-        1.  Navegar a la página de registro y crear un nuevo usuario.
-        2.  Navegar a la página de login e iniciar sesión.
-        3.  Verificar que es redirigido o puede navegar a la página de perfil.
-        4.  Verificar que en la página de perfil se muestran los datos correctos.
-        5.  Implementar y probar la función de `logout`.
+*   [ ] **Tarea 6.1: El usuario debe verificar la implementación.**
+    - **Acción:** Probar manualmente el flujo completo en la aplicación web:
+        1.  Navegar a `/auth/register` y crear un nuevo usuario.
+        2.  Ser redirigido a `/auth/verify` e introducir el PIN.
+        3.  Ser redirigido a `/auth/login` e iniciar sesión.
+        4.  Verificar que es redirigido a la página de perfil y se muestran los datos correctos.
+        5.  Probar la función de `logout`.
