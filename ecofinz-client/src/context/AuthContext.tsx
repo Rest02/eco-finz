@@ -4,64 +4,66 @@ import { AuthContextType, AuthCredentials, User } from '../types/auth';
 import { setAuthTokenProvider } from '../lib/apiClient';
 import * as authService from '../services/authService';
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const bootstrapAuth = async () => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
+        setAuthTokenProvider(() => storedToken); // Configure client immediately
         try {
-          setToken(storedToken);
-          setAuthTokenProvider(() => storedToken); // Ensure apiClient is configured before request
           const profileResponse = await authService.getUserProfile();
+          // If we get here, the token is valid
+          setToken(storedToken);
           setUser(profileResponse.data);
           setIsAuthenticated(true);
         } catch (error) {
-          console.error('Failed to fetch profile with stored token', error);
-          // Token might be invalid/expired, so log out
-          logout();
+          // Token is invalid, clear everything
+          console.error('Failed to authenticate with stored token', error);
+          localStorage.removeItem('token');
+          setAuthTokenProvider(() => null); // De-configure client
         }
       }
+      setLoading(false);
     };
 
-    fetchUserProfile();
+    bootstrapAuth();
   }, []);
-
-  useEffect(() => {
-    setAuthTokenProvider(() => token);
-  }, [token]);
 
   const login = async (credentials: AuthCredentials) => {
     const response = await authService.loginUser(credentials);
-    const { access_token: token } = response.data;
+    const { access_token: newToken } = response.data;
     
-    // Immediately update the API client with the new token before the next request
-    setAuthTokenProvider(() => token);
+    localStorage.setItem('token', newToken);
+    setAuthTokenProvider(() => newToken); // Configure client
 
-    setToken(token);
+    setToken(newToken);
     setIsAuthenticated(true);
-    localStorage.setItem('token', token);
+    
     // Fetch user profile after login
     const profileResponse = await authService.getUserProfile();
     setUser(profileResponse.data);
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
+    setAuthTokenProvider(() => null); // De-configure client
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('token');
   };
 
   const value: AuthContextType = {
     user,
     token,
     isAuthenticated,
+    loading,
     login,
     logout,
   };
