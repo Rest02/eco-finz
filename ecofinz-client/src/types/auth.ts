@@ -25,6 +25,7 @@ export interface AuthState {
 }
 
 export interface AuthContextType extends AuthState {
+    loading: boolean;
     login: (credentials: AuthCredentials) => Promise<void>;
     logout: () => void;
 }
