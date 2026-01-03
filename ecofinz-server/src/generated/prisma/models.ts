@@ -8,10 +8,10 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/User.js'
-export type * from './models/Account.js'
-export type * from './models/MonthlySummary.js'
-export type * from './models/Category.js'
-export type * from './models/Transaction.js'
-export type * from './models/Budget.js'
-export type * from './commonInputTypes.js'
+export type * from './models/User'
+export type * from './models/Account'
+export type * from './models/MonthlySummary'
+export type * from './models/Category'
+export type * from './models/Transaction'
+export type * from './models/Budget'
+export type * from './commonInputTypes'
