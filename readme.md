@@ -211,28 +211,7 @@ La aplicación utiliza **JWT (JSON Web Tokens)** para la autenticación:
 4. El servidor genera un JWT válido por 7 días
 5. El cliente almacena el token y lo envía en cada request
 
-## 📚 Documentación Adicional
 
-- [Documentación de Autenticación](./ecofinz-server/docs/features/auth/authentication_plan.md)
-- [Documentación del Módulo de Finanzas](./ecofinz-server/docs/features/finanzas/1.planificación_primsa_model_fiananzas_feature.md)
-- [Cambios y Correcciones](./ecofinz-server/docs/correciónes%20realizadas%20para%20funcionamiento.md)
-- [Changelog](./ecofinz-server/CHANGELOG.md)
-
-## 🐛 Troubleshooting
-
-### Error: "JWT_SECRET is not set in the environment variables"
-- Verifica que el archivo `.env` exista en `ecofinz-server/`
-- Asegúrate de tener la variable `JWT_SECRET` configurada
-
-### Error: "Cannot connect to database"
-- Verifica que PostgreSQL esté corriendo
-- Comprueba la `DATABASE_URL` en el archivo `.env`
-- Ejecuta `npx prisma migrate dev` para crear las tablas
-
-### Error: "ReferenceError: exports is not defined in ES module scope"
-- Verifica que `tsconfig.json` tenga `"module": "commonjs"`
-- Limpia el caché: `rm -rf dist src/generated`
-- Regenera: `npx prisma generate && npm run build`
 
 ## 📞 Soporte
 
