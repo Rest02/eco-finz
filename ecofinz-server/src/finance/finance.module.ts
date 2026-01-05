@@ -4,9 +4,10 @@ import { FinanceService } from './finance.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { CategoryController } from './category/category.controller';
 import { CategoryService } from './category/category.service';
+import { AccountModule } from './account/account.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AccountModule],
   controllers: [FinanceController, CategoryController],
   providers: [FinanceService, CategoryService]
 })
