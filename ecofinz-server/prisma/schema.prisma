@@ -7,15 +7,30 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
-  moduleFormat    = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+// --- Enums ---
+enum TransactionType {
+  INGRESO
+  EGRESO
+  AHORRO
+}
+
+enum AccountType {
+  BANCO
+  EFECTIVO
+  TARJETA_CREDITO
+  BILLETERA_DIGITAL
+}
+
+// --- Modelos ---
+
 model User {
-  id                   Int       @id @default(autoincrement())
+  id                   String    @id @default(cuid())
   email                String    @unique
   name                 String?
   password             String
@@ -23,4 +38,100 @@ model User {
   verifyPin            String?
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
+
+  accounts         Account[]
+  categories       Category[]
+  monthlySummaries MonthlySummary[]
+  transactions     Transaction[]
+  budgets          Budget[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id        String      @id @default(cuid())
+  name      String
+  type      AccountType
+  balance   Decimal     @default(0.0) @db.Decimal(10, 2)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  transactions Transaction[]
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model MonthlySummary {
+  id     String @id @default(cuid())
+  month  Int
+  year   Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  transactions Transaction[]
+  budgets      Budget[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, month, year])
+}
+
+model Category {
+  id     String @id @default(cuid())
+  name   String
+  type   TransactionType
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  transactions Transaction[]
+  budgets      Budget[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name, type])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Decimal  @db.Decimal(10, 2)
+  type        TransactionType
+  description String
+  date        DateTime
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  userId      String
+  
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId  String
+
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  accountId   String
+
+  monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
+  monthlySummaryId String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Budget {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  amount      Decimal @db.Decimal(10, 2)
+
+  user        User    @relation(fields: [userId], references: [id], onDelete: NoAction)
+  userId      String
+  
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  
+  monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
+  monthlySummaryId String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
