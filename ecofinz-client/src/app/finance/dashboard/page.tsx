@@ -1,41 +1,86 @@
-import AccountList from "@/finance/components/AccountList";
-import { getAccounts } from "@/finance/services/financeService";
-import Link from "next/link";
+'use client';
 
-// Esta es una página de servidor (Server Page).
-// Obtiene los datos antes de renderizar.
-export default async function FinanceDashboardPage() {
-  
-  try {
-    const accountsResponse = await getAccounts();
-    const accounts = accountsResponse.data;
+import { useState, useEffect } from 'react';
+import AccountList from '@/finance/components/AccountList';
+import AccountForm from '@/finance/components/AccountForm';
+import { getAccounts, deleteAccount } from '@/finance/services/financeService';
+import { Account } from '@/finance/dto/finance';
+import Link from 'next/link';
 
-    return (
-      <div>
-        <h1>Dashboard Financiero</h1>
-        <p>Bienvenido a tu centro de finanzas.</p>
-        
-        {/* En el futuro aquí podríamos añadir un AccountForm para crear cuentas */}
-        
-        <AccountList accounts={accounts} />
+export default function FinanceDashboardPage() {
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-        {/* Ejemplo de cómo podríamos linkear a una página de detalle */}
-        {accounts.length > 0 && (
-          <div style={{ marginTop: '20px' }}>
-            <Link href={`/finance/accounts/${accounts[0].id}`}>
-              Ver transacciones de mi primera cuenta
-            </Link>
-          </div>
-        )}
-      </div>
-    );
-  } catch (error) {
-    console.error("Failed to fetch accounts:", error);
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        setLoading(true);
+        const response = await getAccounts();
+        setAccounts(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch accounts:", err);
+        setError("No se pudieron cargar tus cuentas. Por favor, intenta de nuevo más tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
+  const handleAccountCreated = (newAccount: Account) => {
+    setAccounts(prevAccounts => [...prevAccounts, newAccount]);
+  };
+
+  const handleAccountDeleted = async (accountId: string) => {
+    try {
+      await deleteAccount(accountId);
+      setAccounts(prevAccounts => prevAccounts.filter(acc => acc.id !== accountId));
+    } catch (err) {
+      console.error("Failed to delete account:", err);
+      // Opcional: mostrar un mensaje de error al usuario
+    }
+  };
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
+
+  if (error) {
     return (
       <div>
         <h1>Error</h1>
-        <p>No se pudieron cargar tus cuentas. Por favor, intenta de nuevo más tarde.</p>
+        <p>{error}</p>
       </div>
     );
   }
+
+  return (
+    <div>
+      <h1>Dashboard Financiero</h1>
+      <p>Bienvenido a tu centro de finanzas.</p>
+
+      <div style={{ margin: '20px 0' }}>
+        <Link href="/finance/categories" style={{ textDecoration: 'underline', color: 'blue' }}>
+          Gestionar Categorías
+        </Link>
+      </div>
+
+      <AccountForm onAccountCreated={handleAccountCreated} />
+
+      <hr style={{ margin: '20px 0' }} />
+
+      <AccountList accounts={accounts} onAccountDeleted={handleAccountDeleted} />
+
+      {accounts.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <Link href={`/finance/accounts/${accounts[0].id}`}>
+            Ver transacciones de mi primera cuenta
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 }

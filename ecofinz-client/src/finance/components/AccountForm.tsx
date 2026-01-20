@@ -1,30 +1,44 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AccountType, CreateAccountDto } from '../dto/finance';
+import { createAccount } from '../services/financeService';
+import { Account, AccountType, CreateAccountDto } from '../dto/finance';
 
 const accountTypes: AccountType[] = ["BANCO", "BILLETERA_DIGITAL", "EFECTIVO", "TARJETA_CREDITO"];
 
 interface Props {
-  // En el futuro, podríamos pasar una función onSubmit para manejar la lógica de envío
-  // onSubmit: (data: CreateAccountDto) => void;
+  onAccountCreated: (newAccount: Account) => void;
 }
 
-const AccountForm: React.FC<Props> = () => {
+const AccountForm: React.FC<Props> = ({ onAccountCreated }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<AccountType>('BANCO');
   const [balance, setBalance] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setError(null);
+    
     const newAccount: CreateAccountDto = { name, type, balance };
-    console.log('Nueva cuenta a crear:', newAccount);
-    // Aquí llamaríamos a la función onSubmit(newAccount)
+    
+    try {
+      const response = await createAccount(newAccount);
+      onAccountCreated(response.data);
+      // Reset form
+      setName('');
+      setType('BANCO');
+      setBalance(0);
+    } catch (err) {
+      console.error('Failed to create account:', err);
+      setError('No se pudo crear la cuenta. Inténtalo de nuevo.');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', gap: '15px', border: '1px solid #ccc', padding: '20px', borderRadius: '5px' }}>
       <h2>Crear Nueva Cuenta</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
         <label htmlFor="name" style={{ display: 'block', marginBottom: '5px' }}>Nombre de la Cuenta</label>
         <input

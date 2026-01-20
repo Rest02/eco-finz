@@ -1,49 +1,82 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { AxiosError } from 'axios';
 import TransactionList from "@/finance/components/TransactionList";
+import TransactionForm from '@/finance/components/TransactionForm';
 import { getTransactions } from "@/finance/services/financeService";
+import { Transaction } from '@/finance/dto/finance';
 import Link from "next/link";
 
-interface PageProps {
-  params: {
-    id: string; // Este 'id' es el ID de la cuenta y viene de la URL
+export default function AccountDetailPage() {
+  const params = useParams();
+  const accountId = params.id as string;
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!accountId) return;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const transactionResponse = await getTransactions({ accountId });
+        setTransactions(transactionResponse.data);
+        setError(null);
+      } catch (err) {
+        if (err instanceof AxiosError && err.response?.status === 404) {
+          // El backend devuelve 404 si no hay transacciones, lo tratamos como un caso de éxito con 0 transacciones.
+          setTransactions([]);
+          setError(null);
+        } else {
+          console.error(`Failed to fetch transactions:`, err);
+          setError("No se pudieron cargar las transacciones. Intenta de nuevo.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [accountId]);
+
+  const handleTransactionCreated = (newTransaction: Transaction) => {
+    setTransactions(prev => [newTransaction, ...prev]);
   };
-}
 
-// Esta también es una página de servidor.
-// Usa el 'id' de la URL para buscar las transacciones de esa cuenta específica.
-export default async function AccountDetailPage({ params }: PageProps) {
-  const { id: accountId } = params;
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
-  try {
-    const transactionResponse = await getTransactions({ accountId: accountId });
-    const transactions = transactionResponse.data;
-
-    return (
-      <div>
-        {/* En el futuro, podríamos buscar y mostrar el nombre de la cuenta aquí */}
-        <h1>Transacciones de la Cuenta</h1>
-        
-        <TransactionList transactions={transactions} />
-        
-        <div style={{ marginTop: '20px' }}>
-          <Link href="/finance/dashboard">
-            &larr; Volver al Dashboard
-          </Link>
-        </div>
-      </div>
-    );
-
-  } catch (error) {
-    console.error(`Failed to fetch transactions for account ${accountId}:`, error);
+  if (error) {
     return (
       <div>
         <h1>Error</h1>
-        <p>No se pudieron cargar las transacciones. Por favor, intenta de nuevo más tarde.</p>
-        <div style={{ marginTop: '20px' }}>
-          <Link href="/finance/dashboard">
-            &larr; Volver al Dashboard
-          </Link>
-        </div>
+        <p>{error}</p>
+        <Link href="/finance/dashboard">&larr; Volver al Dashboard</Link>
       </div>
     );
   }
+
+  return (
+    <div>
+      <h1>Añadir Transacción a una Cuenta</h1>
+      <p>Estás añadiendo una transacción a la cuenta seleccionada. Abajo se muestran todas tus transacciones recientes.</p>
+      
+      <TransactionForm accountId={accountId} onTransactionCreated={handleTransactionCreated} />
+      
+      <hr style={{ margin: '20px 0' }} />
+
+      <TransactionList transactions={transactions} />
+      
+      <div style={{ marginTop: '20px' }}>
+        <Link href="/finance/dashboard">
+          &larr; Volver al Dashboard
+        </Link>
+      </div>
+    </div>
+  );
 }
