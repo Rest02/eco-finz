@@ -62,9 +62,12 @@ export default function FinanceDashboardPage() {
       <h1>Dashboard Financiero</h1>
       <p>Bienvenido a tu centro de finanzas.</p>
 
-      <div style={{ margin: '20px 0' }}>
+      <div style={{ margin: '20px 0', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
         <Link href="/finance/categories" style={{ textDecoration: 'underline', color: 'blue' }}>
           Gestionar Categorías
+        </Link>
+        <Link href="/finance/budgets" style={{ textDecoration: 'underline', color: 'blue' }}>
+          Gestionar Presupuestos
         </Link>
       </div>
 
