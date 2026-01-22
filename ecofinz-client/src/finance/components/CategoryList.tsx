@@ -7,9 +7,10 @@ import { getTransactions } from '../services/financeService';
 interface Props {
   categories: Category[];
   onCategoryDeleted: (categoryId: string) => void;
+  onCategoryEdit: (category: Category) => void;
 }
 
-const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted }) => {
+const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCategoryEdit }) => {
   const [transactionCounts, setTransactionCounts] = useState<Record<string, number>>({});
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [categoryTransactions, setCategoryTransactions] = useState<Transaction[]>([]);
@@ -140,6 +141,21 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted }) => {
                       {isExpanded ? '🔼 Ocultar' : '🔍 Ver Transacciones'}
                     </button>
                   )}
+
+                  <button
+                    onClick={() => onCategoryEdit(category)}
+                    style={{
+                      padding: '8px 12px',
+                      border: 'none',
+                      backgroundColor: '#ecc94b',
+                      color: 'white',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
 
                   <button
                     onClick={() => handleDelete(category.id)}

@@ -13,6 +13,7 @@ export default function FinanceDashboardPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
   // Estado para el resumen mensual
   const currentDate = new Date();
@@ -61,13 +62,28 @@ export default function FinanceDashboardPage() {
     setAccounts(prevAccounts => [...prevAccounts, newAccount]);
   };
 
+  const handleAccountUpdated = (updatedAccount: Account) => {
+    setAccounts(prevAccounts =>
+      prevAccounts.map(acc => acc.id === updatedAccount.id ? updatedAccount : acc)
+    );
+    setEditingAccount(null);
+  };
+
+  const handleAccountEdit = (account: Account) => {
+    setEditingAccount(account);
+    // Scroll to form
+    window.scrollTo({ top: document.getElementById('account-form-section')?.offsetTop || 0, behavior: 'smooth' });
+  };
+
   const handleAccountDeleted = async (accountId: string) => {
     try {
       await deleteAccount(accountId);
       setAccounts(prevAccounts => prevAccounts.filter(acc => acc.id !== accountId));
+      if (editingAccount?.id === accountId) {
+        setEditingAccount(null);
+      }
     } catch (err) {
       console.error("Failed to delete account:", err);
-      // Opcional: mostrar un mensaje de error al usuario
     }
   };
 
@@ -139,11 +155,23 @@ export default function FinanceDashboardPage() {
         </>
       )}
 
-      <AccountForm onAccountCreated={handleAccountCreated} />
+      <div id="account-form-section">
+        <AccountForm
+          onAccountCreated={handleAccountCreated}
+          onAccountUpdated={handleAccountUpdated}
+          initialData={editingAccount || undefined}
+          isEditMode={!!editingAccount}
+          onCancel={() => setEditingAccount(null)}
+        />
+      </div>
 
       <hr style={{ margin: '20px 0' }} />
 
-      <AccountList accounts={accounts} onAccountDeleted={handleAccountDeleted} />
+      <AccountList
+        accounts={accounts}
+        onAccountDeleted={handleAccountDeleted}
+        onAccountEdit={handleAccountEdit}
+      />
     </div>
   );
 }

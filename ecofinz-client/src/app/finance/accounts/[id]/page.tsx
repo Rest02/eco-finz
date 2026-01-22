@@ -16,6 +16,7 @@ export default function AccountDetailPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
     if (!accountId) return;
@@ -24,10 +25,6 @@ export default function AccountDetailPage() {
       try {
         setLoading(true);
         const transactionResponse = await getTransactions({ accountId });
-
-        // Log para depuración
-        console.log('Transaction Response:', transactionResponse);
-        console.log('Transaction Data:', transactionResponse.data);
 
         // El backend devuelve { data: [...], meta: {...} }
         // Las transacciones están en response.data.data
@@ -39,13 +36,12 @@ export default function AccountDetailPage() {
         setError(null);
       } catch (err) {
         if (err instanceof AxiosError && err.response?.status === 404) {
-          // El backend devuelve 404 si no hay transacciones, lo tratamos como un caso de éxito con 0 transacciones.
           setTransactions([]);
           setError(null);
         } else {
           console.error(`Failed to fetch transactions:`, err);
           setError("No se pudieron cargar las transacciones. Intenta de nuevo.");
-          setTransactions([]); // Asegurar que sea un array vacío en caso de error
+          setTransactions([]);
         }
       } finally {
         setLoading(false);
@@ -59,6 +55,18 @@ export default function AccountDetailPage() {
     setTransactions(prev => [newTransaction, ...prev]);
   };
 
+  const handleTransactionUpdated = (updatedTransaction: Transaction) => {
+    setTransactions(prev =>
+      prev.map(tx => tx.id === updatedTransaction.id ? updatedTransaction : tx)
+    );
+    setEditingTransaction(null);
+  };
+
+  const handleTransactionEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleDeleteTransaction = async (transactionId: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar esta transacción?')) {
       return;
@@ -67,6 +75,9 @@ export default function AccountDetailPage() {
     try {
       await deleteTransaction(transactionId);
       setTransactions(prev => prev.filter(tx => tx.id !== transactionId));
+      if (editingTransaction?.id === transactionId) {
+        setEditingTransaction(null);
+      }
     } catch (err) {
       console.error('Failed to delete transaction:', err);
       alert('No se pudo eliminar la transacción. Inténtalo de nuevo.');
@@ -89,14 +100,25 @@ export default function AccountDetailPage() {
 
   return (
     <div>
-      <h1>Añadir Transacción a una Cuenta</h1>
-      <p>Estás añadiendo una transacción a la cuenta seleccionada. Abajo se muestran todas tus transacciones recientes.</p>
+      <h1>Gestión de Transacciones</h1>
+      <p>Administra los movimientos de tu cuenta. Puedes añadir nuevos, editar los existentes o eliminarlos.</p>
 
-      <TransactionForm accountId={accountId} onTransactionCreated={handleTransactionCreated} />
+      <TransactionForm
+        accountId={accountId}
+        onTransactionCreated={handleTransactionCreated}
+        onTransactionUpdated={handleTransactionUpdated}
+        initialData={editingTransaction || undefined}
+        isEditMode={!!editingTransaction}
+        onCancel={() => setEditingTransaction(null)}
+      />
 
       <hr style={{ margin: '20px 0' }} />
 
-      <TransactionList transactions={transactions} onDelete={handleDeleteTransaction} />
+      <TransactionList
+        transactions={transactions}
+        onDelete={handleDeleteTransaction}
+        onEdit={handleTransactionEdit}
+      />
 
       <div style={{ marginTop: '20px' }}>
         <Link href="/finance/dashboard">

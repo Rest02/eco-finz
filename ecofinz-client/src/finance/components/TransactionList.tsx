@@ -6,9 +6,10 @@ import { Transaction } from '../dto/finance';
 interface Props {
   transactions: Transaction[];
   onDelete: (transactionId: string) => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
-const TransactionList: React.FC<Props> = ({ transactions, onDelete }) => {
+const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) => {
   // Validación defensiva: asegurar que transactions sea un array
   if (!transactions || !Array.isArray(transactions)) {
     return <p>No hay transacciones para esta cuenta.</p>;
@@ -43,19 +44,34 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete }) => {
                 {tx.type === 'EGRESO' ? '-' : ''}${Math.abs(tx.amount).toLocaleString()}
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                <button
-                  onClick={() => onDelete(tx.id)}
-                  style={{
-                    padding: '5px 10px',
-                    backgroundColor: '#e53e3e',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Eliminar
-                </button>
+                <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => onEdit(tx)}
+                    style={{
+                      padding: '5px 10px',
+                      backgroundColor: '#ecc94b',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => onDelete(tx.id)}
+                    style={{
+                      padding: '5px 10px',
+                      backgroundColor: '#e53e3e',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

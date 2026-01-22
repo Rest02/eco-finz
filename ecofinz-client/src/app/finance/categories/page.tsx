@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { AxiosError } from 'axios';
 import { Category } from '@/finance/dto/finance';
-import { getCategories, createCategory, deleteCategory } from '@/finance/services/financeService';
+import { getCategories, createCategory, deleteCategory, updateCategory } from '@/finance/services/financeService';
 import Link from 'next/link';
 import CategoryList from '@/finance/components/CategoryList';
 import CategoryForm from '@/finance/components/CategoryForm';
@@ -13,6 +13,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -41,11 +42,26 @@ export default function CategoriesPage() {
     setDeleteError(null); // Limpiar errores previos
   };
 
+  const handleCategoryUpdated = (updatedCategory: Category) => {
+    setCategories(prev =>
+      prev.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat)
+    );
+    setEditingCategory(null);
+  };
+
+  const handleCategoryEdit = (category: Category) => {
+    setEditingCategory(category);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleCategoryDeleted = async (categoryId: string) => {
     try {
       setDeleteError(null); // Limpiar errores previos
       await deleteCategory(categoryId);
       setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+      if (editingCategory?.id === categoryId) {
+        setEditingCategory(null);
+      }
     } catch (err) {
       console.error('Failed to delete category:', err);
 
@@ -100,11 +116,23 @@ export default function CategoriesPage() {
         </div>
       )}
 
-      <CategoryForm onCategoryCreated={handleCategoryCreated} createCategoryFn={createCategory} />
+      <CategoryForm
+        onCategoryCreated={handleCategoryCreated}
+        onCategoryUpdated={handleCategoryUpdated}
+        initialData={editingCategory || undefined}
+        isEditMode={!!editingCategory}
+        onCancel={() => setEditingCategory(null)}
+        createCategoryFn={createCategory}
+        updateCategoryFn={updateCategory}
+      />
 
       <hr style={{ margin: '20px 0' }} />
 
-      <CategoryList categories={categories} onCategoryDeleted={handleCategoryDeleted} />
+      <CategoryList
+        categories={categories}
+        onCategoryDeleted={handleCategoryDeleted}
+        onCategoryEdit={handleCategoryEdit}
+      />
 
       <div style={{ marginTop: '20px' }}>
         <Link href="/finance/dashboard">

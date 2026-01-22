@@ -7,9 +7,10 @@ import { Account } from '../dto/finance';
 interface Props {
   accounts: Account[];
   onAccountDeleted: (accountId: string) => void;
+  onAccountEdit: (account: Account) => void;
 }
 
-const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted }) => {
+const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdit }) => {
   if (accounts.length === 0) {
     return <p>No hay cuentas disponibles.</p>;
   }
@@ -44,6 +45,22 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted }) => {
               >
                 📊 Ver Transacciones
               </Link>
+
+              <button
+                onClick={() => onAccountEdit(account)}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  backgroundColor: '#ecc94b',
+                  color: 'white',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
+                ✏️ Editar
+              </button>
 
               <button
                 onClick={() => onAccountDeleted(account.id)}
