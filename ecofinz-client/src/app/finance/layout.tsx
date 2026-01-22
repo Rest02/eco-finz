@@ -1,13 +1,21 @@
+"use client";
+
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import React from "react";
 import { Sidebar } from "@/features/finance/components/layout/Sidebar";
 import { RightPanel } from "@/features/finance/components/layout/RightPanel";
+import { useAccounts } from "@/features/finance/hooks/useAccounts";
+import { useTransactions } from "@/features/finance/hooks/useTransactions";
 
 export default function FinanceLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { data: accounts = [] } = useAccounts();
+  const { data: transactionsResponse } = useTransactions({ limit: 5 } as any);
+  const transactions = (transactionsResponse as any)?.data || [];
+
   return (
     <ProtectedRoute>
       <div className="flex h-screen w-full bg-dark-bg text-neutral-300 overflow-hidden">
@@ -21,9 +29,8 @@ export default function FinanceLayout({
             {children}
           </div>
 
-          {/* Panel de Detalles Derecho (Se muestra en el Dashboard o globalmente según se prefiera) */}
-          {/* Por ahora lo mantenemos global para el módulo de finanzas como en el diseño */}
-          <RightPanel />
+          {/* Panel de Detalles Derecho */}
+          <RightPanel accounts={accounts} transactions={transactions} />
         </main>
       </div>
     </ProtectedRoute>

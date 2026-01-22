@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Droplet, Briefcase, Zap, Wifi } from "lucide-react";
+import { Droplet, Briefcase, Zap, Wifi, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { Transaction } from "../../types/finance";
 
 interface ActivityItemProps {
     icon: React.ElementType;
@@ -28,37 +29,27 @@ const ActivityItem = ({ icon: Icon, title, status, amount, colorClass }: Activit
     </div>
 );
 
-export const RecentActivityList = () => {
-    const activities: ActivityItemProps[] = [
-        {
-            icon: Droplet,
-            title: "Water Bill",
-            status: "Successfully",
-            amount: "$120",
-            colorClass: "text-blue-400",
-        },
-        {
-            icon: Briefcase,
-            title: "Income Salary",
-            status: "Received",
-            amount: "+$4,500",
-            colorClass: "text-emerald-400",
-        },
-        {
-            icon: Zap,
-            title: "Electric Bill",
-            status: "Successfully",
-            amount: "$150",
-            colorClass: "text-yellow-400",
-        },
-        {
-            icon: Wifi,
-            title: "Internet Bill",
-            status: "Successfully",
-            amount: "$60",
-            colorClass: "text-purple-400",
-        },
-    ];
+interface RecentActivityListProps {
+    transactions: Transaction[];
+}
+
+export const RecentActivityList = ({ transactions }: RecentActivityListProps) => {
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(value);
+    };
+
+    const mappedActivities = transactions.map((tx) => ({
+        icon: tx.type === 'INGRESO' ? ArrowUpRight : ArrowDownLeft,
+        title: tx.description || "Transacción",
+        status: "Completado",
+        amount: (tx.type === 'INGRESO' ? '+' : '-') + formatCurrency(tx.amount),
+        colorClass: tx.type === 'INGRESO' ? "text-emerald-400" : "text-rose-400",
+    }));
 
     return (
         <div>
@@ -67,12 +58,14 @@ export const RecentActivityList = () => {
                 <button className="text-xs text-neutral-500 hover:text-white transition-colors">Ver todo</button>
             </div>
 
-            <p className="text-xs text-neutral-600 mb-4">02 Mar 2024</p>
-
             <div className="space-y-6">
-                {activities.map((activity, index) => (
-                    <ActivityItem key={index} {...activity} />
-                ))}
+                {mappedActivities.length > 0 ? (
+                    mappedActivities.map((activity, index) => (
+                        <ActivityItem key={index} {...activity} />
+                    ))
+                ) : (
+                    <p className="text-sm text-neutral-600">No hay actividad reciente.</p>
+                )}
             </div>
         </div>
     );

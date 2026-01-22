@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { CreditCard, ArrowLeftRight, Landmark, FileCheck, MoreVertical } from "lucide-react";
+import { Account, MonthlySummary } from "../../types/finance";
 
 interface StatCardProps {
     title: string;
@@ -26,35 +25,49 @@ const StatCard = ({ title, amount, icon: Icon, colorClass, glowClass }: StatCard
     </div>
 );
 
-export const StatsGrid = () => {
+interface StatsGridProps {
+    accounts: Account[];
+    summary?: MonthlySummary;
+}
+
+export const StatsGrid = ({ accounts, summary }: StatsGridProps) => {
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(value);
+    };
+
     const stats = [
         {
-            title: "Transfer via Card",
-            amount: "$1,200",
+            title: "Saldo Total",
+            amount: formatCurrency(accounts.reduce((acc, curr) => acc + curr.balance, 0)),
             icon: CreditCard,
             colorClass: "bg-indigo-500/10 text-indigo-400",
             glowClass: "bg-indigo-500/10 group-hover:bg-indigo-500/20",
         },
         {
-            title: "Transfer Other Banks",
-            amount: "$150",
+            title: "Ingresos Mes",
+            amount: formatCurrency(summary?.totalIncome || 0),
             icon: ArrowLeftRight,
             colorClass: "bg-emerald-500/10 text-emerald-400",
             glowClass: "bg-emerald-500/10 group-hover:bg-emerald-500/20",
         },
         {
-            title: "Transfer Same Bank",
-            amount: "$1,500",
-            icon: Landmark,
-            colorClass: "bg-amber-500/10 text-amber-400",
-            glowClass: "bg-amber-500/10 group-hover:bg-amber-500/20",
-        },
-        {
-            title: "Transfer to Other",
-            amount: "$1,500",
+            title: "Gastos Mes",
+            amount: formatCurrency(summary?.totalExpenses || 0),
             icon: FileCheck,
             colorClass: "bg-rose-500/10 text-rose-400",
             glowClass: "bg-rose-500/10 group-hover:bg-rose-500/20",
+        },
+        {
+            title: "Cuentas Activas",
+            amount: accounts.length.toString(),
+            icon: Landmark,
+            colorClass: "bg-amber-500/10 text-amber-400",
+            glowClass: "bg-amber-500/10 group-hover:bg-amber-500/20",
         },
     ];
 

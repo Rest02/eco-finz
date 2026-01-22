@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { ChevronDown } from "lucide-react";
+import { MonthlySummary } from "../../types/finance";
 
 interface BarProps {
     label: string;
@@ -29,44 +28,59 @@ const Bar = ({ label, value, isActive, delay, tooltipValue }: BarProps) => (
 
         <div
             className={`w-full max-w-[40px] rounded-t-sm transition-all animate-grow-up ${isActive
-                    ? "bar-gradient shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                    : "bg-white/5 group-hover:bg-white/10"
+                ? "bar-gradient shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                : "bg-white/5 group-hover:bg-white/10"
                 }`}
-            style={{ height: `${value}%`, animationDelay: `${delay}ms` }}
+            style={{ height: `${Math.max(value, 5)}%`, animationDelay: `${delay}ms` }}
         />
-        <span className={`text-[10px] uppercase font-medium ${isActive ? "text-white font-bold" : "text-neutral-500"}`}>
+        <span className={`text-[10px] uppercase font-medium truncate w-full text-center ${isActive ? "text-white font-bold" : "text-neutral-500"}`}>
             {label}
         </span>
     </div>
 );
 
-export const BalanceChart = () => {
-    const data = [
-        { label: "Jan", value: 15 },
-        { label: "Feb", value: 25 },
-        { label: "Mar", value: 55, isActive: true, tooltipValue: "$2,500" },
-        { label: "Apr", value: 70 },
-        { label: "May", value: 40 },
-        { label: "Jun", value: 30 },
-        { label: "Jul", value: 20 },
-        { label: "Aug", value: 45 },
-        { label: "Sep", value: 65 },
-        { label: "Oct", value: 35 },
-        { label: "Nov", value: 25 },
+interface BalanceChartProps {
+    summary?: MonthlySummary;
+}
+
+export const BalanceChart = ({ summary }: BalanceChartProps) => {
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(value);
+    };
+
+    // Mapear categorías del resumen a los datos del gráfico
+    const categories = summary?.categorySummaries || [];
+    const maxSpent = Math.max(...categories.map(c => c.spent), 1000);
+
+    const data = categories.map((cat, index) => ({
+        label: cat.categoryName.substring(0, 3),
+        value: (cat.spent / maxSpent) * 100,
+        isActive: index === 0, // Por ahora marcamos la primera como activa
+        tooltipValue: formatCurrency(cat.spent)
+    }));
+
+    // Si no hay datos, mostrar placeholders
+    const displayData = data.length > 0 ? data : [
+        { label: "Sin", value: 10, delay: 0 },
+        { label: "Datos", value: 10, delay: 50 }
     ];
 
     return (
         <div className="mb-10">
             <div className="flex items-end justify-between mb-8">
                 <div>
-                    <p className="text-sm text-neutral-400 mb-1">Balance Total</p>
+                    <p className="text-sm text-neutral-400 mb-1">Balance del Mes</p>
                     <h2 className="text-4xl font-semibold text-white tracking-tight">
-                        $1,500<span className="text-neutral-500 text-lg font-normal ml-2">USD</span>
+                        {formatCurrency(summary?.balance || 0)}
+                        <span className="text-neutral-500 text-lg font-normal ml-2">USD</span>
                     </h2>
                 </div>
                 <div className="flex items-center gap-2 cursor-pointer group">
                     <span className="text-xs font-medium uppercase tracking-widest text-neutral-500 group-hover:text-neutral-300 transition-colors">
-                        Últimos 30 días
+                        Este Mes
                     </span>
                     <ChevronDown className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
                 </div>
@@ -85,16 +99,15 @@ export const BalanceChart = () => {
 
                 {/* Y-Axis Labels */}
                 <div className="absolute -left-12 inset-y-0 flex flex-col justify-between text-[10px] text-neutral-500 py-1 text-right pr-2">
-                    <span>100K</span>
-                    <span>50K</span>
-                    <span>10K</span>
+                    <span>{formatCurrency(maxSpent)}</span>
+                    <span>{formatCurrency(maxSpent / 2)}</span>
                     <span>0</span>
                 </div>
 
                 {/* Bars */}
                 <div className="relative w-full h-full flex items-end justify-between z-10 pl-2">
-                    {data.map((item, index) => (
-                        <Bar key={item.label} {...item} delay={index * 50} />
+                    {displayData.map((item, index) => (
+                        <Bar key={index} {...item as any} delay={index * 50} />
                     ))}
                 </div>
             </div>
