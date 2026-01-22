@@ -1,7 +1,7 @@
 "use client"
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AuthContextType, AuthCredentials, User } from '../types/auth';
-import { setAuthTokenProvider } from '../lib/apiClient';
+import { setAuthTokenProvider } from '@/lib/apiClient';
 import * as authService from '../services/authService';
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -39,13 +39,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: AuthCredentials) => {
     const response = await authService.loginUser(credentials);
     const { access_token: newToken } = response.data;
-    
+
     localStorage.setItem('token', newToken);
     setAuthTokenProvider(() => newToken); // Configure client
 
     setToken(newToken);
     setIsAuthenticated(true);
-    
+
     // Fetch user profile after login
     const profileResponse = await authService.getUserProfile();
     setUser(profileResponse.data);
@@ -72,9 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-      throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

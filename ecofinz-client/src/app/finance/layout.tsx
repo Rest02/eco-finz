@@ -1,6 +1,6 @@
 'use client';
 
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import React from "react";
 
 // Este layout envuelve todas las páginas dentro de /finance

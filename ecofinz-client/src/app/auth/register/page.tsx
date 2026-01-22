@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import * as authService from '@/services/authService';
+import * as authService from '@/features/auth/services/authService';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
@@ -37,26 +37,26 @@ export default function RegisterPage() {
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Purple/Blue main gradient from image (Top Left) */}
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-blob mix-blend-screen"></div>
-        
+
         {/* Blue gradient (Top Right) */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-blob delay-2000 mix-blend-screen"></div>
-        
+
         {/* Bottom gradient */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-900/20 rounded-full blur-[100px] animate-blob delay-4000"></div>
       </div>
 
       {/* Main Card Container */}
       <main className="relative z-10 w-full max-w-[440px] px-4 sm:px-0">
-        
+
         {/* Card Backdrop with specific Green/Purple glows from image */}
         <div className="relative w-full bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden group">
-          
+
           {/* Internal Glow Effects (Green Left, Purple Right - matching image) */}
           <div className="absolute top-1/2 left-10 -translate-y-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-[60px] animate-glow pointer-events-none"></div>
           <div className="absolute top-1/2 right-10 -translate-y-1/2 w-32 h-32 bg-fuchsia-500/20 rounded-full blur-[60px] animate-glow delay-2000 pointer-events-none"></div>
-          
+
           <div className="relative p-8 sm:p-10 flex flex-col items-center">
-            
+
             {/* Icon */}
             <div className="mb-6 p-3 rounded-xl bg-white/5 border border-white/10 shadow-inner">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white">
@@ -81,19 +81,19 @@ export default function RegisterPage() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="w-full space-y-5">
-              
+
               {/* Name Field */}
               <div className="space-y-2">
                 <label htmlFor="name" className="block text-sm font-medium text-neutral-300 ml-1">
                   Nombre Completo
                 </label>
                 <div className="relative group/input">
-                  <input 
-                    type="text" 
-                    id="name" 
+                  <input
+                    type="text"
+                    id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre" 
+                    placeholder="Tu nombre"
                     className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-base text-white placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-white/20 transition-all duration-200 shadow-sm"
                     required
                   />
@@ -108,12 +108,12 @@ export default function RegisterPage() {
                   Correo Electrónico
                 </label>
                 <div className="relative group/input">
-                  <input 
-                    type="email" 
-                    id="email" 
+                  <input
+                    type="email"
+                    id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tu@correo.com" 
+                    placeholder="tu@correo.com"
                     className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-base text-white placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-white/20 transition-all duration-200 shadow-sm"
                     required
                   />
@@ -128,12 +128,12 @@ export default function RegisterPage() {
                   Contraseña
                 </label>
                 <div className="relative group/input">
-                  <input 
-                    type="password" 
-                    id="password" 
+                  <input
+                    type="password"
+                    id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••" 
+                    placeholder="••••••••"
                     className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-base text-white placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-white/20 transition-all duration-200 shadow-sm"
                     required
                   />
@@ -143,13 +143,13 @@ export default function RegisterPage() {
               {/* Actions */}
               <div className="space-y-3 pt-2">
                 {/* Register Button (Primary) */}
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="w-full bg-white text-black font-medium text-base py-3 px-4 rounded-lg hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                 >
                   Crear Cuenta
                 </button>
-                
+
 
               </div>
             </form>
@@ -173,11 +173,11 @@ export default function RegisterPage() {
             </button>
 
           </div>
-          
+
           {/* Bottom subtle gradient inside card */}
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         </div>
-        
+
         {/* Footer Links */}
         <p className="mt-8 text-center text-sm text-neutral-500">
           ¿Ya tienes cuenta? <Link href="/auth/login" className="text-neutral-300 hover:text-white transition-colors underline decoration-neutral-700 underline-offset-4">Inicia sesión</Link>

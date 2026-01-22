@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import * as authService from '@/services/authService';
+import * as authService from '@/features/auth/services/authService';
 import axios from 'axios';
 
 function VerifyPageContent() {
@@ -55,8 +55,8 @@ function VerifyPageContent() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
           required
-          // The email field can be read-only if it's always pre-filled
-          // readOnly={!!searchParams.get('email')} 
+        // The email field can be read-only if it's always pre-filled
+        // readOnly={!!searchParams.get('email')} 
         />
         <input
           type="text"
