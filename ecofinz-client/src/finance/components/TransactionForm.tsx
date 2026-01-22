@@ -1,40 +1,55 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { createTransaction } from '../services/financeService';
-import { getCategories } from '../services/financeService';
-import { Transaction, CreateTransactionDto, TransactionType, Category } from '../dto/finance';
+import { createTransaction, getCategories, getAccounts } from '../services/financeService';
+import { Transaction, CreateTransactionDto, TransactionType, Category, Account } from '../dto/finance';
 
 const transactionTypes: TransactionType[] = ["INGRESO", "EGRESO"];
 
 interface Props {
-  accountId: string;
+  accountId?: string; // Ahora es opcional
   onTransactionCreated: (newTransaction: Transaction) => void;
 }
 
-const TransactionForm: React.FC<Props> = ({ accountId, onTransactionCreated }) => {
+const TransactionForm: React.FC<Props> = ({ accountId: propAccountId, onTransactionCreated }) => {
   const [amount, setAmount] = useState(0);
   const [type, setType] = useState<TransactionType>('EGRESO');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState('');
+  const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || '');
   const [categories, setCategories] = useState<Category[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Determinar si necesitamos mostrar el selector de cuenta
+  const showAccountSelector = !propAccountId;
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getCategories();
-        setCategories(response.data);
-        if (response.data.length > 0) {
-          setCategoryId(response.data[0].id);
+        // Siempre cargar categorías
+        const categoriesResponse = await getCategories();
+        setCategories(categoriesResponse.data);
+        if (categoriesResponse.data.length > 0) {
+          setCategoryId(categoriesResponse.data[0].id);
+        }
+
+        // Solo cargar cuentas si no se proporcionó accountId
+        if (showAccountSelector) {
+          const accountsResponse = await getAccounts();
+          setAccounts(accountsResponse.data);
+          if (accountsResponse.data.length > 0) {
+            setSelectedAccountId(accountsResponse.data[0].id);
+          }
         }
       } catch (err) {
-        console.error('Failed to fetch categories:', err);
+        console.error('Failed to fetch data:', err);
       }
     };
-    fetchCategories();
-  }, []);
+    fetchData();
+  }, [showAccountSelector]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -45,16 +60,23 @@ const TransactionForm: React.FC<Props> = ({ accountId, onTransactionCreated }) =
       return;
     }
 
+    const accountIdToUse = propAccountId || selectedAccountId;
+    if (!accountIdToUse) {
+      setError('Por favor, selecciona una cuenta.');
+      return;
+    }
+
     const newTransaction: CreateTransactionDto = {
       amount,
       type,
       description,
       date,
-      accountId,
+      accountId: accountIdToUse,
       categoryId,
     };
 
     try {
+      setLoading(true);
       const response = await createTransaction(newTransaction);
       onTransactionCreated(response.data);
       // Reset form
@@ -62,9 +84,12 @@ const TransactionForm: React.FC<Props> = ({ accountId, onTransactionCreated }) =
       setType('EGRESO');
       setDescription('');
       setDate(new Date().toISOString().split('T')[0]);
+      setError(null);
     } catch (err) {
       console.error('Failed to create transaction:', err);
       setError('No se pudo crear la transacción. Inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,7 +97,27 @@ const TransactionForm: React.FC<Props> = ({ accountId, onTransactionCreated }) =
     <form onSubmit={handleSubmit} style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', gap: '15px', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', marginTop: '20px' }}>
       <h2>Añadir Nueva Transacción</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      
+
+      {/* Selector de cuenta - solo si no se proporcionó accountId */}
+      {showAccountSelector && (
+        <div>
+          <label htmlFor="account">Cuenta</label>
+          <select
+            id="account"
+            value={selectedAccountId}
+            onChange={(e) => setSelectedAccountId(e.target.value)}
+            required
+          >
+            <option value="">Selecciona una cuenta</option>
+            {accounts.map(acc => (
+              <option key={acc.id} value={acc.id}>
+                {acc.name} - ${acc.balance.toLocaleString()}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div>
         <label htmlFor="description">Descripción</label>
         <input
@@ -121,7 +166,9 @@ const TransactionForm: React.FC<Props> = ({ accountId, onTransactionCreated }) =
         />
       </div>
 
-      <button type="submit">Añadir Transacción</button>
+      <button type="submit" disabled={loading}>
+        {loading ? 'Añadiendo...' : 'Añadir Transacción'}
+      </button>
     </form>
   );
 };

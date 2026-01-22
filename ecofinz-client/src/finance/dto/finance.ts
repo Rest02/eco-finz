@@ -61,6 +61,16 @@ export type UpdateBudgetDto = Partial<Omit<Budget, "id" | "userId">>;
 
 // ========== API Responses ==========
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    lastPage: number;
+  };
+}
+
 export interface SummaryCategory {
   categoryId: string;
   categoryName: string;

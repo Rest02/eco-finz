@@ -5,9 +5,15 @@ import { Transaction } from '../dto/finance';
 
 interface Props {
   transactions: Transaction[];
+  onDelete: (transactionId: string) => void;
 }
 
-const TransactionList: React.FC<Props> = ({ transactions }) => {
+const TransactionList: React.FC<Props> = ({ transactions, onDelete }) => {
+  // Validación defensiva: asegurar que transactions sea un array
+  if (!transactions || !Array.isArray(transactions)) {
+    return <p>No hay transacciones para esta cuenta.</p>;
+  }
+
   if (transactions.length === 0) {
     return <p>No hay transacciones para esta cuenta.</p>;
   }
@@ -25,6 +31,7 @@ const TransactionList: React.FC<Props> = ({ transactions }) => {
             <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Descripción</th>
             <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Fecha</th>
             <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>Monto</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +41,21 @@ const TransactionList: React.FC<Props> = ({ transactions }) => {
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatDate(tx.date)}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right', color: tx.type === 'EGRESO' ? 'red' : 'green' }}>
                 {tx.type === 'EGRESO' ? '-' : ''}${Math.abs(tx.amount).toLocaleString()}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                <button
+                  onClick={() => onDelete(tx.id)}
+                  style={{
+                    padding: '5px 10px',
+                    backgroundColor: '#e53e3e',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}

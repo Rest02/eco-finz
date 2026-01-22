@@ -6,6 +6,7 @@ import {
   Transaction,
   Budget,
   MonthlySummary,
+  PaginatedResponse,
   CreateAccountDto,
   UpdateAccountDto,
   CreateCategoryDto,
@@ -54,8 +55,8 @@ export const deleteCategory = (id: string): Promise<AxiosResponse<void>> => {
 
 // ========== Transaction Endpoints ==========
 
-export const getTransactions = (filters?: { month?: number, year?: number, accountId?: string }): Promise<AxiosResponse<Transaction[]>> => {
-  return apiClient.get<Transaction[]>('/finance/transaction', { params: filters });
+export const getTransactions = (filters?: { month?: number, year?: number, accountId?: string }): Promise<AxiosResponse<PaginatedResponse<Transaction>>> => {
+  return apiClient.get<PaginatedResponse<Transaction>>('/finance/transaction', { params: filters });
 };
 
 export const createTransaction = (data: CreateTransactionDto): Promise<AxiosResponse<Transaction>> => {
