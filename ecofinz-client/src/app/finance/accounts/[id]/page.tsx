@@ -5,9 +5,17 @@ import { useParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 import TransactionList from "@/finance/components/TransactionList";
 import TransactionForm from '@/finance/components/TransactionForm';
+import TransactionFilters from '@/finance/components/TransactionFilters';
 import { getTransactions, deleteTransaction } from "@/finance/services/financeService";
-import { Transaction } from '@/finance/dto/finance';
+import { Transaction, TransactionType } from '@/finance/dto/finance';
 import Link from "next/link";
+
+interface FilterValues {
+  type?: TransactionType | '';
+  categoryId?: string;
+  startDate?: string;
+  endDate?: string;
+}
 
 export default function AccountDetailPage() {
   const params = useParams();
@@ -17,6 +25,7 @@ export default function AccountDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [filterValues, setFilterValues] = useState<FilterValues>({});
 
   useEffect(() => {
     if (!accountId) return;
@@ -24,7 +33,13 @@ export default function AccountDetailPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const transactionResponse = await getTransactions({ accountId });
+        const transactionResponse = await getTransactions({
+          accountId,
+          type: filterValues.type || undefined,
+          categoryId: filterValues.categoryId || undefined,
+          startDate: filterValues.startDate || undefined,
+          endDate: filterValues.endDate || undefined
+        });
 
         // El backend devuelve { data: [...], meta: {...} }
         // Las transacciones están en response.data.data
@@ -49,10 +64,15 @@ export default function AccountDetailPage() {
     };
 
     fetchData();
-  }, [accountId]);
+  }, [accountId, filterValues]);
+
+  const handleFilterChange = (newFilters: FilterValues) => {
+    setFilterValues(newFilters);
+  };
 
   const handleTransactionCreated = (newTransaction: Transaction) => {
-    setTransactions(prev => [newTransaction, ...prev]);
+    // Si hay filtros activos, es mejor recargar todo para asegurar que la nueva transacción cumpla los filtros
+    setFilterValues({ ...filterValues });
   };
 
   const handleTransactionUpdated = (updatedTransaction: Transaction) => {
@@ -84,20 +104,6 @@ export default function AccountDetailPage() {
     }
   };
 
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
-
-  if (error) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>{error}</p>
-        <Link href="/finance/dashboard">&larr; Volver al Dashboard</Link>
-      </div>
-    );
-  }
-
   return (
     <div>
       <h1>Gestión de Transacciones</h1>
@@ -112,13 +118,25 @@ export default function AccountDetailPage() {
         onCancel={() => setEditingTransaction(null)}
       />
 
-      <hr style={{ margin: '20px 0' }} />
+      <hr style={{ margin: '30px 0' }} />
 
-      <TransactionList
-        transactions={transactions}
-        onDelete={handleDeleteTransaction}
-        onEdit={handleTransactionEdit}
-      />
+      <TransactionFilters onFilterChange={handleFilterChange} />
+
+      {error ? (
+        <div style={{ padding: '20px', backgroundColor: '#fee', color: '#c33', borderRadius: '8px', marginBottom: '20px' }}>
+          <strong>Error:</strong> {error}
+        </div>
+      ) : loading ? (
+        <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
+          <p>Cargando transacciones...</p>
+        </div>
+      ) : (
+        <TransactionList
+          transactions={transactions}
+          onDelete={handleDeleteTransaction}
+          onEdit={handleTransactionEdit}
+        />
+      )}
 
       <div style={{ marginTop: '20px' }}>
         <Link href="/finance/dashboard">

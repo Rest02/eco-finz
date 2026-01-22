@@ -55,7 +55,15 @@ export const deleteCategory = (id: string): Promise<AxiosResponse<void>> => {
 
 // ========== Transaction Endpoints ==========
 
-export const getTransactions = (filters?: { month?: number, year?: number, accountId?: string }): Promise<AxiosResponse<PaginatedResponse<Transaction>>> => {
+export const getTransactions = (filters?: {
+  month?: number,
+  year?: number,
+  accountId?: string,
+  categoryId?: string,
+  type?: 'INGRESO' | 'EGRESO',
+  startDate?: string,
+  endDate?: string
+}): Promise<AxiosResponse<PaginatedResponse<Transaction>>> => {
   return apiClient.get<PaginatedResponse<Transaction>>('/finance/transaction', { params: filters });
 };
 
