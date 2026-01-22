@@ -1,8 +1,6 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { Category, TransactionType } from '../types/finance';
-import { getCategories } from '../services/financeService';
+import React, { useState } from 'react';
+import { useCategories } from '../hooks/useCategories';
+import { TransactionType } from '../types/finance';
 
 interface FilterValues {
     type?: TransactionType | '';
@@ -16,25 +14,13 @@ interface Props {
 }
 
 const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
-    const [categories, setCategories] = useState<Category[]>([]);
+    const { data: categories = [] } = useCategories();
     const [filters, setFilters] = useState<FilterValues>({
         type: '',
         categoryId: '',
         startDate: '',
         endDate: '',
     });
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await getCategories();
-                setCategories(response.data);
-            } catch (err) {
-                console.error('Failed to fetch categories for filters:', err);
-            }
-        };
-        fetchCategories();
-    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
