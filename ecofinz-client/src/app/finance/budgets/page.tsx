@@ -1,72 +1,36 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import BudgetForm from '@/features/finance/components/BudgetForm';
 import BudgetList from '@/features/finance/components/BudgetList';
-import { getBudgets, getCategories } from '@/features/finance/services/financeService';
-import { Budget, Category } from '@/features/finance/types/finance';
+import { useBudgets } from '@/features/finance/hooks/useBudgets';
+import { useCategories } from '@/features/finance/hooks/useCategories';
+import { Budget } from '@/features/finance/types/finance';
 import Link from 'next/link';
 
 export default function BudgetsPage() {
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
-  // Fetch categories on mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getCategories();
-        setCategories(response.data);
-      } catch (err) {
-        console.error('Failed to fetch categories:', err);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // Fetch budgets when month/year changes
-  useEffect(() => {
-    const fetchBudgets = async () => {
-      try {
-        setLoading(true);
-        const response = await getBudgets({
-          month: selectedMonth,
-          year: selectedYear,
-        });
-        setBudgets(response.data);
-        setError(null);
-        setEditingBudget(null);
-      } catch (err) {
-        console.error('Failed to fetch budgets:', err);
-        setError('No se pudieron cargar los presupuestos. Por favor, intenta de nuevo más tarde.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBudgets();
-  }, [selectedMonth, selectedYear]);
+  // React Query Hooks
+  const { data: categories = [] } = useCategories();
+  const {
+    data: budgets = [],
+    isLoading: budgetsLoading,
+    error: budgetsError
+  } = useBudgets({ month: selectedMonth, year: selectedYear });
 
   const handleBudgetCreated = (newBudget: Budget) => {
-    setBudgets((prevBudgets) => [...prevBudgets, newBudget]);
+    // React Query invalida automáticamente
   };
 
   const handleBudgetUpdated = (updatedBudget: Budget) => {
-    setBudgets((prevBudgets) =>
-      prevBudgets.map((budget) =>
-        budget.id === updatedBudget.id ? updatedBudget : budget
-      )
-    );
+    setEditingBudget(null);
   };
 
   const handleBudgetDeleted = (budgetId: string) => {
-    setBudgets((prevBudgets) => prevBudgets.filter((budget) => budget.id !== budgetId));
+    // React Query invalida automáticamente
   };
 
   const handleBudgetEdit = (budget: Budget) => {
@@ -152,13 +116,13 @@ export default function BudgetsPage() {
         </div>
       </div>
 
-      {error && (
+      {budgetsError && (
         <div style={{ backgroundColor: '#fee', color: '#c33', padding: '15px', borderRadius: '5px', marginBottom: '20px' }}>
-          {error}
+          No se pudieron cargar los presupuestos.
         </div>
       )}
 
-      {loading ? (
+      {budgetsLoading ? (
         <div>Cargando presupuestos...</div>
       ) : (
         <>

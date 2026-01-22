@@ -1,14 +1,14 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
-import { createTransaction, updateTransaction, getCategories, getAccounts } from '../services/financeService';
-import { Transaction, CreateTransactionDto, UpdateTransactionDto, TransactionType, Category, Account } from '../types/finance';
+import { useCreateTransaction, useUpdateTransaction } from '../hooks/useTransactions';
+import { useCategories } from '../hooks/useCategories';
+import { useAccounts } from '../hooks/useAccounts';
+import { Transaction, CreateTransactionDto, UpdateTransactionDto, TransactionType } from '../types/finance';
 
 const transactionTypes: TransactionType[] = ["INGRESO", "EGRESO"];
 
 interface Props {
   accountId?: string;
-  onTransactionCreated: (newTransaction: Transaction) => void;
+  onTransactionCreated?: (newTransaction: Transaction) => void;
   onTransactionUpdated?: (updatedTransaction: Transaction) => void;
   initialData?: Transaction;
   isEditMode?: boolean;
@@ -29,32 +29,18 @@ const TransactionForm: React.FC<Props> = ({
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState('');
   const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || '');
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  // React Query Hooks
+  const { data: categories = [] } = useCategories();
+  const { data: accounts = [] } = useAccounts();
+  const createTransactionMutation = useCreateTransaction();
+  const updateTransactionMutation = useUpdateTransaction();
+
+  const loading = createTransactionMutation.isPending || updateTransactionMutation.isPending;
 
   // Determinar si necesitamos mostrar el selector de cuenta
   const showAccountSelector = !propAccountId;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Siempre cargar categorías
-        const categoriesResponse = await getCategories();
-        setCategories(categoriesResponse.data);
-
-        // Solo cargar cuentas si no se proporcionó accountId
-        if (showAccountSelector) {
-          const accountsResponse = await getAccounts();
-          setAccounts(accountsResponse.data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-      }
-    };
-    fetchData();
-  }, [showAccountSelector]);
 
   useEffect(() => {
     if (isEditMode && initialData) {
@@ -69,7 +55,6 @@ const TransactionForm: React.FC<Props> = ({
       setType('EGRESO');
       setDescription('');
       setDate(new Date().toISOString().split('T')[0]);
-      // No reseteamos categoryId ni selectedAccountId aquí para mantener la selección previa si se desea
     }
   }, [isEditMode, initialData]);
 
@@ -89,8 +74,7 @@ const TransactionForm: React.FC<Props> = ({
     }
 
     try {
-      setLoading(true);
-      if (isEditMode && initialData && onTransactionUpdated) {
+      if (isEditMode && initialData) {
         const updateData: UpdateTransactionDto = {
           amount,
           type,
@@ -99,8 +83,8 @@ const TransactionForm: React.FC<Props> = ({
           accountId: accountIdToUse,
           categoryId,
         };
-        const response = await updateTransaction(initialData.id, updateData);
-        onTransactionUpdated(response.data);
+        const response = await updateTransactionMutation.mutateAsync({ id: initialData.id, data: updateData });
+        if (onTransactionUpdated) onTransactionUpdated(response.data);
       } else {
         const newTransaction: CreateTransactionDto = {
           amount,
@@ -110,8 +94,8 @@ const TransactionForm: React.FC<Props> = ({
           accountId: accountIdToUse,
           categoryId,
         };
-        const response = await createTransaction(newTransaction);
-        onTransactionCreated(response.data);
+        const response = await createTransactionMutation.mutateAsync(newTransaction);
+        if (onTransactionCreated) onTransactionCreated(response.data);
         // Reset form only on create
         setAmount(0);
         setType('EGRESO');
@@ -122,8 +106,6 @@ const TransactionForm: React.FC<Props> = ({
     } catch (err) {
       console.error('Failed to save transaction:', err);
       setError(`No se pudo ${isEditMode ? 'actualizar' : 'crear'} la transacción. Inténtalo de nuevo.`);
-    } finally {
-      setLoading(false);
     }
   };
 

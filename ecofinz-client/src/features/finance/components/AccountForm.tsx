@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { createAccount, updateAccount } from '../services/financeService';
+import { useCreateAccount, useUpdateAccount } from '../hooks/useAccounts';
 import { Account, AccountType, CreateAccountDto, UpdateAccountDto } from '../types/finance';
 
 const accountTypes: AccountType[] = ["BANCO", "BILLETERA_DIGITAL", "EFECTIVO", "TARJETA_CREDITO"];
 
 interface Props {
-  onAccountCreated: (newAccount: Account) => void;
+  onAccountCreated?: (newAccount: Account) => void;
   onAccountUpdated?: (updatedAccount: Account) => void;
   initialData?: Account;
   isEditMode?: boolean;
@@ -23,7 +23,11 @@ const AccountForm: React.FC<Props> = ({
   const [type, setType] = useState<AccountType>('BANCO');
   const [balance, setBalance] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const createAccountMutation = useCreateAccount();
+  const updateAccountMutation = useUpdateAccount();
+
+  const loading = createAccountMutation.isPending || updateAccountMutation.isPending;
 
   useEffect(() => {
     if (isEditMode && initialData) {
@@ -40,17 +44,16 @@ const AccountForm: React.FC<Props> = ({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    setLoading(true);
 
     try {
-      if (isEditMode && initialData && onAccountUpdated) {
+      if (isEditMode && initialData) {
         const updateData: UpdateAccountDto = { name, type };
-        const response = await updateAccount(initialData.id, updateData);
-        onAccountUpdated(response.data);
+        const response = await updateAccountMutation.mutateAsync({ id: initialData.id, data: updateData });
+        if (onAccountUpdated) onAccountUpdated(response.data);
       } else {
         const newAccount: CreateAccountDto = { name, type, balance };
-        const response = await createAccount(newAccount);
-        onAccountCreated(response.data);
+        const response = await createAccountMutation.mutateAsync(newAccount);
+        if (onAccountCreated) onAccountCreated(response.data);
         // Reset form only on create
         setName('');
         setType('BANCO');
@@ -59,8 +62,6 @@ const AccountForm: React.FC<Props> = ({
     } catch (err) {
       console.error('Failed to save account:', err);
       setError(`No se pudo ${isEditMode ? 'actualizar' : 'crear'} la cuenta. Inténtalo de nuevo.`);
-    } finally {
-      setLoading(false);
     }
   };
 

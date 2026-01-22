@@ -1,8 +1,6 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Category, Transaction } from '../types/finance';
-import { getTransactions } from '../services/financeService';
+import { useTransactions } from '../hooks/useTransactions';
 
 interface Props {
   categories: Category[];
@@ -11,73 +9,32 @@ interface Props {
 }
 
 const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCategoryEdit }) => {
-  const [transactionCounts, setTransactionCounts] = useState<Record<string, number>>({});
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  const [categoryTransactions, setCategoryTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  // Cargar el conteo de transacciones para cada categoría
-  useEffect(() => {
-    const loadTransactionCounts = async () => {
-      try {
-        const response = await getTransactions();
-        console.log('CategoryList - Transactions Response:', response);
-        console.log('CategoryList - Transactions Data:', response.data);
+  // React Query Hook to get all transactions for counting
+  const { data: transactionsData } = useTransactions();
+  const allTransactions = transactionsData?.data || [];
 
-        // El backend devuelve { data: [...], meta: {...} }
-        const allTransactions = Array.isArray(response.data?.data)
-          ? response.data.data
-          : [];
+  // Calculate transaction counts per category
+  const transactionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    categories.forEach(cat => {
+      counts[cat.id] = allTransactions.filter((t: Transaction) => t.categoryId === cat.id).length;
+    });
+    return counts;
+  }, [categories, allTransactions]);
 
-        const counts: Record<string, number> = {};
-        categories.forEach(cat => {
-          counts[cat.id] = allTransactions.filter((t: Transaction) => t.categoryId === cat.id).length;
-        });
+  // Filter transactions for the expanded category
+  const categoryTransactions = useMemo(() => {
+    if (!expandedCategory) return [];
+    return allTransactions.filter((t: Transaction) => t.categoryId === expandedCategory);
+  }, [expandedCategory, allTransactions]);
 
-        setTransactionCounts(counts);
-      } catch (err) {
-        console.error('Failed to load transaction counts:', err);
-        // En caso de error, inicializar con ceros
-        const counts: Record<string, number> = {};
-        categories.forEach(cat => {
-          counts[cat.id] = 0;
-        });
-        setTransactionCounts(counts);
-      }
-    };
-
-    if (categories.length > 0) {
-      loadTransactionCounts();
-    }
-  }, [categories]);
-
-  const handleShowTransactions = async (categoryId: string) => {
+  const handleShowTransactions = (categoryId: string) => {
     if (expandedCategory === categoryId) {
       setExpandedCategory(null);
-      setCategoryTransactions([]);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await getTransactions();
-      console.log('Show Transactions - Response:', response);
-      console.log('Show Transactions - Data:', response.data);
-
-      // El backend devuelve { data: [...], meta: {...} }
-      const allTransactions = Array.isArray(response.data?.data)
-        ? response.data.data
-        : [];
-
-      const filtered = allTransactions.filter((t: Transaction) => t.categoryId === categoryId);
-
-      setCategoryTransactions(filtered);
+    } else {
       setExpandedCategory(categoryId);
-    } catch (err) {
-      console.error('Failed to load transactions:', err);
-      setCategoryTransactions([]);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -177,9 +134,7 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCatego
               {/* Lista de transacciones expandida */}
               {isExpanded && (
                 <div style={{ marginTop: '15px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '5px' }}>
-                  {loading ? (
-                    <p>Cargando transacciones...</p>
-                  ) : categoryTransactions.length > 0 ? (
+                  {categoryTransactions.length > 0 ? (
                     <>
                       <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>Transacciones que usan esta categoría:</h4>
                       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>

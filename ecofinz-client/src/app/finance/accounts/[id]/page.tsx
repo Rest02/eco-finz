@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { AxiosError } from 'axios';
 import TransactionList from "@/features/finance/components/TransactionList";
 import TransactionForm from '@/features/finance/components/TransactionForm';
 import TransactionFilters from '@/features/finance/components/TransactionFilters';
-import { getTransactions, deleteTransaction } from "@/features/finance/services/financeService";
+import { useTransactions, useDeleteTransaction } from '@/features/finance/hooks/useTransactions';
 import { Transaction, TransactionType } from '@/features/finance/types/finance';
 import Link from "next/link";
 
@@ -21,64 +20,37 @@ export default function AccountDetailPage() {
   const params = useParams();
   const accountId = params.id as string;
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [filterValues, setFilterValues] = useState<FilterValues>({});
 
-  useEffect(() => {
-    if (!accountId) return;
+  // React Query Hook
+  const {
+    data: transactionResponse,
+    isLoading,
+    error: fetchError
+  } = useTransactions({
+    accountId,
+    type: filterValues.type || undefined,
+    categoryId: filterValues.categoryId || undefined,
+    startDate: filterValues.startDate || undefined,
+    endDate: filterValues.endDate || undefined
+  });
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const transactionResponse = await getTransactions({
-          accountId,
-          type: filterValues.type || undefined,
-          categoryId: filterValues.categoryId || undefined,
-          startDate: filterValues.startDate || undefined,
-          endDate: filterValues.endDate || undefined
-        });
+  const deleteTransactionMutation = useDeleteTransaction();
 
-        // El backend devuelve { data: [...], meta: {...} }
-        // Las transacciones están en response.data.data
-        const transactionsData = Array.isArray(transactionResponse.data?.data)
-          ? transactionResponse.data.data
-          : [];
-
-        setTransactions(transactionsData);
-        setError(null);
-      } catch (err) {
-        if (err instanceof AxiosError && err.response?.status === 404) {
-          setTransactions([]);
-          setError(null);
-        } else {
-          console.error(`Failed to fetch transactions:`, err);
-          setError("No se pudieron cargar las transacciones. Intenta de nuevo.");
-          setTransactions([]);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [accountId, filterValues]);
+  // Las transacciones están en response.data (según el hook que devuelve response.data)
+  // Pero mi hook useTransactions devuelve response.data, y response.data tiene { data: Transaction[], meta: ... }
+  const transactions = Array.isArray(transactionResponse?.data) ? transactionResponse.data : [];
 
   const handleFilterChange = (newFilters: FilterValues) => {
     setFilterValues(newFilters);
   };
 
   const handleTransactionCreated = (newTransaction: Transaction) => {
-    // Si hay filtros activos, es mejor recargar todo para asegurar que la nueva transacción cumpla los filtros
-    setFilterValues({ ...filterValues });
+    // React Query invalida automáticamente
   };
 
   const handleTransactionUpdated = (updatedTransaction: Transaction) => {
-    setTransactions(prev =>
-      prev.map(tx => tx.id === updatedTransaction.id ? updatedTransaction : tx)
-    );
     setEditingTransaction(null);
   };
 
@@ -93,8 +65,7 @@ export default function AccountDetailPage() {
     }
 
     try {
-      await deleteTransaction(transactionId);
-      setTransactions(prev => prev.filter(tx => tx.id !== transactionId));
+      await deleteTransactionMutation.mutateAsync(transactionId);
       if (editingTransaction?.id === transactionId) {
         setEditingTransaction(null);
       }
@@ -122,11 +93,11 @@ export default function AccountDetailPage() {
 
       <TransactionFilters onFilterChange={handleFilterChange} />
 
-      {error ? (
+      {fetchError ? (
         <div style={{ padding: '20px', backgroundColor: '#fee', color: '#c33', borderRadius: '8px', marginBottom: '20px' }}>
-          <strong>Error:</strong> {error}
+          <strong>Error:</strong> No se pudieron cargar las transacciones.
         </div>
-      ) : loading ? (
+      ) : isLoading ? (
         <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
           <p>Cargando transacciones...</p>
         </div>

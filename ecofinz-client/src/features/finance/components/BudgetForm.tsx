@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
-import { createBudget, updateBudget, getCategories } from '../services/financeService';
-import { Budget, Category, CreateBudgetDto, UpdateBudgetDto } from '../types/finance';
+import { useCreateBudget, useUpdateBudget } from '../hooks/useBudgets';
+import { useCategories } from '../hooks/useCategories';
+import { Budget, CreateBudgetDto, UpdateBudgetDto } from '../types/finance';
 
 interface Props {
   month: number;
@@ -26,28 +25,22 @@ const BudgetForm: React.FC<Props> = ({
   const [name, setName] = useState('');
   const [amount, setAmount] = useState(0);
   const [categoryId, setCategoryId] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getCategories();
-        // Filter only EGRESO categories
-        const egressCategories = response.data.filter(cat => cat.type === 'EGRESO');
-        setCategories(egressCategories);
-        if (egressCategories.length > 0 && !categoryId) {
-          setCategoryId(egressCategories[0].id);
-        }
-      } catch (err) {
-        console.error('Failed to fetch categories:', err);
-        setError('No se pudieron cargar las categorías.');
-      }
-    };
+  // React Query Hooks
+  const { data: allCategories = [] } = useCategories();
+  const categories = allCategories.filter(cat => cat.type === 'EGRESO');
 
-    fetchCategories();
-  }, []);
+  const createBudgetMutation = useCreateBudget();
+  const updateBudgetMutation = useUpdateBudget();
+
+  const loading = createBudgetMutation.isPending || updateBudgetMutation.isPending;
+
+  useEffect(() => {
+    if (categories.length > 0 && !categoryId) {
+      setCategoryId(categories[0].id);
+    }
+  }, [categories, categoryId]);
 
   useEffect(() => {
     if (initialBudget && isEditMode) {
@@ -66,12 +59,10 @@ const BudgetForm: React.FC<Props> = ({
       return;
     }
 
-    setLoading(true);
-
     try {
       if (isEditMode && initialBudget) {
         const updateData: UpdateBudgetDto = { name, amount, categoryId };
-        const response = await updateBudget(initialBudget.id, updateData);
+        const response = await updateBudgetMutation.mutateAsync({ id: initialBudget.id, data: updateData });
         if (onBudgetUpdated) {
           onBudgetUpdated(response.data);
         }
@@ -83,7 +74,7 @@ const BudgetForm: React.FC<Props> = ({
           year,
           categoryId,
         };
-        const response = await createBudget(newBudget);
+        const response = await createBudgetMutation.mutateAsync(newBudget);
         if (onBudgetCreated) {
           onBudgetCreated(response.data);
         }
@@ -102,8 +93,6 @@ const BudgetForm: React.FC<Props> = ({
     } catch (err) {
       console.error('Failed to save budget:', err);
       setError('No se pudo guardar el presupuesto. Inténtalo de nuevo.');
-    } finally {
-      setLoading(false);
     }
   };
 

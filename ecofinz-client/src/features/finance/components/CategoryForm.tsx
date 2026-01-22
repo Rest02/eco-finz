@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { CreateCategoryDto, UpdateCategoryDto, TransactionType, Category } from '@/features/finance/types/finance';
+import { useCreateCategory, useUpdateCategory } from '../hooks/useCategories';
+import { CreateCategoryDto, UpdateCategoryDto, TransactionType, Category } from '../types/finance';
 
 const categoryTypes: TransactionType[] = ["INGRESO", "EGRESO"];
 
 interface Props {
-  onCategoryCreated: (newCategory: Category) => void;
+  onCategoryCreated?: (newCategory: Category) => void;
   onCategoryUpdated?: (updatedCategory: Category) => void;
   initialData?: Category;
   isEditMode?: boolean;
   onCancel?: () => void;
-  createCategoryFn: (data: CreateCategoryDto) => Promise<{ data: Category }>;
-  updateCategoryFn?: (id: string, data: UpdateCategoryDto) => Promise<{ data: Category }>;
 }
 
 const CategoryForm: React.FC<Props> = ({
@@ -18,14 +17,16 @@ const CategoryForm: React.FC<Props> = ({
   onCategoryUpdated,
   initialData,
   isEditMode = false,
-  onCancel,
-  createCategoryFn,
-  updateCategoryFn
+  onCancel
 }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<TransactionType>('EGRESO');
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createCategoryMutation = useCreateCategory();
+  const updateCategoryMutation = useUpdateCategory();
+
+  const isSubmitting = createCategoryMutation.isPending || updateCategoryMutation.isPending;
 
   useEffect(() => {
     if (isEditMode && initialData) {
@@ -40,17 +41,16 @@ const CategoryForm: React.FC<Props> = ({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    setIsSubmitting(true);
 
     try {
-      if (isEditMode && initialData && updateCategoryFn && onCategoryUpdated) {
+      if (isEditMode && initialData) {
         const updateData: UpdateCategoryDto = { name, type };
-        const response = await updateCategoryFn(initialData.id, updateData);
-        onCategoryUpdated(response.data);
+        const response = await updateCategoryMutation.mutateAsync({ id: initialData.id, data: updateData });
+        if (onCategoryUpdated) onCategoryUpdated(response.data);
       } else {
         const newCategory: CreateCategoryDto = { name, type };
-        const response = await createCategoryFn(newCategory);
-        onCategoryCreated(response.data);
+        const response = await createCategoryMutation.mutateAsync(newCategory);
+        if (onCategoryCreated) onCategoryCreated(response.data);
         // Reset form only on create
         setName('');
         setType('EGRESO');
@@ -58,8 +58,6 @@ const CategoryForm: React.FC<Props> = ({
     } catch (err) {
       console.error('Failed to save category:', err);
       setError(`No se pudo ${isEditMode ? 'actualizar' : 'crear'} la categoría. Inténtalo de nuevo.`);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

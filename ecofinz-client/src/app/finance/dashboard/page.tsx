@@ -1,89 +1,52 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AccountList from '@/features/finance/components/AccountList';
 import AccountForm from '@/features/finance/components/AccountForm';
 import TransactionForm from '@/features/finance/components/TransactionForm';
 import MonthlySummary from '@/features/finance/components/MonthlySummary';
-import { getAccounts, deleteAccount, getMonthlySummary } from '@/features/finance/services/financeService';
-import { Account, MonthlySummary as MonthlySummaryType, Transaction } from '@/features/finance/types/finance';
+import { useAccounts, useDeleteAccount } from '@/features/finance/hooks/useAccounts';
+import { useMonthlySummary } from '@/features/finance/hooks/useBudgets';
+import { Account, Transaction } from '@/features/finance/types/finance';
 import Link from 'next/link';
 
 export default function FinanceDashboardPage() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
-  // Estado para el resumen mensual
+  // Estado para el periodo del resumen mensual
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
-  const [summaryData, setSummaryData] = useState<MonthlySummaryType | null>(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        setLoading(true);
-        const response = await getAccounts();
-        setAccounts(response.data);
-        setError(null);
-      } catch (err) {
-        console.error("Failed to fetch accounts:", err);
-        setError("No se pudieron cargar tus cuentas. Por favor, intenta de nuevo más tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccounts();
-  }, []);
-
-  // Efecto para cargar el resumen mensual
-  useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        setSummaryLoading(true);
-        const response = await getMonthlySummary(selectedYear, selectedMonth);
-        setSummaryData(response.data);
-      } catch (err) {
-        console.error("Failed to fetch monthly summary:", err);
-        setSummaryData(null);
-      } finally {
-        setSummaryLoading(false);
-      }
-    };
-
-    fetchSummary();
-  }, [selectedYear, selectedMonth]);
+  // React Query Hooks
+  const { data: accounts = [], isLoading: accountsLoading, error: accountsError } = useAccounts();
+  const { data: summaryData, isLoading: summaryLoading } = useMonthlySummary(selectedYear, selectedMonth);
+  const deleteAccountMutation = useDeleteAccount();
 
   const handleAccountCreated = (newAccount: Account) => {
-    setAccounts(prevAccounts => [...prevAccounts, newAccount]);
+    // React Query se encarga de invalidar y refrescar vía useCreateAccount (si se usara en el form)
+    // O simplemente dejamos que el componente hijo maneje su propia mutación.
   };
 
   const handleAccountUpdated = (updatedAccount: Account) => {
-    setAccounts(prevAccounts =>
-      prevAccounts.map(acc => acc.id === updatedAccount.id ? updatedAccount : acc)
-    );
     setEditingAccount(null);
   };
 
   const handleAccountEdit = (account: Account) => {
     setEditingAccount(account);
-    // Scroll to form
     window.scrollTo({ top: document.getElementById('account-form-section')?.offsetTop || 0, behavior: 'smooth' });
   };
 
   const handleAccountDeleted = async (accountId: string) => {
-    try {
-      await deleteAccount(accountId);
-      setAccounts(prevAccounts => prevAccounts.filter(acc => acc.id !== accountId));
-      if (editingAccount?.id === accountId) {
-        setEditingAccount(null);
+    if (confirm('¿Estás seguro de que deseas eliminar esta cuenta?')) {
+      try {
+        await deleteAccountMutation.mutateAsync(accountId);
+        if (editingAccount?.id === accountId) {
+          setEditingAccount(null);
+        }
+      } catch (err) {
+        console.error("Failed to delete account:", err);
       }
-    } catch (err) {
-      console.error("Failed to delete account:", err);
     }
   };
 
@@ -93,27 +56,18 @@ export default function FinanceDashboardPage() {
   };
 
   const handleTransactionCreated = (newTransaction: Transaction) => {
-    // Recargar el resumen mensual después de crear una transacción
-    const fetchSummary = async () => {
-      try {
-        const response = await getMonthlySummary(selectedYear, selectedMonth);
-        setSummaryData(response.data);
-      } catch (err) {
-        console.error("Failed to refresh summary:", err);
-      }
-    };
-    fetchSummary();
+    // Las mutaciones de transacciones invalidan automáticamente el resumen y las cuentas
   };
 
-  if (loading) {
-    return <div>Cargando...</div>;
+  if (accountsLoading) {
+    return <div style={{ padding: '40px', textAlign: 'center' }}>Cargando dashboard...</div>;
   }
 
-  if (error) {
+  if (accountsError) {
     return (
-      <div>
+      <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
         <h1>Error</h1>
-        <p>{error}</p>
+        <p>No se pudieron cargar tus datos. Por favor, intenta de nuevo más tarde.</p>
       </div>
     );
   }
@@ -134,7 +88,7 @@ export default function FinanceDashboardPage() {
 
       {/* Resumen Mensual */}
       <MonthlySummary
-        data={summaryData}
+        data={summaryData || null}
         isLoading={summaryLoading}
         year={selectedYear}
         month={selectedMonth}

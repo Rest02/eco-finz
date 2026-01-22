@@ -1,19 +1,17 @@
-'use client';
-
 import React, { useState } from 'react';
-import { deleteBudget } from '../services/financeService';
+import { useDeleteBudget } from '../hooks/useBudgets';
 import { Budget, Category } from '../types/finance';
 
 interface Props {
   budgets: Budget[];
   categories: Category[];
-  onBudgetDeleted: (budgetId: string) => void;
+  onBudgetDeleted?: (budgetId: string) => void;
   onBudgetEdit: (budget: Budget) => void;
 }
 
 const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onBudgetEdit }) => {
-  const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const deleteBudgetMutation = useDeleteBudget();
 
   const getCategoryName = (categoryId: string): string => {
     const category = categories.find((cat) => cat.id === categoryId);
@@ -25,17 +23,14 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
       return;
     }
 
-    setLoadingId(budgetId);
     setError(null);
 
     try {
-      await deleteBudget(budgetId);
-      onBudgetDeleted(budgetId);
+      await deleteBudgetMutation.mutateAsync(budgetId);
+      if (onBudgetDeleted) onBudgetDeleted(budgetId);
     } catch (err) {
       console.error('Failed to delete budget:', err);
       setError('No se pudo eliminar el presupuesto. Inténtalo de nuevo.');
-    } finally {
-      setLoadingId(null);
     }
   };
 
@@ -88,18 +83,18 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
                 </button>
                 <button
                   onClick={() => handleDelete(budget.id)}
-                  disabled={loadingId === budget.id}
+                  disabled={deleteBudgetMutation.isPending && deleteBudgetMutation.variables === budget.id}
                   style={{
                     padding: '8px 12px',
                     border: 'none',
-                    backgroundColor: loadingId === budget.id ? '#ccc' : '#f44336',
+                    backgroundColor: (deleteBudgetMutation.isPending && deleteBudgetMutation.variables === budget.id) ? '#ccc' : '#f44336',
                     color: 'white',
                     borderRadius: '4px',
-                    cursor: loadingId === budget.id ? 'not-allowed' : 'pointer',
+                    cursor: (deleteBudgetMutation.isPending && deleteBudgetMutation.variables === budget.id) ? 'not-allowed' : 'pointer',
                     fontSize: '0.9em',
                   }}
                 >
-                  {loadingId === budget.id ? 'Eliminando...' : 'Eliminar'}
+                  {(deleteBudgetMutation.isPending && deleteBudgetMutation.variables === budget.id) ? 'Eliminando...' : 'Eliminar'}
                 </button>
               </div>
             </div>
