@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { deleteBudget } from '../services/financeService';
-import { Budget, Category } from '../dto/finance';
+import { Budget, Category } from '../types/finance';
 
 interface Props {
   budgets: Budget[];

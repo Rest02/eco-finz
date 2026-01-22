@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SummaryCategory } from '../dto/finance';
+import { SummaryCategory } from '../types/finance';
 
 interface CategorySummaryListProps {
     categorySummaries: SummaryCategory[];

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createTransaction, updateTransaction, getCategories, getAccounts } from '../services/financeService';
-import { Transaction, CreateTransactionDto, UpdateTransactionDto, TransactionType, Category, Account } from '../dto/finance';
+import { Transaction, CreateTransactionDto, UpdateTransactionDto, TransactionType, Category, Account } from '../types/finance';
 
 const transactionTypes: TransactionType[] = ["INGRESO", "EGRESO"];
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Category, Transaction } from '../dto/finance';
+import { Category, Transaction } from '../types/finance';
 import { getTransactions } from '../services/financeService';
 
 interface Props {

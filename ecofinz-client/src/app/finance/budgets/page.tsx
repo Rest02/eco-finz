@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import BudgetForm from '@/finance/components/BudgetForm';
-import BudgetList from '@/finance/components/BudgetList';
-import { getBudgets, getCategories } from '@/finance/services/financeService';
-import { Budget, Category } from '@/finance/dto/finance';
+import BudgetForm from '@/features/finance/components/BudgetForm';
+import BudgetList from '@/features/finance/components/BudgetList';
+import { getBudgets, getCategories } from '@/features/finance/services/financeService';
+import { Budget, Category } from '@/features/finance/types/finance';
 import Link from 'next/link';
 
 export default function BudgetsPage() {

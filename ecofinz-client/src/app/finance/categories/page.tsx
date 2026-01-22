@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { AxiosError } from 'axios';
-import { Category } from '@/finance/dto/finance';
-import { getCategories, createCategory, deleteCategory, updateCategory } from '@/finance/services/financeService';
+import { Category } from '@/features/finance/types/finance';
+import { getCategories, createCategory, deleteCategory, updateCategory } from '@/features/finance/services/financeService';
 import Link from 'next/link';
-import CategoryList from '@/finance/components/CategoryList';
-import CategoryForm from '@/finance/components/CategoryForm';
+import CategoryList from '@/features/finance/components/CategoryList';
+import CategoryForm from '@/features/finance/components/CategoryForm';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);

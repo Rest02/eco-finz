@@ -1,4 +1,4 @@
-import apiClient from '../../lib/apiClient';
+import apiClient from '@/lib/apiClient';
 import { AxiosResponse } from 'axios';
 import {
   Account,
@@ -15,7 +15,7 @@ import {
   UpdateTransactionDto,
   CreateBudgetDto,
   UpdateBudgetDto,
-} from '../dto/finance';
+} from '../types/finance';
 
 // ========== Account Endpoints ==========
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MonthlySummary as MonthlySummaryType } from '../dto/finance';
+import { MonthlySummary as MonthlySummaryType } from '../types/finance';
 import SummaryTotals from './SummaryTotals';
 import CategorySummaryList from './CategorySummaryList';
 

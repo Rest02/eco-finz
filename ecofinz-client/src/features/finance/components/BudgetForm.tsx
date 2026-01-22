@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createBudget, updateBudget, getCategories } from '../services/financeService';
-import { Budget, Category, CreateBudgetDto, UpdateBudgetDto } from '../dto/finance';
+import { Budget, Category, CreateBudgetDto, UpdateBudgetDto } from '../types/finance';
 
 interface Props {
   month: number;

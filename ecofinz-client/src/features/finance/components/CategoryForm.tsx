@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CreateCategoryDto, UpdateCategoryDto, TransactionType, Category } from '@/finance/dto/finance';
+import { CreateCategoryDto, UpdateCategoryDto, TransactionType, Category } from '@/features/finance/types/finance';
 
 const categoryTypes: TransactionType[] = ["INGRESO", "EGRESO"];
 

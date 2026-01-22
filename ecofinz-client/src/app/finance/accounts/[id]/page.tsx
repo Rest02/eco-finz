@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { AxiosError } from 'axios';
-import TransactionList from "@/finance/components/TransactionList";
-import TransactionForm from '@/finance/components/TransactionForm';
-import TransactionFilters from '@/finance/components/TransactionFilters';
-import { getTransactions, deleteTransaction } from "@/finance/services/financeService";
-import { Transaction, TransactionType } from '@/finance/dto/finance';
+import TransactionList from "@/features/finance/components/TransactionList";
+import TransactionForm from '@/features/finance/components/TransactionForm';
+import TransactionFilters from '@/features/finance/components/TransactionFilters';
+import { getTransactions, deleteTransaction } from "@/features/finance/services/financeService";
+import { Transaction, TransactionType } from '@/features/finance/types/finance';
 import Link from "next/link";
 
 interface FilterValues {

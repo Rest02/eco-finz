@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Category, TransactionType } from '../dto/finance';
+import { Category, TransactionType } from '../types/finance';
 import { getCategories } from '../services/financeService';
 
 interface FilterValues {

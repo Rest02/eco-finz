@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createAccount, updateAccount } from '../services/financeService';
-import { Account, AccountType, CreateAccountDto, UpdateAccountDto } from '../dto/finance';
+import { Account, AccountType, CreateAccountDto, UpdateAccountDto } from '../types/finance';
 
 const accountTypes: AccountType[] = ["BANCO", "BILLETERA_DIGITAL", "EFECTIVO", "TARJETA_CREDITO"];
 

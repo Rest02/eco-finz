@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Transaction } from '../dto/finance';
+import { Transaction } from '../types/finance';
 
 interface Props {
   transactions: Transaction[];

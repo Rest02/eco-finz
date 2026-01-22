@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AccountList from '@/finance/components/AccountList';
-import AccountForm from '@/finance/components/AccountForm';
-import TransactionForm from '@/finance/components/TransactionForm';
-import MonthlySummary from '@/finance/components/MonthlySummary';
-import { getAccounts, deleteAccount, getMonthlySummary } from '@/finance/services/financeService';
-import { Account, MonthlySummary as MonthlySummaryType, Transaction } from '@/finance/dto/finance';
+import AccountList from '@/features/finance/components/AccountList';
+import AccountForm from '@/features/finance/components/AccountForm';
+import TransactionForm from '@/features/finance/components/TransactionForm';
+import MonthlySummary from '@/features/finance/components/MonthlySummary';
+import { getAccounts, deleteAccount, getMonthlySummary } from '@/features/finance/services/financeService';
+import { Account, MonthlySummary as MonthlySummaryType, Transaction } from '@/features/finance/types/finance';
 import Link from 'next/link';
 
 export default function FinanceDashboardPage() {

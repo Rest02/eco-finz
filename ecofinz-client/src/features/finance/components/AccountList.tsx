@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Account } from '../dto/finance';
+import { Account } from '../types/finance';
 
 interface Props {
   accounts: Account[];
