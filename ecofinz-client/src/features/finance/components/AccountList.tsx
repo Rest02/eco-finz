@@ -72,7 +72,7 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300"
+            className="group relative bg-white/[0.03] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300 backdrop-blur-sm"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -92,14 +92,14 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => onAccountEdit(account)}
-                  className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all"
+                  className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all backdrop-blur-md border border-transparent hover:border-white/5"
                   title="Editar cuenta"
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => onAccountDeleted(account.id)}
-                  className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all"
+                  className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all backdrop-blur-md border border-transparent hover:border-red-500/10"
                   title="Eliminar cuenta"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -118,7 +118,7 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
 
               <Link
                 href={`/finance/accounts/${account.id}`}
-                className="flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-neutral-400 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/20 text-xs font-medium transition-all group/btn"
+                className="flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-neutral-400 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/20 text-xs font-medium transition-all group/btn backdrop-blur-md"
               >
                 Movimientos
                 <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />

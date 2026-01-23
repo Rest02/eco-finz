@@ -38,7 +38,7 @@ export default function AccountsPage() {
     return (
         <div className="p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[2.5rem]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[2.5rem] backdrop-blur-sm">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-emerald-400 font-medium">
                         <Wallet className="w-5 h-5" />
@@ -80,7 +80,7 @@ export default function AccountsPage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="glass-card p-2 md:p-6 rounded-[2rem] border border-white/5 bg-white/[0.02]">
+                        <div className="glass-card p-2 md:p-6 rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-sm">
                             <AccountList
                                 accounts={accounts}
                                 onAccountDeleted={handleDelete}

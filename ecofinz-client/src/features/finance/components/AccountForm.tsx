@@ -159,11 +159,11 @@ const AccountForm: React.FC<Props> = ({
           <button
             type="submit"
             disabled={isLoading}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-300 ${isLoading
-              ? "bg-neutral-800 text-neutral-500 cursor-not-allowed"
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-300 backdrop-blur-md ${isLoading
+              ? "bg-neutral-800/50 text-neutral-500 cursor-not-allowed"
               : isEditMode
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]"
-                : "bg-gradient-to-r from-emerald-500 to-emerald-700 text-white hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                ? "bg-amber-500/80 hover:bg-amber-500 text-white border border-amber-400/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                : "bg-emerald-500/80 hover:bg-emerald-500 text-white border border-emerald-400/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
               }`}
           >
             {isLoading ? (
@@ -185,7 +185,7 @@ const AccountForm: React.FC<Props> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all font-medium"
+              className="px-5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all font-medium backdrop-blur-md"
             >
               <X className="w-5 h-5" />
             </button>
