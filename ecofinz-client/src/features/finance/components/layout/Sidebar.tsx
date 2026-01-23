@@ -7,13 +7,11 @@ import {
     Home,
     BarChart2,
     Wallet,
-    MessageSquare,
     Settings,
     LogOut,
     Activity,
     Target,
     LayoutGrid,
-    FileText
 } from "lucide-react";
 
 const navItems = [
@@ -50,9 +48,6 @@ export const Sidebar = () => {
                             <item.icon className="w-6 h-6 stroke-[1.5]" />
                             {isActive && (
                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-emerald-500 rounded-r-full -ml-[18px]" />
-                            )}
-                            {item.badge && (
-                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-dark-sidebar" />
                             )}
                         </Link>
                     );
