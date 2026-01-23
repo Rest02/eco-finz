@@ -20,19 +20,19 @@ import {
 // ========== Account Endpoints ==========
 
 export const getAccounts = (): Promise<AxiosResponse<Account[]>> => {
-  return apiClient.get<Account[]>('/account');
+  return apiClient.get<Account[]>('/finance/accounts');
 };
 
 export const createAccount = (data: CreateAccountDto): Promise<AxiosResponse<Account>> => {
-  return apiClient.post<Account>('/account', data);
+  return apiClient.post<Account>('/finance/accounts', data);
 };
 
 export const updateAccount = (id: string, data: UpdateAccountDto): Promise<AxiosResponse<Account>> => {
-  return apiClient.patch<Account>(`/account/${id}`, data);
+  return apiClient.patch<Account>(`/finance/accounts/${id}`, data);
 };
 
 export const deleteAccount = (id: string): Promise<AxiosResponse<void>> => {
-  return apiClient.delete(`/account/${id}`);
+  return apiClient.delete(`/finance/accounts/${id}`);
 };
 
 // ========== Category Endpoints ==========
