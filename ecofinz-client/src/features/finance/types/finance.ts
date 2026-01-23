@@ -29,6 +29,8 @@ export interface Transaction {
   accountId: string;
   categoryId: string;
   userId: string;
+  category?: Category;
+  account?: Account;
 }
 
 export interface Budget {

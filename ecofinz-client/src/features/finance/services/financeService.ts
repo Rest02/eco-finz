@@ -23,6 +23,10 @@ export const getAccounts = (): Promise<AxiosResponse<Account[]>> => {
   return apiClient.get<Account[]>('/finance/account');
 };
 
+export const getAccount = (id: string): Promise<AxiosResponse<Account>> => {
+  return apiClient.get<Account>(`/finance/account/${id}`);
+};
+
 export const createAccount = (data: CreateAccountDto): Promise<AxiosResponse<Account>> => {
   return apiClient.post<Account>('/finance/account', data);
 };

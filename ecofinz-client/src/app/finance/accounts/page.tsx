@@ -36,7 +36,7 @@ export default function AccountsPage() {
     const totalBalance = accounts.reduce((acc, account) => acc + Number(account.balance), 0);
 
     return (
-        <div className="p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="p-4 md:p-8 space-y-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[2.5rem] backdrop-blur-sm">
                 <div className="space-y-2">

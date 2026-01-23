@@ -1,10 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useCreateTransaction, useUpdateTransaction } from '../hooks/useTransactions';
-import { useCategories } from '../hooks/useCategories';
-import { useAccounts } from '../hooks/useAccounts';
-import { Transaction, CreateTransactionDto, UpdateTransactionDto, TransactionType } from '../types/finance';
+"use client";
 
-const transactionTypes: TransactionType[] = ["INGRESO", "EGRESO"];
+import React, { useState, useEffect } from "react";
+import { useCreateTransaction, useUpdateTransaction } from "../hooks/useTransactions";
+import { useCategories } from "../hooks/useCategories";
+import { useAccounts } from "../hooks/useAccounts";
+import {
+  Transaction,
+  CreateTransactionDto,
+  UpdateTransactionDto,
+  TransactionType
+} from "../types/finance";
+import {
+  Plus,
+  Save,
+  X,
+  Info,
+  AlertCircle,
+  ArrowUpCircle,
+  ArrowDownCircle,
+  Calendar,
+  Tag,
+  Type,
+  Wallet
+} from "lucide-react";
 
 interface Props {
   accountId?: string;
@@ -24,22 +42,19 @@ const TransactionForm: React.FC<Props> = ({
   onCancel
 }) => {
   const [amount, setAmount] = useState(0);
-  const [type, setType] = useState<TransactionType>('EGRESO');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [categoryId, setCategoryId] = useState('');
-  const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || '');
+  const [type, setType] = useState<TransactionType>("EGRESO");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [categoryId, setCategoryId] = useState("");
+  const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || "");
   const [error, setError] = useState<string | null>(null);
 
-  // React Query Hooks
   const { data: categories = [] } = useCategories();
   const { data: accounts = [] } = useAccounts();
   const createTransactionMutation = useCreateTransaction();
   const updateTransactionMutation = useUpdateTransaction();
 
-  const loading = createTransactionMutation.isPending || updateTransactionMutation.isPending;
-
-  // Determinar si necesitamos mostrar el selector de cuenta
+  const isLoading = createTransactionMutation.isPending || updateTransactionMutation.isPending;
   const showAccountSelector = !propAccountId;
 
   useEffect(() => {
@@ -47,14 +62,15 @@ const TransactionForm: React.FC<Props> = ({
       setAmount(initialData.amount);
       setType(initialData.type);
       setDescription(initialData.description);
-      setDate(initialData.date.split('T')[0]);
+      setDate(initialData.date.split("T")[0]);
       setCategoryId(initialData.categoryId);
       setSelectedAccountId(initialData.accountId);
     } else {
       setAmount(0);
-      setType('EGRESO');
-      setDescription('');
-      setDate(new Date().toISOString().split('T')[0]);
+      setType("EGRESO");
+      setDescription("");
+      setDate(new Date().toISOString().split("T")[0]);
+      setCategoryId("");
     }
   }, [isEditMode, initialData]);
 
@@ -63,13 +79,13 @@ const TransactionForm: React.FC<Props> = ({
     setError(null);
 
     if (!categoryId) {
-      setError('Por favor, selecciona una categoría.');
+      setError("Por favor, selecciona una categoría.");
       return;
     }
 
     const accountIdToUse = propAccountId || selectedAccountId;
     if (!accountIdToUse) {
-      setError('Por favor, selecciona una cuenta.');
+      setError("Por favor, selecciona una cuenta.");
       return;
     }
 
@@ -96,131 +112,189 @@ const TransactionForm: React.FC<Props> = ({
         };
         const response = await createTransactionMutation.mutateAsync(newTransaction);
         if (onTransactionCreated) onTransactionCreated(response.data);
-        // Reset form only on create
         setAmount(0);
-        setType('EGRESO');
-        setDescription('');
-        setDate(new Date().toISOString().split('T')[0]);
+        setDescription("");
       }
-      setError(null);
     } catch (err) {
-      console.error('Failed to save transaction:', err);
-      setError(`No se pudo ${isEditMode ? 'actualizar' : 'crear'} la transacción. Inténtalo de nuevo.`);
+      console.error("Failed to save transaction:", err);
+      setError(`No se pudo ${isEditMode ? "actualizar" : "crear"} la transacción.`);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', gap: '15px', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', marginTop: '20px' }}>
-      <h2>{isEditMode ? 'Editar Transacción' : 'Añadir Nueva Transacción'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-2">
+        <div className={`p-2 rounded-lg ${isEditMode ? "bg-amber-500/10 text-amber-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+          {isEditMode ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+        </div>
+        <h2 className="text-xl font-semibold text-white">
+          {isEditMode ? "Editar Movimiento" : "Nuevo Movimiento"}
+        </h2>
+      </div>
 
-      {/* Selector de cuenta - solo si no se proporcionó accountId */}
-      {showAccountSelector && (
-        <div>
-          <label htmlFor="account">Cuenta</label>
-          <select
-            id="account"
-            value={selectedAccountId}
-            onChange={(e) => setSelectedAccountId(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px' }}
-          >
-            <option value="">Selecciona una cuenta</option>
-            {accounts.map(acc => (
-              <option key={acc.id} value={acc.id}>
-                {acc.name} - ${acc.balance.toLocaleString()}
-              </option>
-            ))}
-          </select>
+      {error && (
+        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm animate-in fade-in zoom-in duration-300">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <p>{error}</p>
         </div>
       )}
 
-      <div>
-        <label htmlFor="description">Descripción</label>
-        <input
-          id="description"
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          style={{ width: '100%', padding: '8px' }}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="amount">Monto</label>
-        <input
-          id="amount"
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(parseFloat(e.target.value))}
-          required
-          style={{ width: '100%', padding: '8px' }}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="type">Tipo</label>
-        <select id="type" value={type} onChange={(e) => setType(e.target.value as TransactionType)} style={{ width: '100%', padding: '8px' }}>
-          {transactionTypes.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="category">Categoría</label>
-        <select id="category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required style={{ width: '100%', padding: '8px' }}>
-          <option value="">Selecciona una categoría</option>
-          {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="date">Fecha</label>
-        <input
-          id="date"
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-          style={{ width: '100%', padding: '8px' }}
-        />
-      </div>
-
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '10px 15px',
-            border: 'none',
-            backgroundColor: loading ? '#ccc' : '#0070f3',
-            color: 'white',
-            borderRadius: '5px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            flex: 1
-          }}
-        >
-          {loading ? 'Guardando...' : isEditMode ? 'Actualizar Transacción' : 'Añadir Transacción'}
-        </button>
-        {isEditMode && onCancel && (
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Type Toggle */}
+        <div className="flex p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
           <button
             type="button"
-            onClick={onCancel}
-            style={{
-              padding: '10px 15px',
-              border: '1px solid #ccc',
-              backgroundColor: 'white',
-              color: '#333',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              flex: 1
-            }}
+            onClick={() => setType("EGRESO")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
+                ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
+                : "text-neutral-500 hover:text-white hover:bg-white/5"
+              }`}
           >
-            Cancelar
+            <ArrowDownCircle className="w-4 h-4" />
+            Egreso
           </button>
+          <button
+            type="button"
+            onClick={() => setType("INGRESO")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                : "text-neutral-500 hover:text-white hover:bg-white/5"
+              }`}
+          >
+            <ArrowUpCircle className="w-4 h-4" />
+            Ingreso
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-neutral-400 ml-1 flex items-center gap-1.5">
+            <Type className="w-3.5 h-3.5" /> Concepto
+          </label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Ej. Alquiler, Sueldo, Comida..."
+            required
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all shadow-inner"
+          />
+        </div>
+
+        {showAccountSelector && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1 flex items-center gap-1.5">
+              <Wallet className="w-3.5 h-3.5" /> Cuenta
+            </label>
+            <select
+              value={selectedAccountId}
+              onChange={(e) => setSelectedAccountId(e.target.value)}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all appearance-none cursor-pointer"
+            >
+              <option value="" className="bg-neutral-900">Seleccionar cuenta</option>
+              {accounts.map(acc => (
+                <option key={acc.id} value={acc.id} className="bg-neutral-900">
+                  {acc.name}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
-      </div>
-    </form>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1 flex items-center gap-1.5">
+              <Tag className="w-3.5 h-3.5" /> Categoría
+            </label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all appearance-none cursor-pointer"
+            >
+              <option value="" className="bg-neutral-900 text-neutral-500">¿Categoría?</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id} className="bg-neutral-900">
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" /> Fecha
+            </label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all [color-scheme:dark]"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-neutral-400 ml-1">Monto del Movimiento</label>
+          <div className="relative group">
+            <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-bold transition-colors ${type === 'EGRESO' ? 'text-red-400' : 'text-emerald-400'
+              }`}>$</span>
+            <input
+              type="number"
+              step="0.01"
+              value={isNaN(amount) ? "" : amount}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setAmount(isNaN(val) ? 0 : val);
+              }}
+              required
+              className={`w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-4 text-2xl font-black text-white focus:outline-none focus:ring-2 transition-all ${type === 'EGRESO' ? 'focus:ring-red-500/50 focus:border-red-500/50' : 'focus:ring-emerald-500/50 focus:border-emerald-500/50'
+                }`}
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-3 pt-4">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all duration-300 backdrop-blur-md ${isLoading
+                ? "bg-neutral-800/50 text-neutral-500 cursor-not-allowed"
+                : isEditMode
+                  ? "bg-amber-500/80 hover:bg-amber-500 text-white border border-amber-400/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                  : type === 'INGRESO'
+                    ? "bg-emerald-500/80 hover:bg-emerald-500 text-white border border-emerald-400/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                    : "bg-red-500/80 hover:bg-red-500 text-white border border-red-400/20 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]"
+              }`}
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+            ) : isEditMode ? (
+              <>
+                <Save className="w-5 h-5" />
+                Actualizar
+              </>
+            ) : (
+              <>
+                <Plus className="w-5 h-5" />
+                Registrar
+              </>
+            )}
+          </button>
+
+          {isEditMode && onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-6 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all font-medium backdrop-blur-md"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 };
 

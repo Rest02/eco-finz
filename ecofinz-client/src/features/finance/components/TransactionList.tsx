@@ -1,7 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Transaction } from '../types/finance';
+import React from "react";
+import { Transaction } from "../types/finance";
+import {
+  ArrowUpCircle,
+  ArrowDownCircle,
+  Pencil,
+  Trash2,
+  Clock,
+  Tag,
+  Calendar
+} from "lucide-react";
 
 interface Props {
   transactions: Transaction[];
@@ -10,73 +19,87 @@ interface Props {
 }
 
 const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) => {
-  // Validación defensiva: asegurar que transactions sea un array
-  if (!transactions || !Array.isArray(transactions)) {
-    return <p>No hay transacciones para esta cuenta.</p>;
-  }
-
-  if (transactions.length === 0) {
-    return <p>No hay transacciones para esta cuenta.</p>;
+  if (!transactions || transactions.length === 0) {
+    return (
+      <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-[2rem]">
+        <Clock className="w-12 h-12 text-neutral-700 mx-auto mb-4" />
+        <p className="text-neutral-500 text-lg">No hay movimientos registrados para este periodo.</p>
+      </div>
+    );
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   };
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      <h2>Últimas Transacciones</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Descripción</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Fecha</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>Monto</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((tx) => (
-            <tr key={tx.id}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{tx.description}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatDate(tx.date)}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right', color: tx.type === 'EGRESO' ? 'red' : 'green' }}>
-                {tx.type === 'EGRESO' ? '-' : ''}${Math.abs(tx.amount).toLocaleString()}
-              </td>
-              <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
-                  <button
-                    onClick={() => onEdit(tx)}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#ecc94b',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => onDelete(tx.id)}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#e53e3e',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-4">
+      {transactions.map((tx) => (
+        <div
+          key={tx.id}
+          className="group relative glass-card p-4 md:p-5 rounded-2xl flex items-center justify-between transition-all duration-300 hover:bg-white/[0.05]"
+        >
+          <div className="flex items-center gap-4">
+            {/* Icon Box */}
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${tx.type === 'INGRESO'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+              }`}>
+              {tx.type === 'INGRESO' ? <ArrowUpCircle className="w-6 h-6" /> : <ArrowDownCircle className="w-6 h-6" />}
+            </div>
+
+            {/* Info */}
+            <div>
+              <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-wider text-sm mb-0.5">
+                {tx.description}
+              </h4>
+              <div className="flex items-center gap-3 text-xs text-neutral-500">
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {formatDate(tx.date)}
+                </span>
+                {tx.category && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-white/5 rounded-full border border-white/5 uppercase text-[9px] font-bold tracking-tighter">
+                    <Tag className="w-2.5 h-2.5" />
+                    {tx.category.name}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Amount & Actions */}
+          <div className="flex items-center gap-6">
+            <div className="text-right">
+              <div className={`text-lg font-bold tracking-tight ${tx.type === 'INGRESO' ? 'text-emerald-400' : 'text-red-400'
+                }`}>
+                {tx.type === 'INGRESO' ? '+' : '-'}${Math.abs(tx.amount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+              </div>
+            </div>
+
+            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
+              <button
+                onClick={() => onEdit(tx)}
+                className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all backdrop-blur-md"
+                title="Editar"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onDelete(tx.id)}
+                className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all backdrop-blur-md"
+                title="Eliminar"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

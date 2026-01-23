@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAccounts, createAccount, updateAccount, deleteAccount } from '../services/financeService';
+import { getAccounts, getAccount, createAccount, updateAccount, deleteAccount } from '../services/financeService';
 import { CreateAccountDto, UpdateAccountDto } from '../types/finance';
 
 export const useAccounts = () => {
@@ -9,6 +9,17 @@ export const useAccounts = () => {
             const response = await getAccounts();
             return response.data;
         },
+    });
+};
+
+export const useAccount = (id: string) => {
+    return useQuery({
+        queryKey: ['accounts', id],
+        queryFn: async () => {
+            const response = await getAccount(id);
+            return response.data;
+        },
+        enabled: !!id
     });
 };
 
