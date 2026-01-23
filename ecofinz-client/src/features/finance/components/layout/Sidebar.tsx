@@ -8,11 +8,12 @@ import {
     BarChart2,
     Wallet,
     MessageSquare,
-    Trophy,
-    FileText,
     Settings,
     LogOut,
-    Activity
+    Activity,
+    Target,
+    LayoutGrid,
+    FileText
 } from "lucide-react";
 
 const navItems = [
@@ -20,7 +21,8 @@ const navItems = [
     { icon: BarChart2, href: "/finance/dashboard", label: "Estadísticas" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
     { icon: MessageSquare, href: "/finance/messages", label: "Mensajes", badge: true },
-    { icon: Trophy, href: "/finance/goals", label: "Metas" },
+    { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
+    { icon: LayoutGrid, href: "/finance/categories", label: "Categorías" },
     { icon: FileText, href: "/finance/reports", label: "Reportes" },
 ];
 
