@@ -1,8 +1,18 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { Account } from '../types/finance';
+import React from "react";
+import Link from "next/link";
+import { Account, AccountType } from "../types/finance";
+import {
+  Landmark,
+  Wallet,
+  Banknote,
+  CreditCard,
+  Pencil,
+  Trash2,
+  ExternalLink,
+  ChevronRight
+} from "lucide-react";
 
 interface Props {
   accounts: Account[];
@@ -10,77 +20,113 @@ interface Props {
   onAccountEdit: (account: Account) => void;
 }
 
+const getAccountIcon = (type: AccountType) => {
+  switch (type) {
+    case "BANCO":
+      return <Landmark className="w-5 h-5" />;
+    case "BILLETERA_DIGITAL":
+      return <Wallet className="w-5 h-5" />;
+    case "EFECTIVO":
+      return <Banknote className="w-5 h-5" />;
+    case "TARJETA_CREDITO":
+      return <CreditCard className="w-5 h-5" />;
+    default:
+      return <Wallet className="w-5 h-5" />;
+  }
+};
+
+const getAccountColor = (type: AccountType) => {
+  switch (type) {
+    case "BANCO":
+      return "text-blue-400 bg-blue-500/10 border-blue-500/20";
+    case "BILLETERA_DIGITAL":
+      return "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+    case "EFECTIVO":
+      return "text-amber-400 bg-amber-500/10 border-amber-500/20";
+    case "TARJETA_CREDITO":
+      return "text-purple-400 bg-purple-500/10 border-purple-500/20";
+    default:
+      return "text-neutral-400 bg-neutral-500/10 border-neutral-500/20";
+  }
+};
+
 const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdit }) => {
   if (accounts.length === 0) {
-    return <p>No hay cuentas disponibles.</p>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-neutral-500 text-lg italic">No hay cuentas disponibles todavía.</p>
+      </div>
+    );
   }
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      <h2>Mis Cuentas</h2>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-white/90">Mis Cuentas</h2>
+        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-400">
+          {accounts.length} {accounts.length === 1 ? 'cuenta' : 'cuentas'}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {accounts.map((account) => (
-          <li key={account.id} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', borderRadius: '8px' }}>
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '5px' }}>{account.name}</div>
-              <div style={{ color: '#666', fontSize: '14px' }}>Tipo: {account.type}</div>
-              <div style={{ fontSize: '16px', fontWeight: '600', color: account.balance >= 0 ? '#38a169' : '#e53e3e', marginTop: '5px' }}>
-                Balance: ${account.balance.toLocaleString()}
+          <div
+            key={account.id}
+            className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl border ${getAccountColor(account.type)}`}>
+                  {getAccountIcon(account.type)}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-wider text-sm">
+                    {account.name}
+                  </h3>
+                  <span className="text-xs text-neutral-500">
+                    {account.type.replace('_', ' ')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => onAccountEdit(account)}
+                  className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all"
+                  title="Editar cuenta"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onAccountDeleted(account.id)}
+                  className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all"
+                  title="Eliminar cuenta"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-xs text-neutral-500 mb-1">Balance Actual</p>
+                <div className="text-2xl font-bold text-white tracking-tight">
+                  <span className="text-emerald-500 mr-1">$</span>
+                  {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                </div>
+              </div>
+
               <Link
                 href={`/finance/accounts/${account.id}`}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#4299e1',
-                  color: 'white',
-                  borderRadius: '5px',
-                  textDecoration: 'none',
-                  display: 'inline-block',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
+                className="flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-neutral-400 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/20 text-xs font-medium transition-all group/btn"
               >
-                📊 Ver Transacciones
+                Movimientos
+                <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
               </Link>
-
-              <button
-                onClick={() => onAccountEdit(account)}
-                style={{
-                  padding: '8px 16px',
-                  border: 'none',
-                  backgroundColor: '#ecc94b',
-                  color: 'white',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
-              >
-                ✏️ Editar
-              </button>
-
-              <button
-                onClick={() => onAccountDeleted(account.id)}
-                style={{
-                  padding: '8px 16px',
-                  border: 'none',
-                  backgroundColor: '#e53e3e',
-                  color: 'white',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
-              >
-                🗑️ Eliminar
-              </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
