@@ -52,18 +52,27 @@ export default function AccountsPage() {
                     </p>
                 </div>
 
-                <div className="glass-card bg-emerald-500/10 border-emerald-500/20 p-6 rounded-3xl min-w-[240px]">
-                    <p className="text-emerald-400/60 text-sm font-medium mb-1 uppercase tracking-wider">Balance Total</p>
-                    <div className="flex items-baseline gap-2">
+                <div className="group relative glass-card glass-card-hover p-8 rounded-3xl min-w-[280px] overflow-hidden transition-all duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <Wallet className="w-6 h-6 stroke-[1.5]" />
+                    </div>
+
+                    <p className="text-xs font-semibold text-emerald-400/60 uppercase tracking-widest mb-1">Balance Total</p>
+
+                    <div className="flex items-baseline gap-2 relative z-10">
                         <span className="text-emerald-500 text-2xl font-bold">$</span>
                         <span className="text-4xl font-black text-white tracking-tighter">
                             {totalBalance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                         </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-emerald-400/40 text-[10px] mt-2 font-medium">
+
+                    <div className="flex items-center gap-1.5 text-emerald-400/30 text-[10px] mt-4 font-bold tracking-widest uppercase">
                         <ArrowUpRight className="w-3 h-3" />
-                        ACTUALIZADO EN TIEMPO REAL
+                        Actualizado ahora
                     </div>
+
+                    {/* Glow effect */}
+                    <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-emerald-500 blur-[50px] rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
                 </div>
             </div>
 

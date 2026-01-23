@@ -72,58 +72,55 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="group relative bg-white/[0.03] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300 backdrop-blur-sm"
+            className="group relative glass-card glass-card-hover rounded-3xl p-6 transition-all duration-300 overflow-hidden"
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-xl border ${getAccountColor(account.type)}`}>
-                  {getAccountIcon(account.type)}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-wider text-sm">
-                    {account.name}
-                  </h3>
-                  <span className="text-xs text-neutral-500">
-                    {account.type.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => onAccountEdit(account)}
-                  className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all backdrop-blur-md border border-transparent hover:border-white/5"
-                  title="Editar cuenta"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onAccountDeleted(account.id)}
-                  className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all backdrop-blur-md border border-transparent hover:border-red-500/10"
-                  title="Eliminar cuenta"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+            {/* Options Icon (Hidden by default, shown on hover like StatCard) */}
+            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+              <button
+                onClick={() => onAccountEdit(account)}
+                className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onAccountDeleted(account.id)}
+                className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-xs text-neutral-500 mb-1">Balance Actual</p>
-                <div className="text-2xl font-bold text-white tracking-tight">
-                  <span className="text-emerald-500 mr-1">$</span>
-                  {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
-                </div>
+            {/* Icon Box */}
+            <div className={`w-12 h-12 rounded-2xl ${getAccountColor(account.type)} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+              {getAccountIcon(account.type)}
+            </div>
+
+            {/* Info */}
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-widest mb-1">
+              {account.name}
+            </p>
+
+            <div className="flex items-end justify-between relative z-10">
+              <div className="text-2xl font-bold text-white tracking-tight">
+                <span className="text-emerald-500 mr-1">$</span>
+                {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
               </div>
 
               <Link
                 href={`/finance/accounts/${account.id}`}
-                className="flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-neutral-400 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/20 text-xs font-medium transition-all group/btn backdrop-blur-md"
+                className="flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white border border-white/5 text-[10px] font-bold uppercase tracking-tighter transition-all group/btn backdrop-blur-md"
               >
                 Movimientos
-                <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
               </Link>
             </div>
+
+            {/* Glow effect based on account color */}
+            <div className={`absolute -bottom-6 -right-6 w-24 h-24 blur-[40px] rounded-full transition-colors opacity-40 group-hover:opacity-60 ${account.type === 'BANCO' ? 'bg-blue-500' :
+                account.type === 'BILLETERA_DIGITAL' ? 'bg-emerald-500' :
+                  account.type === 'EFECTIVO' ? 'bg-amber-500' :
+                    'bg-purple-500'
+              }`} />
           </div>
         ))}
       </div>
