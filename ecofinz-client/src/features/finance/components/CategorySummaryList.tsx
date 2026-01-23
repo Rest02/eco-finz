@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { SummaryCategory } from '../types/finance';
+import React from "react";
+import { SummaryCategory } from "../types/finance";
+import { PieChart, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface CategorySummaryListProps {
     categorySummaries: SummaryCategory[];
@@ -11,9 +12,9 @@ const CategorySummaryList: React.FC<CategorySummaryListProps> = ({
     categorySummaries,
 }) => {
     const formatCurrency = (amount: number): string => {
-        return new Intl.NumberFormat('es-AR', {
+        return new Intl.NumberFormat('es-ES', {
             style: 'currency',
-            currency: 'ARS',
+            currency: 'USD',
             minimumFractionDigits: 2,
         }).format(amount);
     };
@@ -23,67 +24,66 @@ const CategorySummaryList: React.FC<CategorySummaryListProps> = ({
         return Math.min((spent / budgeted) * 100, 100);
     };
 
-    const getStatusClass = (remaining: number): string => {
-        if (remaining > 0) return 'status-good';
-        if (remaining === 0) return 'status-warning';
-        return 'status-danger';
-    };
-
     if (categorySummaries.length === 0) {
         return (
-            <div className="category-summary-empty">
-                <p>No hay categorías con presupuesto definido para este período.</p>
+            <div className="text-center py-10 bg-white/[0.02] border border-white/5 rounded-3xl">
+                <p className="text-neutral-500 text-sm italic">No hay categorías con presupuesto definido.</p>
             </div>
         );
     }
 
     return (
-        <div className="category-summary-list">
-            <h3 className="category-summary-title">Presupuesto por Categoría</h3>
-            <div className="category-summary-grid">
+        <div className="space-y-6">
+            <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                <PieChart className="w-4 h-4" />
+                <h3 className="text-xs font-bold uppercase tracking-widest">Ejecución Presupuestaria</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categorySummaries.map((category) => {
                     const progressPercentage = getProgressPercentage(
                         category.spent,
                         category.budgeted
                     );
-                    const statusClass = getStatusClass(category.remaining);
+                    const isOverBudget = category.remaining < 0;
 
                     return (
-                        <div key={category.categoryId} className={`category-summary-card ${statusClass}`}>
-                            <div className="category-header">
-                                <h4 className="category-name">{category.categoryName}</h4>
-                                <span className={`category-status ${statusClass}`}>
-                                    {category.remaining >= 0 ? '✓' : '!'}
-                                </span>
+                        <div
+                            key={category.categoryId}
+                            className={`glass-card p-5 rounded-2xl border transition-all duration-300 hover:bg-white/[0.05] ${isOverBudget ? 'border-red-500/20' : 'border-white/5'
+                                }`}
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-sm font-bold text-white uppercase tracking-tight">{category.categoryName}</h4>
+                                {isOverBudget ? (
+                                    <AlertCircle className="w-4 h-4 text-red-400" />
+                                ) : (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                )}
                             </div>
 
-                            <div className="category-amounts">
-                                <div className="amount-row">
-                                    <span className="amount-label">Presupuestado:</span>
-                                    <span className="amount-value">{formatCurrency(category.budgeted)}</span>
-                                </div>
-                                <div className="amount-row">
-                                    <span className="amount-label">Gastado:</span>
-                                    <span className="amount-value spent">{formatCurrency(category.spent)}</span>
-                                </div>
-                                <div className="amount-row">
-                                    <span className="amount-label">Restante:</span>
-                                    <span className={`amount-value ${category.remaining >= 0 ? 'positive' : 'negative'}`}>
-                                        {formatCurrency(category.remaining)}
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
+                                    <span className="text-neutral-500">Gastado / Total</span>
+                                    <span className="text-white">
+                                        {formatCurrency(category.spent)} / {formatCurrency(category.budgeted)}
                                     </span>
                                 </div>
-                            </div>
 
-                            <div className="progress-container">
-                                <div className="progress-bar">
+                                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className={`progress-fill ${statusClass}`}
+                                        className={`h-full transition-all duration-1000 rounded-full ${isOverBudget ? 'bg-red-500' : progressPercentage > 80 ? 'bg-amber-500' : 'bg-emerald-500'
+                                            }`}
                                         style={{ width: `${progressPercentage}%` }}
                                     ></div>
                                 </div>
-                                <span className="progress-text">
-                                    {progressPercentage.toFixed(1)}% utilizado
-                                </span>
+
+                                <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest pt-1">
+                                    <span className="text-neutral-600">Restante</span>
+                                    <span className={isOverBudget ? 'text-red-400' : 'text-emerald-400'}>
+                                        {formatCurrency(category.remaining)}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     );

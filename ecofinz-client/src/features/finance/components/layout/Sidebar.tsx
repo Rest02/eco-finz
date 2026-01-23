@@ -17,13 +17,11 @@ import {
 } from "lucide-react";
 
 const navItems = [
-    { icon: Home, href: "/finance", label: "Dashboard" },
+    { icon: Home, href: "/home", label: "Dashboard" },
     { icon: BarChart2, href: "/finance/dashboard", label: "Estadísticas" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
-    { icon: MessageSquare, href: "/finance/messages", label: "Mensajes", badge: true },
     { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
     { icon: LayoutGrid, href: "/finance/categories", label: "Categorías" },
-    { icon: FileText, href: "/finance/reports", label: "Reportes" },
 ];
 
 export const Sidebar = () => {

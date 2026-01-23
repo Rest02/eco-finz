@@ -35,6 +35,7 @@ export default function HomePage() {
               {/* Desktop Nav */}
               <nav className="hidden md:flex items-center gap-8">
                 <a href="#" className="text-sm font-medium text-white transition-colors">Inicio</a>
+                <Link href="/finance/dashboard" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Finanzas</Link>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Movimientos</a>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Presupuestos</a>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors relative group">
