@@ -17,7 +17,7 @@ import {
 
 const navItems = [
     { icon: Home, href: "/finance", label: "Dashboard" },
-    { icon: BarChart2, href: "/finance/stats", label: "Estadísticas" },
+    { icon: BarChart2, href: "/finance/dashboard", label: "Estadísticas" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
     { icon: MessageSquare, href: "/finance/messages", label: "Mensajes", badge: true },
     { icon: Trophy, href: "/finance/goals", label: "Metas" },
@@ -43,8 +43,8 @@ export const Sidebar = () => {
                             key={item.href}
                             href={item.href}
                             className={`group relative p-3 rounded-xl transition-all ${isActive
-                                    ? "text-white bg-white/10"
-                                    : "text-neutral-500 hover:text-white hover:bg-white/5"
+                                ? "text-white bg-white/10"
+                                : "text-neutral-500 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             <item.icon className="w-6 h-6 stroke-[1.5]" />

@@ -4,7 +4,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('finance')
 export class FinanceController {
-  constructor(private readonly financeService: FinanceService) {}
+  constructor(private readonly financeService: FinanceService) { }
 
   @UseGuards(JwtAuthGuard)
   @Get('summary/:year/:month')

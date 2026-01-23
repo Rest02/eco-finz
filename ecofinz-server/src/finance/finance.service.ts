@@ -4,7 +4,7 @@ import { TransactionType } from 'src/generated/prisma/client';
 
 @Injectable()
 export class FinanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getSummary(userId: string, year: number, month: number) {
     const startDate = new Date(year, month - 1, 1);
