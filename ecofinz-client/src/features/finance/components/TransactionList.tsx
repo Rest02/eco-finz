@@ -9,7 +9,9 @@ import {
   Trash2,
   Clock,
   Tag,
-  Calendar
+  Calendar,
+  PiggyBank,
+  TrendingUp,
 } from "lucide-react";
 
 interface Props {
@@ -45,11 +47,15 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) =>
         >
           <div className="flex items-center gap-4">
             {/* Icon Box */}
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${tx.type === 'INGRESO'
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${tx.type === 'INGRESO' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : tx.type === 'EGRESO' ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  : tx.type === 'AHORRO' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                    : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
               }`}>
-              {tx.type === 'INGRESO' ? <ArrowUpCircle className="w-6 h-6" /> : <ArrowDownCircle className="w-6 h-6" />}
+              {tx.type === 'INGRESO' ? <ArrowUpCircle className="w-6 h-6" />
+                : tx.type === 'EGRESO' ? <ArrowDownCircle className="w-6 h-6" />
+                  : tx.type === 'AHORRO' ? <PiggyBank className="w-6 h-6" />
+                    : <TrendingUp className="w-6 h-6" />}
             </div>
 
             {/* Info */}
@@ -75,7 +81,10 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) =>
           {/* Amount & Actions */}
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <div className={`text-lg font-bold tracking-tight ${tx.type === 'INGRESO' ? 'text-emerald-400' : 'text-red-400'
+              <div className={`text-lg font-bold tracking-tight ${tx.type === 'INGRESO' ? 'text-emerald-400'
+                  : tx.type === 'EGRESO' ? 'text-red-400'
+                    : tx.type === 'AHORRO' ? 'text-blue-400'
+                      : 'text-violet-400'
                 }`}>
                 {tx.type === 'INGRESO' ? '+' : '-'}${Math.abs(tx.amount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
               </div>
