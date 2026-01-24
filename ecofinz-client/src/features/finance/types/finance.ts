@@ -1,7 +1,7 @@
 // ========== Enums ==========
 
 export type AccountType = "BANCO" | "EFECTIVO" | "TARJETA_CREDITO" | "BILLETERA_DIGITAL";
-export type TransactionType = "INGRESO" | "EGRESO";
+export type TransactionType = "INGRESO" | "EGRESO" | "AHORRO" | "INVERSION";
 
 // ========== Main Entities ==========
 
@@ -79,11 +79,14 @@ export interface SummaryCategory {
   budgeted: number;
   spent: number;
   remaining: number;
+  type?: TransactionType; // Added purely for frontend convenience if needed
 }
 
 export interface MonthlySummary {
   totalIncome: number;
   totalExpenses: number;
+  totalSavings: number;
+  totalInvestments: number;
   balance: number;
   categorySummaries: SummaryCategory[];
 }
