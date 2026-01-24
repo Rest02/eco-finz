@@ -44,6 +44,14 @@ export class FinanceService {
       .filter((t) => t.type === TransactionType.EGRESO)
       .reduce((sum, t) => sum + t.amount.toNumber(), 0);
 
+    const totalSavings = transactions
+      .filter((t) => t.type === TransactionType.AHORRO)
+      .reduce((sum, t) => sum + t.amount.toNumber(), 0);
+
+    const totalInvestments = transactions
+      .filter((t) => t.type === TransactionType.INVERSION)
+      .reduce((sum, t) => sum + t.amount.toNumber(), 0);
+
     const balance = totalIncome - totalExpenses;
 
     const budgetMap = new Map(
@@ -73,6 +81,8 @@ export class FinanceService {
     return {
       totalIncome,
       totalExpenses,
+      totalSavings,
+      totalInvestments,
       balance,
       categorySummaries,
     };

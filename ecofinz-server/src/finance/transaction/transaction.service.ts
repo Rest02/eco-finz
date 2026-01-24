@@ -11,14 +11,14 @@ import { TransactionType } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createTransactionDto: CreateTransactionDto, userId: string) {
     const { amount, type, date, description, accountId, categoryId } =
       createTransactionDto;
 
     const transactionDate = new Date(date);
-    const month = transactionDate.getMonth() + 1; 
+    const month = transactionDate.getMonth() + 1;
     const year = transactionDate.getFullYear();
 
     const [account, category] = await Promise.all([
@@ -33,6 +33,12 @@ export class TransactionService {
     if (account.userId !== userId || category.userId !== userId) {
       throw new UnauthorizedException(
         'Account or Category does not belong to the user.',
+      );
+    }
+
+    if (category.type !== type) {
+      throw new UnauthorizedException(
+        `Transaction type (${type}) does not match category type (${category.type}).`,
       );
     }
 
@@ -185,10 +191,24 @@ export class TransactionService {
       };
       const newAmount = newDetails.amount as unknown as number;
       const newAccountId = newDetails.accountId;
+      const newType = newDetails.type;
+      const newCategoryId = newDetails.categoryId;
+
+      // Validate category type if either type or categoryId changed
+      if (updateTransactionDto.type || updateTransactionDto.categoryId) {
+        const category = await tx.category.findUnique({
+          where: { id: newCategoryId },
+        });
+        if (category && category.type !== newType) {
+          throw new UnauthorizedException(
+            `Transaction type (${newType}) does not match category type (${category.type}).`,
+          );
+        }
+      }
 
       // 3. Apply the new financial impact
       const impactAmount =
-        newDetails.type === TransactionType.INGRESO ? newAmount : -newAmount;
+        newType === TransactionType.INGRESO ? newAmount : -newAmount;
 
       await tx.account.update({
         where: { id: newAccountId },

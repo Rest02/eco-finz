@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -13,11 +7,102 @@ datasource db {
   provider = "postgresql"
 }
 
-// --- Enums ---
+model User {
+  id                   String           @id @default(cuid())
+  email                String           @unique
+  name                 String?
+  password             String
+  verified             Boolean          @default(false)
+  verifyPin            String?
+  resetPasswordExpires DateTime?
+  resetPasswordToken   String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  accounts             Account[]
+  budgets              Budget[]
+  categories           Category[]
+  monthlySummaries     MonthlySummary[]
+  transactions         Transaction[]
+}
+
+model Account {
+  id           String        @id @default(cuid())
+  name         String
+  type         AccountType
+  balance      Decimal       @default(0.0) @db.Decimal(10, 2)
+  userId       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model MonthlySummary {
+  id           String        @id @default(cuid())
+  month        Int
+  year         Int
+  userId       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  budgets      Budget[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([userId, month, year])
+}
+
+model Category {
+  id           String          @id @default(cuid())
+  name         String
+  type         TransactionType
+  userId       String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  budgets      Budget[]
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([userId, name, type])
+}
+
+model Transaction {
+  id               String          @id @default(cuid())
+  amount           Decimal         @db.Decimal(10, 2)
+  type             TransactionType
+  description      String
+  date             DateTime
+  userId           String
+  categoryId       String
+  accountId        String
+  monthlySummaryId String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  account          Account         @relation(fields: [accountId], references: [id])
+  category         Category        @relation(fields: [categoryId], references: [id])
+  monthlySummary   MonthlySummary  @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
+  user             User            @relation(fields: [userId], references: [id], onDelete: NoAction)
+}
+
+model Budget {
+  id               String         @id @default(cuid())
+  name             String
+  description      String?
+  amount           Decimal        @db.Decimal(10, 2)
+  userId           String
+  categoryId       String
+  monthlySummaryId String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  category         Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: NoAction)
+}
+
 enum TransactionType {
   INGRESO
   EGRESO
   AHORRO
+  INVERSION
 }
 
 enum AccountType {
@@ -25,113 +110,4 @@ enum AccountType {
   EFECTIVO
   TARJETA_CREDITO
   BILLETERA_DIGITAL
-}
-
-// --- Modelos ---
-
-model User {
-  id                   String    @id @default(cuid())
-  email                String    @unique
-  name                 String?
-  password             String
-  verified             Boolean   @default(false)
-  verifyPin            String?
-  resetPasswordToken   String?
-  resetPasswordExpires DateTime?
-
-  accounts         Account[]
-  categories       Category[]
-  monthlySummaries MonthlySummary[]
-  transactions     Transaction[]
-  budgets          Budget[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Account {
-  id        String      @id @default(cuid())
-  name      String
-  type      AccountType
-  balance   Decimal     @default(0.0) @db.Decimal(10, 2)
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  transactions Transaction[]
-
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-}
-
-model MonthlySummary {
-  id     String @id @default(cuid())
-  month  Int
-  year   Int
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  transactions Transaction[]
-  budgets      Budget[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, month, year])
-}
-
-model Category {
-  id     String @id @default(cuid())
-  name   String
-  type   TransactionType
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  transactions Transaction[]
-  budgets      Budget[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, name, type])
-}
-
-model Transaction {
-  id          String   @id @default(cuid())
-  amount      Decimal  @db.Decimal(10, 2)
-  type        TransactionType
-  description String
-  date        DateTime
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
-  userId      String
-  
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  categoryId  String
-
-  account     Account  @relation(fields: [accountId], references: [id], onDelete: Restrict)
-  accountId   String
-
-  monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
-  monthlySummaryId String
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Budget {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  amount      Decimal @db.Decimal(10, 2)
-
-  user        User    @relation(fields: [userId], references: [id], onDelete: NoAction)
-  userId      String
-  
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String
-  
-  monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
-  monthlySummaryId String
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
