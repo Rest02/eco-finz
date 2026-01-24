@@ -16,7 +16,9 @@ import {
   Type,
   ArrowUpCircle,
   ArrowDownCircle,
-  LayoutGrid
+  LayoutGrid,
+  PiggyBank,
+  TrendingUp,
 } from "lucide-react";
 
 interface Props {
@@ -94,11 +96,22 @@ const CategoryForm: React.FC<Props> = ({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Type Toggle */}
-        <div className="flex p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
+          <button
+            type="button"
+            onClick={() => setType("INGRESO")}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                : "text-neutral-500 hover:text-white hover:bg-white/5"
+              }`}
+          >
+            <ArrowUpCircle className="w-4 h-4" />
+            Ingreso
+          </button>
           <button
             type="button"
             onClick={() => setType("EGRESO")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
                 ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
                 : "text-neutral-500 hover:text-white hover:bg-white/5"
               }`}
@@ -108,14 +121,25 @@ const CategoryForm: React.FC<Props> = ({
           </button>
           <button
             type="button"
-            onClick={() => setType("INGRESO")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
-                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+            onClick={() => setType("AHORRO")}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "AHORRO"
+                ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
                 : "text-neutral-500 hover:text-white hover:bg-white/5"
               }`}
           >
-            <ArrowUpCircle className="w-4 h-4" />
-            Ingreso
+            <PiggyBank className="w-4 h-4" />
+            Ahorro
+          </button>
+          <button
+            type="button"
+            onClick={() => setType("INVERSION")}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INVERSION"
+                ? "bg-violet-500 text-white shadow-lg shadow-violet-500/20"
+                : "text-neutral-500 hover:text-white hover:bg-white/5"
+              }`}
+          >
+            <TrendingUp className="w-4 h-4" />
+            Inversión
           </button>
         </div>
 
@@ -138,10 +162,10 @@ const CategoryForm: React.FC<Props> = ({
             type="submit"
             disabled={isSubmitting}
             className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all duration-300 backdrop-blur-md ${isSubmitting
-                ? "bg-neutral-800/50 text-neutral-500 cursor-not-allowed"
-                : isEditMode
-                  ? "bg-amber-500/80 hover:bg-amber-500 text-white border border-amber-400/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-                  : "bg-emerald-500/80 hover:bg-emerald-500 text-white border border-emerald-400/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+              ? "bg-neutral-800/50 text-neutral-500 cursor-not-allowed"
+              : isEditMode
+                ? "bg-amber-500/80 hover:bg-amber-500 text-white border border-amber-400/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                : "bg-emerald-500/80 hover:bg-emerald-500 text-white border border-emerald-400/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
               }`}
           >
             {isSubmitting ? (
