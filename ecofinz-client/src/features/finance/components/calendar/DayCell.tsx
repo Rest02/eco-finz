@@ -1,18 +1,34 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Transaction } from "../../types/finance";
 import DaySummaryTooltip from "./DaySummaryTooltip";
+import { TransactionFloatingWidget } from "./TransactionFloatingWidget";
 
 interface Props {
     date: Date;
     transactions: Transaction[];
     isCurrentMonth: boolean;
     isToday: boolean;
+    rowIndex?: number; // Para determinar si está en las últimas filas
+    totalRows?: number;
+    colIndex?: number; // Para determinar posicionamiento izquierda/derecha
+    isSelected?: boolean; // Controlado externamente
+    onSelect?: (date: Date) => void; // Handler para selección
 }
 
-export const DayCell: React.FC<Props> = ({ date, transactions, isCurrentMonth, isToday }) => {
+export const DayCell: React.FC<Props> = ({
+    date,
+    transactions,
+    isCurrentMonth,
+    isToday,
+    rowIndex = 0,
+    totalRows = 6,
+    colIndex = 0,
+    isSelected = false,
+    onSelect
+}) => {
 
     // Calculate totals
     const summary = useMemo(() => {
@@ -33,6 +49,52 @@ export const DayCell: React.FC<Props> = ({ date, transactions, isCurrentMonth, i
 
     const hasActivity = transactions.length > 0;
 
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onSelect) {
+            onSelect(date);
+        }
+    };
+
+    const handleSaveTransaction = (data: any) => {
+        console.log("Saving transaction:", data);
+        // Here you would call an API or prop function
+        if (onSelect) {
+            onSelect(date); // This will close it via parent
+        }
+    };
+
+    // Determine widget position based on row and column
+    // If in last 2 rows, position widget above (bottom positioning)
+    // Otherwise position below (top positioning)
+    const isBottomRow = rowIndex >= totalRows - 2;
+
+    // Determine left/right positioning based on day of week
+    // colIndex: 0=Lun, 1=Mar, 2=Mié, 3=Jue, 4=Vie, 5=Sáb, 6=Dom
+    const isWeekend = colIndex === 5 || colIndex === 6; // Sábado o Domingo
+
+    const widgetStyle = isBottomRow ? {
+        bottom: "100%",
+        marginBottom: "10px",
+        ...(isWeekend ? {
+            right: "100%",
+            marginRight: "10px"
+        } : {
+            left: "50%",
+            transform: "translateX(-50%)"
+        })
+    } : {
+        top: "100%",
+        marginTop: "10px",
+        ...(isWeekend ? {
+            right: "100%",
+            marginRight: "10px"
+        } : {
+            left: "50%",
+            transform: "translateX(-50%)"
+        })
+    };
+
     return (
         <motion.div
             layout
@@ -40,10 +102,12 @@ export const DayCell: React.FC<Props> = ({ date, transactions, isCurrentMonth, i
             animate={{ opacity: 1 }}
             whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)", zIndex: 10 }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
+            onClick={handleClick}
             className={cn(
                 "relative flex flex-col p-2 min-h-[100px] border-r border-b border-white/5 transition-colors group",
                 !isCurrentMonth && "bg-neutral-900/30 text-neutral-700",
-                "cursor-pointer"
+                "cursor-pointer",
+                isSelected && "bg-white/[0.05] ring-inset ring-1 ring-white/10 z-20"
             )}
         >
             {/* Date Number */}
@@ -92,6 +156,19 @@ export const DayCell: React.FC<Props> = ({ date, transactions, isCurrentMonth, i
 
             {/* Selection Glow (Optional) */}
             <div className="absolute inset-0 border border-transparent hover:border-white/10 rounded-lg pointer-events-none" />
+
+            {/* Floating Widget */}
+            {isSelected && (
+                <AnimatePresence>
+                    <TransactionFloatingWidget
+                        date={date}
+                        hour={9} // Default hour for month view
+                        onClose={() => onSelect && onSelect(date)}
+                        onSave={handleSaveTransaction}
+                        style={widgetStyle}
+                    />
+                </AnimatePresence>
+            )}
         </motion.div>
     );
 };

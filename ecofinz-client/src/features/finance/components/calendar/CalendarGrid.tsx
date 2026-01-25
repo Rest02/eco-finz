@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { DayCell } from "./DayCell";
@@ -11,6 +11,8 @@ interface Props {
 }
 
 export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => {
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(monthStart);
     const startDate = startOfWeek(monthStart, { locale: es }); // Starts on Monday usually or Sunday depending on locale
@@ -37,9 +39,16 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
 
             {/* Days Grid */}
             <div className="grid grid-cols-7 flex-1 auto-rows-fr">
-                {days.map((day) => {
+                {days.map((day, index) => {
                     // Filter transactions for this specific day
                     const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));
+
+                    // Calculate row index (0-based)
+                    const rowIndex = Math.floor(index / 7);
+                    const totalRows = Math.ceil(days.length / 7);
+
+                    // Calculate column index for left/right positioning
+                    const colIndex = index % 7;
 
                     return (
                         <DayCell
@@ -48,6 +57,18 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
                             transactions={dayTransactions}
                             isCurrentMonth={isSameMonth(day, monthStart)}
                             isToday={isSameDay(day, new Date())}
+                            rowIndex={rowIndex}
+                            totalRows={totalRows}
+                            colIndex={colIndex}
+                            isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
+                            onSelect={(date) => {
+                                // Toggle: if clicking the same date, close it
+                                if (selectedDate && isSameDay(date, selectedDate)) {
+                                    setSelectedDate(null);
+                                } else {
+                                    setSelectedDate(date);
+                                }
+                            }}
                         />
                     );
                 })}
