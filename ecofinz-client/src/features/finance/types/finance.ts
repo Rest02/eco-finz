@@ -44,6 +44,8 @@ export interface Budget {
   year: number;
   categoryId: string;
   userId: string;
+  category?: Category;
+  spent?: number;
 }
 
 // ========== Data Transfer Objects (DTOs) ==========

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Budget, Category } from "../types/finance";
+import BudgetCard from "./BudgetCard";
 import {
   Target,
   Pencil,
@@ -45,61 +46,26 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {budgets.map((budget) => (
-          <div
-            key={budget.id}
-            className="group relative glass-card glass-card-hover rounded-3xl p-6 transition-all duration-300 overflow-hidden"
-          >
-            {/* Options Icon */}
-            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+          <div key={budget.id} className="relative group/wrapper">
+            <BudgetCard budget={budget} />
+
+            {/* Floating Actions */}
+            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/wrapper:opacity-100 transition-opacity">
               <button
                 onClick={() => onBudgetEdit(budget)}
-                className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all"
-                title="Editar objetivo"
+                className="p-2 rounded-xl bg-neutral-900/80 hover:bg-neutral-800 text-neutral-400 hover:text-amber-400 transition-colors backdrop-blur-md border border-white/10"
+                title="Editar"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <button
                 onClick={() => onBudgetDeleted(budget.id)}
-                className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all"
-                title="Eliminar objetivo"
+                className="p-2 rounded-xl bg-neutral-900/80 hover:bg-neutral-800 text-neutral-400 hover:text-red-400 transition-colors backdrop-blur-md border border-white/10"
+                title="Eliminar"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
-
-            {/* Icon Box */}
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Target className="w-6 h-6 stroke-[1.5]" />
-            </div>
-
-            {/* Info */}
-            <div>
-              <h3 className="font-semibold text-white group-hover:text-indigo-400 transition-colors uppercase tracking-wider text-sm mb-1">
-                {budget.name}
-              </h3>
-              <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-4">
-                <AlertCircle className="w-3 h-3" />
-                {getCategoryName(budget.categoryId)}
-              </div>
-            </div>
-
-            <div className="flex items-end justify-between relative z-10">
-              <div>
-                <p className="text-[10px] text-neutral-500 uppercase tracking-tighter mb-1 font-bold">Límite Establecido</p>
-                <div className="text-2xl font-bold text-white tracking-tight">
-                  <span className="text-emerald-500 mr-1">$</span>
-                  {parseFloat(String(budget.amount)).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-indigo-500/5 text-indigo-400/60 text-[10px] font-bold uppercase tracking-tighter border border-indigo-500/10">
-                <TrendingUp className="w-3 h-3" />
-                ACTIVO
-              </div>
-            </div>
-
-            {/* Glow effect */}
-            <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-indigo-500 blur-[40px] rounded-full transition-colors opacity-20 group-hover:opacity-40" />
           </div>
         ))}
       </div>
