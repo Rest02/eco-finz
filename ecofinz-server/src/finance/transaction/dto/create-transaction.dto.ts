@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsPositive,
   IsString,
+  IsOptional,
 } from 'class-validator';
 import { TransactionType } from 'src/generated/prisma/enums';
 
@@ -32,6 +33,16 @@ export class CreateTransactionDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   categoryId: string;
+
+  @IsString()
+  @IsOptional()
+  budgetId?: string;
+
+  @IsString()
+  @IsOptional()
+  destinationAccountId?: string;
 }
 

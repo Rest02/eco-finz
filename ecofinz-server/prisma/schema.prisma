@@ -74,13 +74,18 @@ model Transaction {
   userId           String
   categoryId       String
   accountId        String
-  monthlySummaryId String
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  account          Account         @relation(fields: [accountId], references: [id])
-  category         Category        @relation(fields: [categoryId], references: [id])
-  monthlySummary   MonthlySummary  @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
-  user             User            @relation(fields: [userId], references: [id], onDelete: NoAction)
+  monthlySummaryId    String
+  budgetId            String?
+  relatedTransactionId String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  account             Account         @relation(fields: [accountId], references: [id])
+  category            Category        @relation(fields: [categoryId], references: [id])
+  monthlySummary      MonthlySummary  @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
+  budget              Budget?         @relation(fields: [budgetId], references: [id])
+  relatedTransaction  Transaction?    @relation("RelatedTransaction", fields: [relatedTransactionId], references: [id])
+  otherRelated        Transaction[]   @relation("RelatedTransaction")
+  user                User            @relation(fields: [userId], references: [id], onDelete: NoAction)
 }
 
 model Budget {
@@ -96,6 +101,7 @@ model Budget {
   category         Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   monthlySummary   MonthlySummary @relation(fields: [monthlySummaryId], references: [id], onDelete: Cascade)
   user             User           @relation(fields: [userId], references: [id], onDelete: NoAction)
+  transactions     Transaction[]
 }
 
 enum TransactionType {

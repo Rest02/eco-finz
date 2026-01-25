@@ -31,6 +31,8 @@ export interface Transaction {
   userId: string;
   category?: Category;
   account?: Account;
+  budgetId?: string;
+  relatedTransactionId?: string;
 }
 
 export interface Budget {
@@ -54,8 +56,11 @@ export type CreateCategoryDto = Omit<Category, "id" | "userId">;
 export type UpdateCategoryDto = Partial<Omit<Category, "id" | "userId">>;
 
 // --- Transaction DTOs ---
-export type CreateTransactionDto = Omit<Transaction, "id" | "userId">;
-export type UpdateTransactionDto = Partial<Omit<Transaction, "id" | "userId">>;
+export type CreateTransactionDto = Omit<Transaction, "id" | "userId" | "category" | "account" | "budgetId" | "relatedTransactionId"> & {
+  budgetId?: string;
+  destinationAccountId?: string;
+};
+export type UpdateTransactionDto = Partial<CreateTransactionDto>;
 
 // --- Budget DTOs ---
 export type CreateBudgetDto = Omit<Budget, "id" | "userId">;

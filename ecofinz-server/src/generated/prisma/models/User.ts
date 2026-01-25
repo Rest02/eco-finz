@@ -31,8 +31,8 @@ export type UserMinAggregateOutputType = {
   password: string | null
   verified: boolean | null
   verifyPin: string | null
-  resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  resetPasswordToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,8 +44,8 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   verified: boolean | null
   verifyPin: string | null
-  resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  resetPasswordToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -57,8 +57,8 @@ export type UserCountAggregateOutputType = {
   password: number
   verified: number
   verifyPin: number
-  resetPasswordToken: number
   resetPasswordExpires: number
+  resetPasswordToken: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -72,8 +72,8 @@ export type UserMinAggregateInputType = {
   password?: true
   verified?: true
   verifyPin?: true
-  resetPasswordToken?: true
   resetPasswordExpires?: true
+  resetPasswordToken?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -85,8 +85,8 @@ export type UserMaxAggregateInputType = {
   password?: true
   verified?: true
   verifyPin?: true
-  resetPasswordToken?: true
   resetPasswordExpires?: true
+  resetPasswordToken?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -98,8 +98,8 @@ export type UserCountAggregateInputType = {
   password?: true
   verified?: true
   verifyPin?: true
-  resetPasswordToken?: true
   resetPasswordExpires?: true
+  resetPasswordToken?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -184,8 +184,8 @@ export type UserGroupByOutputType = {
   password: string
   verified: boolean
   verifyPin: string | null
-  resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  resetPasswordToken: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -218,15 +218,15 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   verified?: Prisma.BoolFilter<"User"> | boolean
   verifyPin?: Prisma.StringNullableFilter<"User"> | string | null
-  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
+  budgets?: Prisma.BudgetListRelationFilter
   categories?: Prisma.CategoryListRelationFilter
   monthlySummaries?: Prisma.MonthlySummaryListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
-  budgets?: Prisma.BudgetListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -236,15 +236,15 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   verified?: Prisma.SortOrder
   verifyPin?: Prisma.SortOrderInput | Prisma.SortOrder
-  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  budgets?: Prisma.BudgetOrderByRelationAggregateInput
   categories?: Prisma.CategoryOrderByRelationAggregateInput
   monthlySummaries?: Prisma.MonthlySummaryOrderByRelationAggregateInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
-  budgets?: Prisma.BudgetOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -257,15 +257,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   verified?: Prisma.BoolFilter<"User"> | boolean
   verifyPin?: Prisma.StringNullableFilter<"User"> | string | null
-  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
+  budgets?: Prisma.BudgetListRelationFilter
   categories?: Prisma.CategoryListRelationFilter
   monthlySummaries?: Prisma.MonthlySummaryListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
-  budgets?: Prisma.BudgetListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -275,8 +275,8 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   verified?: Prisma.SortOrder
   verifyPin?: Prisma.SortOrderInput | Prisma.SortOrder
-  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -294,8 +294,8 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   verified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   verifyPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  resetPasswordToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  resetPasswordToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -307,15 +307,15 @@ export type UserCreateInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -325,15 +325,15 @@ export type UserUncheckedCreateInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -343,15 +343,15 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -361,15 +361,15 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -379,8 +379,8 @@ export type UserCreateManyInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -392,8 +392,8 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -405,8 +405,8 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -418,8 +418,8 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   verified?: Prisma.SortOrder
   verifyPin?: Prisma.SortOrder
-  resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -431,8 +431,8 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   verified?: Prisma.SortOrder
   verifyPin?: Prisma.SortOrder
-  resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -444,8 +444,8 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   verified?: Prisma.SortOrder
   verifyPin?: Prisma.SortOrder
-  resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -552,14 +552,14 @@ export type UserCreateWithoutAccountsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -569,14 +569,14 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -602,14 +602,14 @@ export type UserUpdateWithoutAccountsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -619,14 +619,14 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMonthlySummariesInput = {
@@ -636,14 +636,14 @@ export type UserCreateWithoutMonthlySummariesInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMonthlySummariesInput = {
@@ -653,14 +653,14 @@ export type UserUncheckedCreateWithoutMonthlySummariesInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMonthlySummariesInput = {
@@ -686,14 +686,14 @@ export type UserUpdateWithoutMonthlySummariesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMonthlySummariesInput = {
@@ -703,14 +703,14 @@ export type UserUncheckedUpdateWithoutMonthlySummariesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCategoriesInput = {
@@ -720,14 +720,14 @@ export type UserCreateWithoutCategoriesInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCategoriesInput = {
@@ -737,14 +737,14 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCategoriesInput = {
@@ -770,14 +770,14 @@ export type UserUpdateWithoutCategoriesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCategoriesInput = {
@@ -787,14 +787,14 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTransactionsInput = {
@@ -804,14 +804,14 @@ export type UserCreateWithoutTransactionsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -821,14 +821,14 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
-  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -854,14 +854,14 @@ export type UserUpdateWithoutTransactionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -871,14 +871,14 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
-  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBudgetsInput = {
@@ -888,8 +888,8 @@ export type UserCreateWithoutBudgetsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -905,8 +905,8 @@ export type UserUncheckedCreateWithoutBudgetsInput = {
   password: string
   verified?: boolean
   verifyPin?: string | null
-  resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -938,8 +938,8 @@ export type UserUpdateWithoutBudgetsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -955,8 +955,8 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -972,18 +972,18 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
 
 export type UserCountOutputType = {
   accounts: number
+  budgets: number
   categories: number
   monthlySummaries: number
   transactions: number
-  budgets: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  budgets?: boolean | UserCountOutputTypeCountBudgetsArgs
   categories?: boolean | UserCountOutputTypeCountCategoriesArgs
   monthlySummaries?: boolean | UserCountOutputTypeCountMonthlySummariesArgs
   transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
-  budgets?: boolean | UserCountOutputTypeCountBudgetsArgs
 }
 
 /**
@@ -1001,6 +1001,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AccountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBudgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BudgetWhereInput
 }
 
 /**
@@ -1024,13 +1031,6 @@ export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.TransactionWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountBudgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.BudgetWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1039,15 +1039,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   verified?: boolean
   verifyPin?: boolean
-  resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  resetPasswordToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  budgets?: boolean | Prisma.User$budgetsArgs<ExtArgs>
   categories?: boolean | Prisma.User$categoriesArgs<ExtArgs>
   monthlySummaries?: boolean | Prisma.User$monthlySummariesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
-  budgets?: boolean | Prisma.User$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1058,8 +1058,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   verified?: boolean
   verifyPin?: boolean
-  resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  resetPasswordToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1071,8 +1071,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   verified?: boolean
   verifyPin?: boolean
-  resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  resetPasswordToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1084,19 +1084,19 @@ export type UserSelectScalar = {
   password?: boolean
   verified?: boolean
   verifyPin?: boolean
-  resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  resetPasswordToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "password" | "verified" | "verifyPin" | "resetPasswordToken" | "resetPasswordExpires" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "password" | "verified" | "verifyPin" | "resetPasswordExpires" | "resetPasswordToken" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  budgets?: boolean | Prisma.User$budgetsArgs<ExtArgs>
   categories?: boolean | Prisma.User$categoriesArgs<ExtArgs>
   monthlySummaries?: boolean | Prisma.User$monthlySummariesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
-  budgets?: boolean | Prisma.User$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1106,10 +1106,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    budgets: Prisma.$BudgetPayload<ExtArgs>[]
     categories: Prisma.$CategoryPayload<ExtArgs>[]
     monthlySummaries: Prisma.$MonthlySummaryPayload<ExtArgs>[]
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
-    budgets: Prisma.$BudgetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1118,8 +1118,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     verified: boolean
     verifyPin: string | null
-    resetPasswordToken: string | null
     resetPasswordExpires: Date | null
+    resetPasswordToken: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1517,10 +1517,10 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  budgets<T extends Prisma.User$budgetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$budgetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BudgetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   categories<T extends Prisma.User$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   monthlySummaries<T extends Prisma.User$monthlySummariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$monthlySummariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlySummaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   transactions<T extends Prisma.User$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  budgets<T extends Prisma.User$budgetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$budgetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BudgetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1556,8 +1556,8 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly verified: Prisma.FieldRef<"User", 'Boolean'>
   readonly verifyPin: Prisma.FieldRef<"User", 'String'>
-  readonly resetPasswordToken: Prisma.FieldRef<"User", 'String'>
   readonly resetPasswordExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly resetPasswordToken: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1972,6 +1972,30 @@ export type User$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * User.budgets
+ */
+export type User$budgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Budget
+   */
+  select?: Prisma.BudgetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Budget
+   */
+  omit?: Prisma.BudgetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BudgetInclude<ExtArgs> | null
+  where?: Prisma.BudgetWhereInput
+  orderBy?: Prisma.BudgetOrderByWithRelationInput | Prisma.BudgetOrderByWithRelationInput[]
+  cursor?: Prisma.BudgetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BudgetScalarFieldEnum | Prisma.BudgetScalarFieldEnum[]
+}
+
+/**
  * User.categories
  */
 export type User$categoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2041,30 +2065,6 @@ export type User$transactionsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.TransactionScalarFieldEnum | Prisma.TransactionScalarFieldEnum[]
-}
-
-/**
- * User.budgets
- */
-export type User$budgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Budget
-   */
-  select?: Prisma.BudgetSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Budget
-   */
-  omit?: Prisma.BudgetOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BudgetInclude<ExtArgs> | null
-  where?: Prisma.BudgetWhereInput
-  orderBy?: Prisma.BudgetOrderByWithRelationInput | Prisma.BudgetOrderByWithRelationInput[]
-  cursor?: Prisma.BudgetWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.BudgetScalarFieldEnum | Prisma.BudgetScalarFieldEnum[]
 }
 
 /**

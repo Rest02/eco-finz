@@ -54,9 +54,11 @@ export class FinanceService {
 
     const balance = totalIncome - totalExpenses;
 
-    const budgetMap = new Map(
-      budgets.map((b) => [b.categoryId, b.amount.toNumber()]),
-    );
+    const budgetMap = new Map<string, number>();
+    budgets.forEach((b) => {
+      const current = budgetMap.get(b.categoryId) || 0;
+      budgetMap.set(b.categoryId, current + b.amount.toNumber());
+    });
     const expenseMap = new Map<string, number>();
 
     transactions
