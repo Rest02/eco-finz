@@ -109,11 +109,11 @@ export class TransactionService {
         });
 
         // C. Create Main Transaction (Source -> Outflow)
-        // We link it to budget if provided
         const mainTransaction = await tx.transaction.create({
           data: {
             amount,
             type, // AHORRO
+            isInflow: false, // Source is outflow
             description,
             date: transactionDate,
             userId,
@@ -121,28 +121,20 @@ export class TransactionService {
             categoryId,
             monthlySummaryId: monthlySummary.id,
             budgetId,
-            // We will link relatedTransactionId after creating the second one
           },
         });
 
-        // D. Create Destination Transaction (Destination -> Inflow)
-        // Usually we want to reflect this as an INCOME or SAVING in the other account.
-        // For simplicity, we keep type AHORRO but it acts as inflow because of logic context or we can mark it.
-        // However, standard logic often treats positive amounts as inflow.
-        // Let's create it as AHORRO but we need to know it's an inflow.
-        // In this system, is INGRESO/EGRESO defined by type?
-        // finance service: income = filter INGRESO.
-        // So if we label it AHORRO, it won't be counted as Income, which is correct (it's a transfer).
-        // But the balance update was manual increment.
+        // D. Create Destination Transaction (Linked -> Inflow)
         const linkedTransaction = await tx.transaction.create({
           data: {
             amount, // Same amount
             type, // AHORRO
+            isInflow: true, // Destination is INFLOW
             description: `Transferencia desde ${account.name}`,
             date: transactionDate,
             userId,
             accountId: destinationAccountId,
-            categoryId, // Same category (Ahorro)
+            categoryId, // Same category
             monthlySummaryId: monthlySummary.id,
             relatedTransactionId: mainTransaction.id,
           },
@@ -158,8 +150,8 @@ export class TransactionService {
       }
 
       // HANDLE STANDARD TRANSACTION
-      const amountInDecimal =
-        type === TransactionType.INGRESO ? amount : -amount;
+      const isIngreso = type === TransactionType.INGRESO;
+      const amountInDecimal = isIngreso ? amount : -amount;
 
       await tx.account.update({
         where: { id: accountId },
@@ -174,6 +166,7 @@ export class TransactionService {
         data: {
           amount,
           type,
+          isInflow: isIngreso, // Only INGRESO is inflow by default
           description,
           date: transactionDate,
           userId,

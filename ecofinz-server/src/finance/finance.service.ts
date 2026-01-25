@@ -45,7 +45,7 @@ export class FinanceService {
       .reduce((sum, t) => sum + t.amount.toNumber(), 0);
 
     const totalSavings = transactions
-      .filter((t) => t.type === TransactionType.AHORRO)
+      .filter((t) => t.type === TransactionType.AHORRO && !t.isInflow)
       .reduce((sum, t) => sum + t.amount.toNumber(), 0);
 
     const totalInvestments = transactions

@@ -69,6 +69,7 @@ model Transaction {
   id               String          @id @default(cuid())
   amount           Decimal         @db.Decimal(10, 2)
   type             TransactionType
+  isInflow         Boolean         @default(false)
   description      String
   date             DateTime
   userId           String
