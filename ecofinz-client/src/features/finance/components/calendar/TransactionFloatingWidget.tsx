@@ -39,7 +39,7 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", duration: 0.4, bounce: 0.3 }}
             style={style}
-            className="absolute z-50 w-[320px] bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="absolute z-[100] w-[320px] bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
         >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5">

@@ -27,9 +27,9 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
     const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]; // Simplified for design
 
     return (
-        <div className="flex flex-col h-full border border-white/5 rounded-2xl overflow-hidden bg-white/[0.01]">
+        <div className="flex flex-col h-full border border-white/5 rounded-2xl bg-white/[0.01] relative">
             {/* Weekday Headers */}
-            <div className="grid grid-cols-7 border-b border-white/5 bg-white/[0.02]">
+            <div className="grid grid-cols-7 border-b border-white/5 bg-white/[0.02] rounded-t-2xl overflow-hidden">
                 {weekDays.map((day) => (
                     <div key={day} className="py-3 text-center text-sm font-medium text-neutral-500 uppercase tracking-wider">
                         {day}
@@ -38,7 +38,7 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
             </div>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-7 flex-1 auto-rows-fr">
+            <div className="grid grid-cols-7 flex-1 auto-rows-fr rounded-b-2xl overflow-hidden">
                 {days.map((day, index) => {
                     // Filter transactions for this specific day
                     const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));

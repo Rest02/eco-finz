@@ -107,7 +107,7 @@ export const DayCell: React.FC<Props> = ({
                 "relative flex flex-col p-2 min-h-[100px] border-r border-b border-white/5 transition-colors group",
                 !isCurrentMonth && "bg-neutral-900/30 text-neutral-700",
                 "cursor-pointer",
-                isSelected && "bg-white/[0.05] ring-inset ring-1 ring-white/10 z-20"
+                isSelected && "bg-white/[0.05] ring-inset ring-1 ring-white/10 z-50"
             )}
         >
             {/* Date Number */}
