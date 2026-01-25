@@ -27,9 +27,9 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
     const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]; // Simplified for design
 
     return (
-        <div className="flex flex-col h-full border border-white/5 rounded-2xl bg-white/[0.01] relative">
+        <div className="flex flex-col h-full border border-white/5 rounded-2xl bg-white/[0.01] relative overflow-hidden">
             {/* Weekday Headers */}
-            <div className="grid grid-cols-7 border-b border-white/5 bg-white/[0.02] rounded-t-2xl overflow-hidden">
+            <div className="grid grid-cols-7 border-b border-white/5 bg-white/[0.02] sticky top-0 z-10">
                 {weekDays.map((day) => (
                     <div key={day} className="py-3 text-center text-sm font-medium text-neutral-500 uppercase tracking-wider">
                         {day}
@@ -37,41 +37,52 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
                 ))}
             </div>
 
-            {/* Days Grid */}
-            <div className="grid grid-cols-7 flex-1 auto-rows-fr rounded-b-2xl overflow-hidden">
-                {days.map((day, index) => {
-                    // Filter transactions for this specific day
-                    const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));
+            {/* Scrollable Container */}
+            <div className={cn(
+                "flex-1 overflow-y-auto overflow-x-hidden",
+                // Scrollbar Styles
+                "[&::-webkit-scrollbar]:w-2",
+                "[&::-webkit-scrollbar-track]:bg-transparent",
+                "[&::-webkit-scrollbar-thumb]:bg-white/10",
+                "[&::-webkit-scrollbar-thumb]:rounded-full",
+                "hover:[&::-webkit-scrollbar-thumb]:bg-white/20"
+            )}>
+                {/* Days Grid */}
+                <div className="grid grid-cols-7 auto-rows-fr min-h-full">
+                    {days.map((day, index) => {
+                        // Filter transactions for this specific day
+                        const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));
 
-                    // Calculate row index (0-based)
-                    const rowIndex = Math.floor(index / 7);
-                    const totalRows = Math.ceil(days.length / 7);
+                        // Calculate row index (0-based)
+                        const rowIndex = Math.floor(index / 7);
+                        const totalRows = Math.ceil(days.length / 7);
 
-                    // Calculate column index for left/right positioning
-                    const colIndex = index % 7;
+                        // Calculate column index for left/right positioning
+                        const colIndex = index % 7;
 
-                    return (
-                        <DayCell
-                            key={day.toISOString()}
-                            date={day}
-                            transactions={dayTransactions}
-                            isCurrentMonth={isSameMonth(day, monthStart)}
-                            isToday={isSameDay(day, new Date())}
-                            rowIndex={rowIndex}
-                            totalRows={totalRows}
-                            colIndex={colIndex}
-                            isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
-                            onSelect={(date) => {
-                                // Toggle: if clicking the same date, close it
-                                if (selectedDate && isSameDay(date, selectedDate)) {
-                                    setSelectedDate(null);
-                                } else {
-                                    setSelectedDate(date);
-                                }
-                            }}
-                        />
-                    );
-                })}
+                        return (
+                            <DayCell
+                                key={day.toISOString()}
+                                date={day}
+                                transactions={dayTransactions}
+                                isCurrentMonth={isSameMonth(day, monthStart)}
+                                isToday={isSameDay(day, new Date())}
+                                rowIndex={rowIndex}
+                                totalRows={totalRows}
+                                colIndex={colIndex}
+                                isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
+                                onSelect={(date) => {
+                                    // Toggle: if clicking the same date, close it
+                                    if (selectedDate && isSameDay(date, selectedDate)) {
+                                        setSelectedDate(null);
+                                    } else {
+                                        setSelectedDate(date);
+                                    }
+                                }}
+                            />
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

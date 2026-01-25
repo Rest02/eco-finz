@@ -64,35 +64,20 @@ export const DayCell: React.FC<Props> = ({
         }
     };
 
-    // Determine widget position based on row and column
-    // If in last 2 rows, position widget above (bottom positioning)
-    // Otherwise position below (top positioning)
-    const isBottomRow = rowIndex >= totalRows - 2;
-
-    // Determine left/right positioning based on day of week
+    // Determine widget position based on column (day of week)
     // colIndex: 0=Lun, 1=Mar, 2=Mié, 3=Jue, 4=Vie, 5=Sáb, 6=Dom
     const isWeekend = colIndex === 5 || colIndex === 6; // Sábado o Domingo
 
-    const widgetStyle = isBottomRow ? {
-        bottom: "100%",
-        marginBottom: "10px",
-        ...(isWeekend ? {
-            right: "100%",
-            marginRight: "10px"
-        } : {
-            left: "50%",
-            transform: "translateX(-50%)"
-        })
+    // Widget se abre al mismo nivel vertical del cuadrante
+    // A la derecha para días normales, a la izquierda para fin de semana
+    const widgetStyle = isWeekend ? {
+        top: 0,
+        right: "100%",
+        marginRight: "10px"
     } : {
-        top: "100%",
-        marginTop: "10px",
-        ...(isWeekend ? {
-            right: "100%",
-            marginRight: "10px"
-        } : {
-            left: "50%",
-            transform: "translateX(-50%)"
-        })
+        top: 0,
+        left: "100%",
+        marginLeft: "10px"
     };
 
     return (
