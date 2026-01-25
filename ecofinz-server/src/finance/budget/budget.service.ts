@@ -11,7 +11,7 @@ import { UpdateBudgetDto } from './dto/update-budget.dto';
 
 @Injectable()
 export class BudgetService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createBudgetDto: CreateBudgetDto, userId: string) {
     const { categoryId, month, year, amount, name, description } =
@@ -80,7 +80,7 @@ export class BudgetService {
     });
   }
 
-  findAll(userId: string, query: FindAllBudgetsDto) {
+  async findAll(userId: string, query: FindAllBudgetsDto) {
     const { month, year } = query;
     const where: Prisma.BudgetWhereInput = {
       userId,
@@ -101,12 +101,28 @@ export class BudgetService {
       };
     }
 
-    return this.prisma.budget.findMany({
+    const budgets = await this.prisma.budget.findMany({
       where,
       include: {
-        category: true, // Incluir detalles de la categoría
-        monthlySummary: true, // Incluir detalles del resumen mensual
+        category: true,
+        monthlySummary: true,
+        transactions: {
+          select: {
+            amount: true,
+            isInflow: true,
+          },
+        },
       },
+    });
+
+    return budgets.map((budget) => {
+      const spent = budget.transactions.reduce((acc, t) => {
+        const amount = t.amount.toNumber();
+        return t.isInflow ? acc - amount : acc + amount;
+      }, 0);
+
+      const { transactions, ...rest } = budget;
+      return { ...rest, spent };
     });
   }
 
@@ -116,6 +132,12 @@ export class BudgetService {
       include: {
         category: true,
         monthlySummary: true,
+        transactions: {
+          select: {
+            amount: true,
+            isInflow: true,
+          },
+        },
       },
     });
 
@@ -123,7 +145,13 @@ export class BudgetService {
       throw new NotFoundException('Presupuesto no encontrado.');
     }
 
-    return budget;
+    const spent = budget.transactions.reduce((acc, t) => {
+      const amount = t.amount.toNumber();
+      return t.isInflow ? acc - amount : acc + amount;
+    }, 0);
+
+    const { transactions, ...rest } = budget;
+    return { ...rest, spent };
   }
 
   async update(id: string, userId: string, updateBudgetDto: UpdateBudgetDto) {

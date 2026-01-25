@@ -15,9 +15,9 @@ interface AuthenticatedRequest extends Request {
 }
 
 @UseGuards(JwtAuthGuard)
-@Controller('account')
+@Controller('finance/account')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
+  constructor(private readonly accountService: AccountService) { }
 
   @Post()
   create(@Req() req: AuthenticatedRequest, @Body() createAccountDto: CreateAccountDto) {

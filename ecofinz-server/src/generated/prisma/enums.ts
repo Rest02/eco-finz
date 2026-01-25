@@ -12,7 +12,8 @@
 export const TransactionType = {
   INGRESO: 'INGRESO',
   EGRESO: 'EGRESO',
-  AHORRO: 'AHORRO'
+  AHORRO: 'AHORRO',
+  INVERSION: 'INVERSION'
 } as const
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]

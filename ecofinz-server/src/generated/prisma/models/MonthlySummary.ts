@@ -228,9 +228,9 @@ export type MonthlySummaryWhereInput = {
   userId?: Prisma.StringFilter<"MonthlySummary"> | string
   createdAt?: Prisma.DateTimeFilter<"MonthlySummary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MonthlySummary"> | Date | string
+  budgets?: Prisma.BudgetListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
-  budgets?: Prisma.BudgetListRelationFilter
 }
 
 export type MonthlySummaryOrderByWithRelationInput = {
@@ -240,9 +240,9 @@ export type MonthlySummaryOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  budgets?: Prisma.BudgetOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
-  budgets?: Prisma.BudgetOrderByRelationAggregateInput
 }
 
 export type MonthlySummaryWhereUniqueInput = Prisma.AtLeast<{
@@ -256,9 +256,9 @@ export type MonthlySummaryWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"MonthlySummary"> | string
   createdAt?: Prisma.DateTimeFilter<"MonthlySummary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MonthlySummary"> | Date | string
+  budgets?: Prisma.BudgetListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
-  budgets?: Prisma.BudgetListRelationFilter
 }, "id" | "userId_month_year">
 
 export type MonthlySummaryOrderByWithAggregationInput = {
@@ -293,9 +293,9 @@ export type MonthlySummaryCreateInput = {
   year: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  budgets?: Prisma.BudgetCreateNestedManyWithoutMonthlySummaryInput
   user: Prisma.UserCreateNestedOneWithoutMonthlySummariesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutMonthlySummaryInput
-  budgets?: Prisma.BudgetCreateNestedManyWithoutMonthlySummaryInput
 }
 
 export type MonthlySummaryUncheckedCreateInput = {
@@ -305,8 +305,8 @@ export type MonthlySummaryUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutMonthlySummaryInput
   budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutMonthlySummaryInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutMonthlySummaryInput
 }
 
 export type MonthlySummaryUpdateInput = {
@@ -315,9 +315,9 @@ export type MonthlySummaryUpdateInput = {
   year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  budgets?: Prisma.BudgetUpdateManyWithoutMonthlySummaryNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMonthlySummariesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutMonthlySummaryNestedInput
-  budgets?: Prisma.BudgetUpdateManyWithoutMonthlySummaryNestedInput
 }
 
 export type MonthlySummaryUncheckedUpdateInput = {
@@ -327,8 +327,8 @@ export type MonthlySummaryUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutMonthlySummaryNestedInput
   budgets?: Prisma.BudgetUncheckedUpdateManyWithoutMonthlySummaryNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutMonthlySummaryNestedInput
 }
 
 export type MonthlySummaryCreateManyInput = {
@@ -499,8 +499,8 @@ export type MonthlySummaryCreateWithoutUserInput = {
   year: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  transactions?: Prisma.TransactionCreateNestedManyWithoutMonthlySummaryInput
   budgets?: Prisma.BudgetCreateNestedManyWithoutMonthlySummaryInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutMonthlySummaryInput
 }
 
 export type MonthlySummaryUncheckedCreateWithoutUserInput = {
@@ -509,8 +509,8 @@ export type MonthlySummaryUncheckedCreateWithoutUserInput = {
   year: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutMonthlySummaryInput
   budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutMonthlySummaryInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutMonthlySummaryInput
 }
 
 export type MonthlySummaryCreateOrConnectWithoutUserInput = {
@@ -557,8 +557,8 @@ export type MonthlySummaryCreateWithoutTransactionsInput = {
   year: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutMonthlySummariesInput
   budgets?: Prisma.BudgetCreateNestedManyWithoutMonthlySummaryInput
+  user: Prisma.UserCreateNestedOneWithoutMonthlySummariesInput
 }
 
 export type MonthlySummaryUncheckedCreateWithoutTransactionsInput = {
@@ -593,8 +593,8 @@ export type MonthlySummaryUpdateWithoutTransactionsInput = {
   year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutMonthlySummariesNestedInput
   budgets?: Prisma.BudgetUpdateManyWithoutMonthlySummaryNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMonthlySummariesNestedInput
 }
 
 export type MonthlySummaryUncheckedUpdateWithoutTransactionsInput = {
@@ -677,8 +677,8 @@ export type MonthlySummaryUpdateWithoutUserInput = {
   year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transactions?: Prisma.TransactionUpdateManyWithoutMonthlySummaryNestedInput
   budgets?: Prisma.BudgetUpdateManyWithoutMonthlySummaryNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutMonthlySummaryNestedInput
 }
 
 export type MonthlySummaryUncheckedUpdateWithoutUserInput = {
@@ -687,8 +687,8 @@ export type MonthlySummaryUncheckedUpdateWithoutUserInput = {
   year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutMonthlySummaryNestedInput
   budgets?: Prisma.BudgetUncheckedUpdateManyWithoutMonthlySummaryNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutMonthlySummaryNestedInput
 }
 
 export type MonthlySummaryUncheckedUpdateManyWithoutUserInput = {
@@ -705,13 +705,13 @@ export type MonthlySummaryUncheckedUpdateManyWithoutUserInput = {
  */
 
 export type MonthlySummaryCountOutputType = {
-  transactions: number
   budgets: number
+  transactions: number
 }
 
 export type MonthlySummaryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  transactions?: boolean | MonthlySummaryCountOutputTypeCountTransactionsArgs
   budgets?: boolean | MonthlySummaryCountOutputTypeCountBudgetsArgs
+  transactions?: boolean | MonthlySummaryCountOutputTypeCountTransactionsArgs
 }
 
 /**
@@ -727,15 +727,15 @@ export type MonthlySummaryCountOutputTypeDefaultArgs<ExtArgs extends runtime.Typ
 /**
  * MonthlySummaryCountOutputType without action
  */
-export type MonthlySummaryCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TransactionWhereInput
+export type MonthlySummaryCountOutputTypeCountBudgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BudgetWhereInput
 }
 
 /**
  * MonthlySummaryCountOutputType without action
  */
-export type MonthlySummaryCountOutputTypeCountBudgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.BudgetWhereInput
+export type MonthlySummaryCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TransactionWhereInput
 }
 
 
@@ -746,9 +746,9 @@ export type MonthlySummarySelect<ExtArgs extends runtime.Types.Extensions.Intern
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  budgets?: boolean | Prisma.MonthlySummary$budgetsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.MonthlySummary$transactionsArgs<ExtArgs>
-  budgets?: boolean | Prisma.MonthlySummary$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.MonthlySummaryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monthlySummary"]>
 
@@ -783,9 +783,9 @@ export type MonthlySummarySelectScalar = {
 
 export type MonthlySummaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "month" | "year" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["monthlySummary"]>
 export type MonthlySummaryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  budgets?: boolean | Prisma.MonthlySummary$budgetsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.MonthlySummary$transactionsArgs<ExtArgs>
-  budgets?: boolean | Prisma.MonthlySummary$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.MonthlySummaryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MonthlySummaryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -798,9 +798,9 @@ export type MonthlySummaryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Typ
 export type $MonthlySummaryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MonthlySummary"
   objects: {
+    budgets: Prisma.$BudgetPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
-    budgets: Prisma.$BudgetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1203,9 +1203,9 @@ readonly fields: MonthlySummaryFieldRefs;
  */
 export interface Prisma__MonthlySummaryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  budgets<T extends Prisma.MonthlySummary$budgetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlySummary$budgetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BudgetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.MonthlySummary$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlySummary$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  budgets<T extends Prisma.MonthlySummary$budgetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlySummary$budgetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BudgetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1637,30 +1637,6 @@ export type MonthlySummaryDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * MonthlySummary.transactions
- */
-export type MonthlySummary$transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Transaction
-   */
-  select?: Prisma.TransactionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Transaction
-   */
-  omit?: Prisma.TransactionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TransactionInclude<ExtArgs> | null
-  where?: Prisma.TransactionWhereInput
-  orderBy?: Prisma.TransactionOrderByWithRelationInput | Prisma.TransactionOrderByWithRelationInput[]
-  cursor?: Prisma.TransactionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TransactionScalarFieldEnum | Prisma.TransactionScalarFieldEnum[]
-}
-
-/**
  * MonthlySummary.budgets
  */
 export type MonthlySummary$budgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1682,6 +1658,30 @@ export type MonthlySummary$budgetsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.BudgetScalarFieldEnum | Prisma.BudgetScalarFieldEnum[]
+}
+
+/**
+ * MonthlySummary.transactions
+ */
+export type MonthlySummary$transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Transaction
+   */
+  select?: Prisma.TransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Transaction
+   */
+  omit?: Prisma.TransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TransactionInclude<ExtArgs> | null
+  where?: Prisma.TransactionWhereInput
+  orderBy?: Prisma.TransactionOrderByWithRelationInput | Prisma.TransactionOrderByWithRelationInput[]
+  cursor?: Prisma.TransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TransactionScalarFieldEnum | Prisma.TransactionScalarFieldEnum[]
 }
 
 /**

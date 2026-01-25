@@ -4,7 +4,7 @@ import { TransactionType } from 'src/generated/prisma/client';
 
 @Injectable()
 export class FinanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getSummary(userId: string, year: number, month: number) {
     const startDate = new Date(year, month - 1, 1);
@@ -44,11 +44,21 @@ export class FinanceService {
       .filter((t) => t.type === TransactionType.EGRESO)
       .reduce((sum, t) => sum + t.amount.toNumber(), 0);
 
+    const totalSavings = transactions
+      .filter((t) => t.type === TransactionType.AHORRO && !t.isInflow)
+      .reduce((sum, t) => sum + t.amount.toNumber(), 0);
+
+    const totalInvestments = transactions
+      .filter((t) => t.type === TransactionType.INVERSION)
+      .reduce((sum, t) => sum + t.amount.toNumber(), 0);
+
     const balance = totalIncome - totalExpenses;
 
-    const budgetMap = new Map(
-      budgets.map((b) => [b.categoryId, b.amount.toNumber()]),
-    );
+    const budgetMap = new Map<string, number>();
+    budgets.forEach((b) => {
+      const current = budgetMap.get(b.categoryId) || 0;
+      budgetMap.set(b.categoryId, current + b.amount.toNumber());
+    });
     const expenseMap = new Map<string, number>();
 
     transactions
@@ -73,6 +83,8 @@ export class FinanceService {
     return {
       totalIncome,
       totalExpenses,
+      totalSavings,
+      totalInvestments,
       balance,
       categorySummaries,
     };

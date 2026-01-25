@@ -899,8 +899,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   verified: 'verified',
   verifyPin: 'verifyPin',
-  resetPasswordToken: 'resetPasswordToken',
   resetPasswordExpires: 'resetPasswordExpires',
+  resetPasswordToken: 'resetPasswordToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -949,12 +949,15 @@ export const TransactionScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   type: 'type',
+  isInflow: 'isInflow',
   description: 'description',
   date: 'date',
   userId: 'userId',
   categoryId: 'categoryId',
   accountId: 'accountId',
   monthlySummaryId: 'monthlySummaryId',
+  budgetId: 'budgetId',
+  relatedTransactionId: 'relatedTransactionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

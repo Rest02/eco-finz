@@ -1,12 +1,12 @@
 "use client";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen w-full flex flex-col antialiased selection:bg-emerald-500/30 text-neutral-300 relative overflow-x-hidden bg-[#050505]">
-        
+
         {/* Background Atmospheric Effects (Global) */}
         <div className="fixed inset-0 z-0 pointer-events-none">
           {/* Purple Blob (Top Left) */}
@@ -21,7 +21,7 @@ export default function HomePage() {
         <header className="relative z-50 w-full border-b border-white/5 bg-[#050505]/80 backdrop-blur-md sticky top-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20">
-              
+
               {/* Logo */}
               <div className="flex items-center gap-2 group cursor-pointer">
                 <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/10 transition-colors">
@@ -35,6 +35,7 @@ export default function HomePage() {
               {/* Desktop Nav */}
               <nav className="hidden md:flex items-center gap-8">
                 <a href="#" className="text-sm font-medium text-white transition-colors">Inicio</a>
+                <Link href="/finance/dashboard" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Finanzas</Link>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Movimientos</a>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors">Presupuestos</a>
                 <a href="#" className="text-sm font-normal text-neutral-400 hover:text-white transition-colors relative group">
@@ -71,14 +72,14 @@ export default function HomePage() {
             </div>
           </div>
         </header>
-        
+
         {/* Main Content */}
         <main className="relative z-10 w-full flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
 
           {/* Page Header */}
           <div className="text-center mb-16 space-y-4">
             <h1 className="text-3xl md:text-5xl font-medium text-white tracking-tight leading-tight">
-              Tus <span className="text-emerald-400 font-normal italic">Finanzas</span> y Novedades<br /> 
+              Tus <span className="text-emerald-400 font-normal italic">Finanzas</span> y Novedades<br />
               del Mercado <span className="text-purple-400 font-normal italic">Global</span>
             </h1>
             <p className="text-neutral-500 max-w-xl mx-auto font-light text-lg">
@@ -91,7 +92,7 @@ export default function HomePage() {
 
             {/* LEFT COLUMN: Featured Item (Approx 60-65% width) */}
             <div className="lg:col-span-7 flex flex-col gap-6">
-              
+
               {/* Tag */}
               <div className="flex items-center justify-between">
                 <span className="inline-flex px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-medium tracking-wide uppercase">
@@ -108,12 +109,12 @@ export default function HomePage() {
 
               {/* Featured Card */}
               <div className="group relative w-full bg-[#0a0a0a]/40 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.05)]">
-                
+
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" alt="Finanzas Digitales" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60"></div>
-                  
+
                   {/* Floating Data Visual (Decoration) */}
                   <div className="absolute bottom-6 right-6 hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-black/40 backdrop-blur-md border border-white/10">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-emerald-400">
@@ -132,7 +133,7 @@ export default function HomePage() {
                   <p className="text-neutral-400 font-light leading-relaxed mb-6 text-base sm:text-lg">
                     En la sociedad moderna, entender los ciclos económicos es crucial. Analizamos las tendencias actuales del mercado y te ofrecemos estrategias prácticas para diversificar tu cartera antes del próximo cierre fiscal.
                   </p>
-                  
+
                   {/* Author Meta */}
                   <div className="flex items-center justify-between pt-6 border-t border-white/5">
                     <div className="flex items-center gap-3">
@@ -154,7 +155,7 @@ export default function HomePage() {
 
             {/* RIGHT COLUMN: List Items (Approx 35-40% width) */}
             <div className="lg:col-span-5 flex flex-col space-y-8">
-              
+
               {/* Item 1 */}
               <article className="group flex flex-col gap-4 p-5 rounded-xl hover:bg-white/[0.02] border border-transparent hover:border-white/5 transition-all duration-300">
                 <div className="flex items-center justify-between">
@@ -162,7 +163,7 @@ export default function HomePage() {
                     Criptoactivos
                   </span>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h3 className="text-lg font-medium text-white tracking-tight group-hover:text-purple-400 transition-colors">
                     Bitcoin vs Ethereum: Análisis de volatilidad
@@ -194,7 +195,7 @@ export default function HomePage() {
                     Ahorro
                   </span>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h3 className="text-lg font-medium text-white tracking-tight group-hover:text-blue-400 transition-colors">
                     La regla 50/30/20 explicada para principiantes
@@ -226,7 +227,7 @@ export default function HomePage() {
                     Impuestos
                   </span>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h3 className="text-lg font-medium text-white tracking-tight group-hover:text-orange-400 transition-colors">
                     Guía fiscal 2024: Cambios en la declaración
