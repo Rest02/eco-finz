@@ -12,12 +12,14 @@ import {
     Activity,
     Target,
     LayoutGrid,
+    Calendar,
 } from "lucide-react";
 
 const navItems = [
     { icon: Home, href: "/home", label: "Dashboard" },
     { icon: BarChart2, href: "/finance/dashboard", label: "Estadísticas" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
+    { icon: Calendar, href: "/finance/calendar", label: "Calendario" },
     { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
     { icon: LayoutGrid, href: "/finance/categories", label: "Categorías" },
 ];

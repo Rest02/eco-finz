@@ -1,79 +1,52 @@
-"use client";
-
 import React, { useState } from "react";
-import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
+import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth } from "date-fns";
 import { es } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarGrid } from "./CalendarGrid";
 import { TimeGrid } from "./TimeGrid";
 import { Transaction } from "../../types/finance";
+import { useTransactions, useCreateTransaction } from "../../hooks/useTransactions";
 
-// --- MOCK DATA FOR DEVELOPMENT ---
-const MOCK_TRANSACTIONS: Transaction[] = [
-    // Current month transactions (assuming mostly current date for verifying)
-    {
-        id: "1",
-        amount: 1500,
-        type: "INGRESO",
-        description: "Salario",
-        date: new Date().toISOString(),
-        accountId: "acc1",
-        categoryId: "cat1",
-        userId: "user1",
-        isInflow: true
-    },
-    {
-        id: "2",
-        amount: 50,
-        type: "EGRESO",
-        description: "Café",
-        date: new Date().toISOString(),
-        accountId: "acc1",
-        categoryId: "cat2",
-        userId: "user1",
-        isInflow: false
-    },
-    {
-        id: "3",
-        amount: 200,
-        type: "AHORRO",
-        description: "Fondo de Emergencia",
-        date: new Date().toISOString(),
-        accountId: "acc1",
-        categoryId: "cat3",
-        userId: "user1",
-        isInflow: false
-    },
-    // New transactions with specific times for Week/Day view testing
-    {
-        id: "4",
-        amount: 85,
-        type: "EGRESO",
-        description: "Almuerzo Ejecutivo",
-        date: new Date(new Date().setHours(13, 15, 0, 0)).toISOString(),
-        accountId: "acc1",
-        categoryId: "cat2",
-        userId: "user1",
-        isInflow: false
-    },
-    {
-        id: "5",
-        amount: 1200,
-        type: "INGRESO",
-        description: "Freelance Project",
-        date: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
-        accountId: "acc1",
-        categoryId: "cat1",
-        userId: "user1",
-        isInflow: true
-    }
-];
+
 
 export const FinancialCalendar: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [view, setView] = useState<'month' | 'week' | 'day'>('month');
     const [direction, setDirection] = useState(0);
+
+    // Calculate start and end date based on view
+    let startDate: Date;
+    let endDate: Date;
+
+    if (view === 'month') {
+        startDate = startOfMonth(currentDate);
+        endDate = endOfMonth(currentDate);
+    } else if (view === 'week') {
+        startDate = startOfWeek(currentDate, { locale: es });
+        endDate = endOfWeek(currentDate, { locale: es });
+    } else {
+        startDate = currentDate;
+        endDate = currentDate; // Same day
+    }
+
+    const { data: transactions } = useTransactions({
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+    });
+
+    const createTransactionMutation = useCreateTransaction();
+
+    const handleSaveTransaction = (data: any) => {
+        createTransactionMutation.mutate({
+            description: data.description,
+            amount: Number(data.amount),
+            type: data.type,
+            date: new Date(data.date).toISOString(),
+            accountId: data.accountId,
+            categoryId: data.categoryId,
+        });
+    };
 
     const handlePrev = () => {
         setDirection(-1);
@@ -155,13 +128,15 @@ export const FinancialCalendar: React.FC = () => {
                         {view === 'month' ? (
                             <CalendarGrid
                                 currentDate={currentDate}
-                                transactions={MOCK_TRANSACTIONS}
+                                transactions={transactions?.data || []}
+                                onSaveTransaction={handleSaveTransaction}
                             />
                         ) : (
                             <TimeGrid
                                 date={currentDate}
                                 days={getDaysForView()}
-                                transactions={MOCK_TRANSACTIONS}
+                                transactions={transactions?.data || []}
+                                onSaveTransaction={handleSaveTransaction}
                             />
                         )}
                     </motion.div>

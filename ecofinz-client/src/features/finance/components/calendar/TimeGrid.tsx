@@ -10,9 +10,10 @@ interface Props {
     date: Date;
     days: Date[];
     transactions: Transaction[];
+    onSaveTransaction: (data: any) => void;
 }
 
-export const TimeGrid: React.FC<Props> = ({ date, days, transactions }) => {
+export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTransaction }) => {
     // Selection state for creating new transaction
     const [selectedSlot, setSelectedSlot] = useState<{ date: Date, hour: number } | null>(null);
 
@@ -45,8 +46,7 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions }) => {
     };
 
     const handleSaveTransaction = (data: any) => {
-        console.log("Saving transaction:", data);
-        // Here you would call an API or prop function
+        onSaveTransaction(data);
         setSelectedSlot(null);
     };
 

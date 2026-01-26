@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
+import { useAccounts } from "../../hooks/useAccounts";
+import { useCategories } from "../../hooks/useCategories";
+
 interface Props {
     date: Date;
     hour: number;
@@ -19,16 +22,28 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
     const [description, setDescription] = useState("");
     const [selectedHour, setSelectedHour] = useState(hour.toString().padStart(2, '0'));
     const [selectedMinute, setSelectedMinute] = useState('00');
+    const [selectedAccount, setSelectedAccount] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+
+    const { data: accounts } = useAccounts();
+    const { data: categories } = useCategories();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalHour = parseInt(selectedHour);
         const finalMinute = parseInt(selectedMinute);
+
+        // Validation: Ensure account and category are selected if loaded
+        // For better UX we might default select the first one or show error, but here we just pass what we have
+        // FinancialCalendar handles strict checking or backend validation
+
         onSave({
             amount: Number(amount),
             type,
             description,
             date: new Date(date).setHours(finalHour, finalMinute, 0, 0),
+            accountId: selectedAccount,
+            categoryId: selectedCategory
         });
     };
 
@@ -39,7 +54,11 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", duration: 0.4, bounce: 0.3 }}
             style={style}
-            className="absolute z-[100] w-[320px] bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
+            onDoubleClick={(e) => e.stopPropagation()}
+            className="absolute z-[100] w-[320px] bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden cursor-auto"
         >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5">
@@ -81,7 +100,10 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
+            <form
+                onSubmit={handleSubmit}
+                className="p-4 flex flex-col gap-4"
+            >
                 {/* Amount */}
                 <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">$</span>
@@ -103,6 +125,31 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full bg-neutral-800/50 border border-white/5 rounded-xl py-2 px-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
                 />
+
+                {/* Account & Category Selection */}
+                <div className="grid grid-cols-2 gap-2">
+                    <select
+                        value={selectedAccount}
+                        onChange={(e) => setSelectedAccount(e.target.value)}
+                        className="bg-neutral-800/50 border border-white/5 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
+                    >
+                        <option value="">Cuenta...</option>
+                        {accounts?.map((acc: any) => (
+                            <option key={acc.id} value={acc.id}>{acc.name}</option>
+                        ))}
+                    </select>
+
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="bg-neutral-800/50 border border-white/5 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
+                    >
+                        <option value="">Categoría...</option>
+                        {categories?.filter((cat: any) => cat.type === type).map((cat: any) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
+                </div>
 
                 {/* Time Selector */}
                 <div className="flex gap-2 items-center">

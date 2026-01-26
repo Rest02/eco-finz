@@ -16,6 +16,7 @@ interface Props {
     colIndex?: number; // Para determinar posicionamiento izquierda/derecha
     isSelected?: boolean; // Controlado externamente
     onSelect?: (date: Date) => void; // Handler para selección
+    onSaveTransaction: (data: any) => void;
 }
 
 export const DayCell: React.FC<Props> = ({
@@ -27,7 +28,8 @@ export const DayCell: React.FC<Props> = ({
     totalRows = 6,
     colIndex = 0,
     isSelected = false,
-    onSelect
+    onSelect,
+    onSaveTransaction
 }) => {
 
     // Calculate totals
@@ -57,8 +59,7 @@ export const DayCell: React.FC<Props> = ({
     };
 
     const handleSaveTransaction = (data: any) => {
-        console.log("Saving transaction:", data);
-        // Here you would call an API or prop function
+        onSaveTransaction(data);
         if (onSelect) {
             onSelect(date); // This will close it via parent
         }
@@ -110,32 +111,27 @@ export const DayCell: React.FC<Props> = ({
             </div>
 
             {/* Indicators / Content */}
-            <div className="flex-1 flex flex-col justify-end gap-1.5 mt-2">
-                {hasActivity && (
-                    <>
-                        {/* Visual Indicators (Bars/Pills) */}
-                        <div className="flex gap-1 flex-wrap">
-                            {summary.income > 0 && (
-                                <div className="h-1.5 w-full max-w-[40%] rounded-full bg-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
-                            )}
-                            {summary.expenses > 0 && (
-                                <div className="h-1.5 w-full max-w-[30%] rounded-full bg-rose-400/80 shadow-[0_0_8px_rgba(251,113,133,0.3)]" />
-                            )}
-                            {summary.savings > 0 && (
-                                <div className="h-1.5 w-full max-w-[20%] rounded-full bg-cyan-400/80 shadow-[0_0_8px_rgba(34,211,238,0.3)]" />
-                            )}
-                        </div>
+            <div className="flex-1 flex flex-col justify-start gap-1 mt-1 overflow-hidden">
+                {transactions.map((t) => {
+                    const colorClass =
+                        t.type === 'INGRESO' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                            t.type === 'EGRESO' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                                t.type === 'AHORRO' ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
+                                    "bg-purple-500/10 text-purple-400 border-purple-500/20";
 
-                        {/* Hover Tooltip */}
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bottom-full left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-                            <DaySummaryTooltip
-                                income={summary.income}
-                                expenses={summary.expenses}
-                                savings={summary.savings}
-                            />
+                    return (
+                        <div
+                            key={t.id}
+                            className={cn(
+                                "text-[10px] px-1.5 py-0.5 rounded border truncate font-medium",
+                                colorClass
+                            )}
+                            title={t.description} // Tooltip nativo para ver nombre completo
+                        >
+                            {t.description}
                         </div>
-                    </>
-                )}
+                    );
+                })}
             </div>
 
 
