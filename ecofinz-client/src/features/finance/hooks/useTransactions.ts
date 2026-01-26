@@ -18,7 +18,7 @@ export const useTransactions = (filters?: {
             return response.data;
         },
         // Enabled if no filters are provided (fetch all) or if specific filters are provided
-        enabled: !filters || !!filters.accountId || (!!filters.month && !!filters.year),
+        enabled: !filters || !!filters.accountId || (!!filters.month && !!filters.year) || (!!filters.startDate && !!filters.endDate),
     });
 };
 

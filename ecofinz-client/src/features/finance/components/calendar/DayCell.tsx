@@ -16,6 +16,7 @@ interface Props {
     colIndex?: number; // Para determinar posicionamiento izquierda/derecha
     isSelected?: boolean; // Controlado externamente
     onSelect?: (date: Date) => void; // Handler para selección
+    onSaveTransaction: (data: any) => void;
 }
 
 export const DayCell: React.FC<Props> = ({
@@ -27,7 +28,8 @@ export const DayCell: React.FC<Props> = ({
     totalRows = 6,
     colIndex = 0,
     isSelected = false,
-    onSelect
+    onSelect,
+    onSaveTransaction
 }) => {
 
     // Calculate totals
@@ -57,8 +59,7 @@ export const DayCell: React.FC<Props> = ({
     };
 
     const handleSaveTransaction = (data: any) => {
-        console.log("Saving transaction:", data);
-        // Here you would call an API or prop function
+        onSaveTransaction(data);
         if (onSelect) {
             onSelect(date); // This will close it via parent
         }

@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 interface Props {
     currentDate: Date;
     transactions: Transaction[];
+    onSaveTransaction: (data: any) => void;
 }
 
-export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => {
+export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions, onSaveTransaction }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const monthStart = startOfMonth(currentDate);
@@ -71,6 +72,7 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions }) => 
                                 totalRows={totalRows}
                                 colIndex={colIndex}
                                 isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
+                                onSaveTransaction={onSaveTransaction}
                                 onSelect={(date) => {
                                     // Toggle: if clicking the same date, close it
                                     if (selectedDate && isSameDay(date, selectedDate)) {
