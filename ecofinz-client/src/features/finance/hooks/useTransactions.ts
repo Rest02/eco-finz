@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../services/financeService';
-import { CreateTransactionDto, UpdateTransactionDto } from '../types/finance';
+import { CreateTransactionDto, UpdateTransactionDto, TransactionType } from '../types/finance';
 
 export const useTransactions = (filters?: {
     month?: number;
     year?: number;
     accountId?: string;
     categoryId?: string;
-    type?: 'INGRESO' | 'EGRESO';
+    type?: TransactionType;
     startDate?: string;
     endDate?: string;
 }) => {

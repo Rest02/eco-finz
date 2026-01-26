@@ -4,6 +4,7 @@ import {
   Account,
   Category,
   Transaction,
+  TransactionType,
   Budget,
   MonthlySummary,
   PaginatedResponse,
@@ -64,7 +65,7 @@ export const getTransactions = (filters?: {
   year?: number,
   accountId?: string,
   categoryId?: string,
-  type?: 'INGRESO' | 'EGRESO',
+  type?: TransactionType,
   startDate?: string,
   endDate?: string
 }): Promise<AxiosResponse<PaginatedResponse<Transaction>>> => {
