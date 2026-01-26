@@ -145,7 +145,7 @@ export const TransactionFloatingWidget: React.FC<Props> = ({ date, hour, onClose
                         className="bg-neutral-800/50 border border-white/5 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
                     >
                         <option value="">Categoría...</option>
-                        {categories?.map((cat: any) => (
+                        {categories?.filter((cat: any) => cat.type === type).map((cat: any) => (
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
