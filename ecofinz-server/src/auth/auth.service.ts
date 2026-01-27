@@ -21,7 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.prisma.user.findUnique({ where: { email } });
@@ -66,7 +66,13 @@ export class AuthService {
       verifyPin,
     });
 
-    await this.emailService.sendVerificationPin(newUser.email, verifyPin);
+    try {
+      await this.emailService.sendVerificationPin(newUser.email, verifyPin);
+      console.log('Verification email sent successfully to:', newUser.email);
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      // NOTA: El usuario igualmente se crea. Verificar configuración de EMAIL en variables de entorno.
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, verifyPin: __, ...result } = newUser;
