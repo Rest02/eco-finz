@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:3000', // La URL de tu frontend
+    origin: true, // Permite cualquier origen o refleja el origen de la petición (ideal para Vercel + Local)
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
