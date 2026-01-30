@@ -342,17 +342,74 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-zinc-100">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-black">EcoFinz</span>
-            <span>© 2026</span>
-          </div>
-          <div className="flex gap-8">
-            <a href="#" className="hover:text-black">Privacidad</a>
-            <a href="#" className="hover:text-black">Términos</a>
-            <a href="#" className="hover:text-black">Soporte</a>
+      {/* Premium Footer */}
+      <footer className="pt-12 pb-24 px-6 bg-zinc-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white border border-zinc-200/60 rounded-[40px] p-12 md:p-16 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+              {/* Brand Section */}
+              <div className="lg:col-span-4 space-y-8">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white font-bold text-lg">
+                    E
+                  </div>
+                  <span className="font-bold text-2xl tracking-tight">EcoFinz</span>
+                </div>
+                <p className="text-zinc-500 leading-relaxed max-w-sm">
+                  EcoFinz empodera a personas y equipos para transformar sus datos financieros en decisiones claras y estrategias ganadoras.
+                </p>
+                <div className="flex gap-5 text-zinc-400">
+                  <span className="hover:text-black transition-colors cursor-pointer"><Activity className="w-5 h-5" /></span>
+                  <span className="hover:text-black transition-colors cursor-pointer"><Activity className="w-5 h-5" /></span>
+                  <span className="hover:text-black transition-colors cursor-pointer"><Activity className="w-5 h-5" /></span>
+                  <span className="hover:text-black transition-colors cursor-pointer"><Activity className="w-5 h-5" /></span>
+                </div>
+              </div>
+
+              {/* Links Sections */}
+              <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+                <div className="space-y-6">
+                  <h4 className="font-bold text-zinc-900">Producto</h4>
+                  <ul className="space-y-4 text-sm text-zinc-500">
+                    <li className="hover:text-black transition-colors cursor-pointer">Funcionalidades</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Precios</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Integraciones</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Changelog</li>
+                  </ul>
+                </div>
+                <div className="space-y-6">
+                  <h4 className="font-bold text-zinc-900">Recursos</h4>
+                  <ul className="space-y-4 text-sm text-zinc-500">
+                    <li className="hover:text-black transition-colors cursor-pointer">Documentación</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Tutoriales</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Blog</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Soporte</li>
+                  </ul>
+                </div>
+                <div className="space-y-6">
+                  <h4 className="font-bold text-zinc-900">Compañía</h4>
+                  <ul className="space-y-4 text-sm text-zinc-500">
+                    <li className="hover:text-black transition-colors cursor-pointer">Sobre nosotros</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Carreras</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Contacto</li>
+                    <li className="hover:text-black transition-colors cursor-pointer">Partners</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Bar */}
+            <div className="pt-8 border-t border-zinc-100 flex flex-col md:row justify-between items-center gap-6">
+              <p className="text-sm text-zinc-400">
+                © 2026 EcoFinz. Todos los derechos reservados.
+              </p>
+              <div className="flex gap-8 text-sm font-medium text-zinc-500">
+                <a href="#" className="hover:text-black transition-colors underline decoration-zinc-200 underline-offset-4">Privacy Policy</a>
+                <a href="#" className="hover:text-black transition-colors underline decoration-zinc-200 underline-offset-4">Terms of Service</a>
+                <a href="#" className="hover:text-black transition-colors underline decoration-zinc-200 underline-offset-4">Cookies Settings</a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
