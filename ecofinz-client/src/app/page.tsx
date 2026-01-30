@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Zap, BarChart3, Wallet, Activity, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Zap, BarChart3, Wallet, Activity, Shield, Lock, Globe } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-[#ffffff] text-zinc-900 font-sans selection:bg-black selection:text-white">
 
       {/* Floating Navbar */}
       <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
@@ -31,11 +31,11 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <main className="pt-40 pb-20 px-6">
+      <main className="pt-40 pb-12 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           {/* Left Content */}
-          <div className="max-w-xl space-y-8 animate-fade-in">
+          <div className="max-w-xl space-y-8 animate-fade-in z-10">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05]">
               Tu Libertad <br />
               Financiera, <br />
@@ -61,56 +61,36 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Visual (Abstract Interface) */}
-          <div className="relative bg-zinc-50 rounded-[40px] p-12 min-h-[500px] flex items-center justify-center border border-zinc-100/50 animate-slide-up">
-            {/* Abstract Simplified Dashboard */}
-            <div className="relative w-full max-w-md bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-zinc-100 p-6 overflow-hidden">
+          {/* Right Visual (Web Dashboard Showcase) */}
+          <div className="relative flex items-center justify-center animate-slide-up">
+            {/* Abstract Background Shapes */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-zinc-50 rounded-full blur-3xl opacity-60 z-0"></div>
 
-              {/* Header */}
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <div className="h-2 w-24 bg-zinc-200 rounded-full mb-2"></div>
-                  <div className="h-2 w-16 bg-zinc-100 rounded-full"></div>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-zinc-50"></div>
-              </div>
-
-              {/* Balance */}
-              <div className="mb-8">
-                <div className="text-sm text-zinc-400 font-medium mb-1">Balance Total</div>
-                <div className="text-4xl font-bold tracking-tight text-black">$24,500.00</div>
-                <div className="inline-flex items-center gap-1 mt-2 text-emerald-600 text-xs font-semibold bg-emerald-50 px-2 py-1 rounded-full">
-                  <ArrowUpRight className="w-3 h-3" /> +12.5%
-                </div>
-              </div>
-
-              {/* Graph Area */}
-              <div className="flex items-end gap-3 h-32 w-full mt-auto">
-                <div className="flex-1 bg-zinc-100 rounded-lg h-[40%]" />
-                <div className="flex-1 bg-zinc-100 rounded-lg h-[60%]" />
-                <div className="flex-1 bg-black rounded-lg h-[80%]" />
-                <div className="flex-1 bg-zinc-100 rounded-lg h-[50%]" />
-                <div className="flex-1 bg-zinc-100 rounded-lg h-[70%]" />
-              </div>
-
+            {/* Laptop Image with Floating Animation */}
+            <div className="relative z-10">
+              <img
+                src="/hero-visual.jpg"
+                alt="EcoFinz Dashboard Interface"
+                className="w-full max-w-[600px] object-contain mix-blend-multiply border border-zinc-200 rounded-2xl"
+              />
             </div>
-
-            {/* Floating Elements */}
-            <div className="absolute top-20 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-zinc-100 animate-bounce delay-700">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold">Suscripción</div>
-                  <div className="text-sm font-bold">-$12.99</div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </main>
+
+      {/* Trust Strip */}
+      <section className="py-10 border-y border-zinc-50 bg-zinc-50/30">
+        <div className="max-w-7xl mx-auto px-6">
+          <p className="text-center text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-6">Seguridad Garantizada por Estándares Globales</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-40 grayscale">
+            {/* Security Badges (Simulated with Icons/Text for now) */}
+            <div className="flex items-center gap-2"><Shield className="w-5 h-5" /> <span className="font-bold">AES-256</span></div>
+            <div className="flex items-center gap-2"><Lock className="w-5 h-5" /> <span className="font-bold">SOC2 Compliant</span></div>
+            <div className="flex items-center gap-2"><Globe className="w-5 h-5" /> <span className="font-bold">ISO 27001</span></div>
+            <div className="flex items-center gap-2"><Zap className="w-5 h-5" /> <span className="font-bold">Bank Grade</span></div>
+          </div>
+        </div>
+      </section>
 
       {/* Feature Section (PFM Focus) */}
       <section className="py-24 px-6 bg-white">
@@ -122,10 +102,9 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-            {/* Feature 1: Transactions */}
-            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+            {/* Feature 1 */}
+            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-white hover:bg-zinc-50/50 hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
                 <BarChart3 className="w-7 h-7 text-black stroke-1" />
               </div>
               <h3 className="text-xl font-bold mb-3">Control de Movimientos</h3>
@@ -134,9 +113,9 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Feature 2: Accounts */}
-            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+            {/* Feature 2 */}
+            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-white hover:bg-zinc-50/50 hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
                 <Wallet className="w-7 h-7 text-black stroke-1" />
               </div>
               <h3 className="text-xl font-bold mb-3">Cuentas Unificadas</h3>
@@ -145,9 +124,9 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Feature 3: Status */}
-            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+            {/* Feature 3 */}
+            <div className="group p-8 rounded-[32px] border border-zinc-100 bg-white hover:bg-zinc-50/50 hover:shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
                 <Activity className="w-7 h-7 text-black stroke-1" />
               </div>
               <h3 className="text-xl font-bold mb-3">Salud Financiera</h3>
@@ -155,7 +134,21 @@ export default function LandingPage() {
                 Diagnósticos en tiempo real y reportes visuales para entender tu patrimonio neto y mejorar tu futuro.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Editorial Testimonial */}
+      <section className="py-24 px-6 bg-zinc-900 text-white rounded-[40px] mx-4 lg:mx-8 mb-8 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-10"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-3xl md:text-5xl font-serif italic leading-tight mb-8 text-zinc-100">
+            "EcoFinz cambió radicalmente cómo entiendo mi flujo de caja. Es la herramienta que faltaba en mi arsenal financiero."
+          </h2>
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 bg-zinc-800 rounded-full mb-4 border-2 border-zinc-700"></div>
+            <p className="font-bold text-lg">Matias G.</p>
+            <p className="text-zinc-500 text-sm">CEO, TechStart</p>
           </div>
         </div>
       </section>

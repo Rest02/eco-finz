@@ -42,6 +42,7 @@
   --animate-fade-in: fadeIn 0.8s ease-out forwards;
   --animate-slide-up: slideUp 0.8s ease-out forwards;
   --animate-blob: blob 7s infinite;
+  --animate-float: float 6s ease-in-out infinite;
 
   @keyframes growUp {
     from {
@@ -73,6 +74,20 @@
     to {
       transform: translateY(0);
       opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+
+    100% {
+      transform: translateY(0px);
     }
   }
 
