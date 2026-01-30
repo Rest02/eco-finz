@@ -1,26 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "EcoFinz - Gestión Financiera Inteligente",
-  description: "Toma el control de tus finanzas personales con EcoFinz.",
+  title: "EcoFinz - Control Absoluto",
+  description: "Gestión financiera de precisión para profesionales.",
 };
 
 export default function RootLayout({
@@ -31,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} antialiased`}
+        className={`${geistMono.variable} antialiased`}
       >
         <Providers>
           {children}

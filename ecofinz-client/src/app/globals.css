@@ -1,24 +1,47 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=general-sans@400,500,600,700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #030303;
-  --foreground: #ededed;
+  --background: #FFFFFF;
+  --foreground: #09090B;
+  --font-satoshi: 'Satoshi', sans-serif;
+  --font-general: 'General Sans', sans-serif;
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui;
-  --font-mono: var(--font-geist-mono);
 
-  /* Custom Colors */
-  --color-dark-bg: #030303;
-  --color-dark-sidebar: #050505;
-  --color-glass-border: rgba(255, 255, 255, 0.05);
-  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  /* Typography */
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono, monospace);
+  --font-display: var(--font-satoshi);
+
+  /* Ultra-Clean Palette (Slate/Black) */
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-500: #64748B;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+
+  /* Semantic Colors */
+  --color-primary: var(--color-black);
+  --color-primary-foreground: var(--color-white);
+  --color-muted: var(--color-slate-500);
+  --color-muted-bg: var(--color-slate-50);
+  --color-border: var(--color-slate-200);
+
+  --color-card-bg: var(--color-white);
+  --color-card-border: var(--color-slate-200);
 
   /* Animations */
   --animate-grow-up: growUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-fade-in: fadeIn 0.8s ease-out forwards;
+  --animate-slide-up: slideUp 0.8s ease-out forwards;
+  --animate-blob: blob 7s infinite;
 
   @keyframes growUp {
     from {
@@ -30,27 +53,72 @@
       opacity: 1;
     }
   }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
 }
 
 @layer utilities {
   .glass-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   }
 
-  .glass-card-hover {
+  .clean-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
   }
 
-  .glass-card-hover:hover {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border-color: rgba(255, 255, 255, 0.1);
+  .clean-card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    /* Soft editorial shadow */
     transform: translateY(-2px);
   }
 
   .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -58,405 +126,28 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #262626;
-    border-radius: 4px;
+    background: #CBD5E1;
+    border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #404040;
+    background: #94A3B8;
   }
 
-  .bar-gradient {
-    background: linear-gradient(to top, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.8));
-  }
-
-  .bar-gradient-inactive {
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2));
+  .text-gradient-subtle {
+    background: linear-gradient(135deg, #0F172A 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-plus-jakarta-sans), sans-serif;
+  font-family: var(--font-satoshi), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ========== Monthly Summary Styles ========== */
-
-.monthly-summary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin: 24px 0;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-  color: white;
-}
-
-.summary-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.summary-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.date-selector {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.selector-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.selector-group label {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.date-select {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.date-select:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.date-select:focus {
-  outline: none;
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.7);
-}
-
-.date-select option {
-  background: #667eea;
-  color: white;
-}
-
-.summary-loading {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  margin: 0 auto 16px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.summary-empty {
-  text-align: center;
-  padding: 60px 20px;
-  font-size: 18px;
-  opacity: 0.8;
-}
-
-.summary-content {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-/* ========== Summary Totals Styles ========== */
-
-.summary-totals {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.total-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.total-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.card-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.income-card .card-icon {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.expense-card .card-icon {
-  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-}
-
-.balance-card.positive .card-icon {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.balance-card.negative .card-icon {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-
-.card-content {
-  flex: 1;
-}
-
-.card-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.card-amount {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-}
-
-/* ========== Category Summary List Styles ========== */
-
-.category-summary-list {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.category-summary-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 24px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.category-summary-empty {
-  text-align: center;
-  padding: 40px 20px;
-  font-size: 16px;
-  opacity: 0.8;
-}
-
-.category-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.category-summary-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.category-summary-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.category-summary-card.status-good {
-  border-color: rgba(56, 239, 125, 0.5);
-}
-
-.category-summary-card.status-warning {
-  border-color: rgba(254, 225, 64, 0.5);
-}
-
-.category-summary-card.status-danger {
-  border-color: rgba(235, 51, 73, 0.5);
-}
-
-.category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.category-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.category-status {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-.category-status.status-good {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.category-status.status-warning {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.category-status.status-danger {
-  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-}
-
-.category-amounts {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.amount-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-}
-
-.amount-label {
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-.amount-value {
-  font-weight: 700;
-}
-
-.amount-value.spent {
-  color: #ffd700;
-}
-
-.amount-value.positive {
-  color: #38ef7d;
-}
-
-.amount-value.negative {
-  color: #ff6b6b;
-}
-
-.progress-container {
-  margin-top: 12px;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.5s ease;
-}
-
-.progress-fill.status-good {
-  background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-}
-
-.progress-fill.status-warning {
-  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-}
-
-.progress-fill.status-danger {
-  background: linear-gradient(90deg, #eb3349 0%, #f45c43 100%);
-}
-
-.progress-text {
-  font-size: 12px;
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .monthly-summary {
-    padding: 20px;
-  }
-
-  .summary-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .date-selector {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .selector-group {
-    width: 100%;
-  }
-
-  .date-select {
-    flex: 1;
-  }
-
-  .summary-totals {
-    grid-template-columns: 1fr;
-  }
-
-  .category-summary-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Legacy Dashboard Dark Mode Override (Optional: Keep dashboard dark if requested later, but for now pivoting global) */
+/* We will let dashboard inherit light mode to match new brand, unless specific overrides are needed */
