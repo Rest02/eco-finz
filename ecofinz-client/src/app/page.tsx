@@ -138,17 +138,96 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Editorial Testimonial */}
-      <section className="py-24 px-6 bg-zinc-900 text-white rounded-[40px] mx-4 lg:mx-8 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-10"></div>
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-serif italic leading-tight mb-8 text-zinc-100">
-            "EcoFinz cambió radicalmente cómo entiendo mi flujo de caja. Es la herramienta que faltaba en mi arsenal financiero."
-          </h2>
-          <div className="flex flex-col items-center">
-            <div className="w-16 h-16 bg-zinc-800 rounded-full mb-4 border-2 border-zinc-700"></div>
-            <p className="font-bold text-lg">Matias G.</p>
-            <p className="text-zinc-500 text-sm">CEO, TechStart</p>
+      {/* Testimonials Section */}
+      <section className="py-24 px-6 bg-zinc-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16 px-4">
+            <div className="flex justify-center lg:justify-start">
+              <img
+                src="/notion-testimonials-v2.png"
+                alt="EcoFinz Community Illustration"
+                className="w-full max-w-[500px] object-contain mix-blend-multiply"
+              />
+            </div>
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                Lo que dicen quienes <br /> ya confían en <span className="text-zinc-400">EcoFinz.</span>
+              </h2>
+              <p className="text-zinc-500 text-lg leading-relaxed max-w-md">
+                Únete a miles de personas que están transformando su relación con el dinero a través de una gestión inteligente y visual.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="clean-card p-10 flex flex-col justify-between h-full group animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <div>
+                <div className="flex gap-1 mb-8 text-black">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Zap key={s} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-zinc-600 text-lg leading-relaxed italic mb-8">
+                  "EcoFinz cambió radicalmente cómo entiendo mi flujo de caja. Es la herramienta que faltaba en mi arsenal financiero."
+                </p>
+              </div>
+              <div className="flex items-center gap-4 border-t border-zinc-100 pt-8">
+                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-bold text-zinc-400 border border-zinc-200">
+                  MG
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900">Matias G.</p>
+                  <p className="text-xs text-zinc-500 font-medium">CEO, TechStart</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="clean-card p-10 flex flex-col justify-between h-full group animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div>
+                <div className="flex gap-1 mb-8 text-black">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Zap key={s} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-zinc-600 text-lg leading-relaxed italic mb-8">
+                  "La simplicidad del diseño y la rapidez para registrar gastos es lo que más valoro. Por fin tengo un ahorro real."
+                </p>
+              </div>
+              <div className="flex items-center gap-4 border-t border-zinc-100 pt-8">
+                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-bold text-zinc-400 border border-zinc-200">
+                  LR
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900">Lucía R.</p>
+                  <p className="text-xs text-zinc-500 font-medium">Product Manager</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="clean-card p-10 flex flex-col justify-between h-full group animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              <div>
+                <div className="flex gap-1 mb-8 text-black">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Zap key={s} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-zinc-600 text-lg leading-relaxed italic mb-8">
+                  "Visualizar mis metas financieras me motiva a seguir adelante. Una experiencia de usuario impecable y profesional."
+                </p>
+              </div>
+              <div className="flex items-center gap-4 border-t border-zinc-100 pt-8">
+                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-bold text-zinc-400 border border-zinc-200">
+                  CM
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900">Carlos M.</p>
+                  <p className="text-xs text-zinc-500 font-medium">Freelance Designer</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
