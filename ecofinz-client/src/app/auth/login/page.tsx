@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-      router.push('/home');
+      router.push('/finance/dashboard');
     } catch (error) {
       console.error('Failed to login', error);
     }
