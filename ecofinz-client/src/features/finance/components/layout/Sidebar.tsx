@@ -16,8 +16,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-    { icon: Home, href: "/home", label: "Dashboard" },
-    { icon: BarChart2, href: "/finance/dashboard", label: "Estadísticas" },
+    { icon: Home, href: "/finance/dashboard", label: "Dashboard" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
     { icon: Calendar, href: "/finance/calendar", label: "Calendario" },
     { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
