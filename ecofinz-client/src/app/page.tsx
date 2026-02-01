@@ -10,9 +10,7 @@ export default function LandingPage() {
         <div className="bg-white/90 backdrop-blur-md border border-zinc-200/80 rounded-full px-6 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between">
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold text-sm">
-              E
-            </div>
+            <img src="/logo.png" alt="EcoFinz Logo" className="w-8 h-8 object-contain" />
             <span className="font-bold text-lg tracking-tight">EcoFinz</span>
           </div>
 
@@ -351,9 +349,7 @@ export default function LandingPage() {
               {/* Brand Section */}
               <div className="lg:col-span-4 space-y-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white font-bold text-lg">
-                    E
-                  </div>
+                  <img src="/logo.png" alt="EcoFinz Logo" className="w-10 h-10 object-contain" />
                   <span className="font-bold text-2xl tracking-tight">EcoFinz</span>
                 </div>
                 <p className="text-zinc-500 leading-relaxed max-w-sm">
