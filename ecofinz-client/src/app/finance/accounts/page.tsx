@@ -40,7 +40,7 @@ export default function AccountsPage() {
     return (
         <>
             <BackgroundAurora />
-            <div className="p-6 lg:p-10 space-y-8 animate-fade-in relative min-h-full">
+            <div className="p-4 lg:p-10 space-y-6 lg:space-y-8 animate-fade-in relative min-h-full">
                 {/* Page Header & Stats */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -64,7 +64,7 @@ export default function AccountsPage() {
                     </div>
 
                     {/* Total Balance Card */}
-                    <div className="clean-card p-8 flex flex-col justify-between h-full bg-white/20 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-2xl hover:shadow-md transition-shadow" style={{ backdropFilter: 'blur(5px)' }}>
+                    <div className="clean-card p-6 lg:p-8 flex flex-col justify-between h-full bg-white/20 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-2xl hover:shadow-md transition-shadow" style={{ backdropFilter: 'blur(5px)' }}>
                         <div className="flex justify-between items-start">
                             <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
                                 <TrendingUp className="w-6 h-6 text-black stroke-1" />
@@ -88,17 +88,17 @@ export default function AccountsPage() {
                 </div>
 
                 {/* Main Content Layout */}
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-start">
 
                     {/* Account List (Left Side) */}
-                    <div className="xl:col-span-8 space-y-6 order-2 xl:order-1">
+                    <div className="xl:col-span-8 space-y-6">
                         {isLoading ? (
                             <div className="rounded-[32px] border border-zinc-100 bg-zinc-50 p-20 flex flex-col items-center justify-center gap-4 min-h-[400px]">
                                 <div className="w-10 h-10 border-4 border-zinc-200 border-t-black rounded-full animate-spin" />
                                 <p className="text-zinc-400 font-medium animate-pulse">Sincronizando activos...</p>
                             </div>
                         ) : (
-                            <div className="clean-card rounded-[32px] border border-white/30 bg-white/20 p-2 md:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
+                            <div className="clean-card rounded-[32px] border border-white/30 bg-white/20 p-5 md:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
                                 <AccountList
                                     accounts={accounts}
                                     onAccountDeleted={handleDelete}
@@ -124,7 +124,7 @@ export default function AccountsPage() {
                     </div>
 
                     {/* Account Form (Right Sticky Side) */}
-                    <div className="xl:col-span-4 xl:sticky xl:top-6 order-1 xl:order-2 space-y-6">
+                    <div className="xl:col-span-4 xl:sticky xl:top-6 space-y-6">
                         <div className="clean-card p-6 border border-white/30 bg-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-[32px]" style={{ backdropFilter: 'blur(5px)' }}>
                             <AccountForm
                                 isEditMode={!!editingAccount}

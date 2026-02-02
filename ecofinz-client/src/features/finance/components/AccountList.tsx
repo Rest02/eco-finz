@@ -51,9 +51,9 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-black">Mis Cuentas</h2>
-        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-500">
+      <div className="flex items-center justify-between mb-6 px-1">
+        <h2 className="text-2xl md:text-3xl font-bold text-black tracking-tight">Mis Cuentas</h2>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-500 uppercase tracking-wider">
           {accounts.length} {accounts.length === 1 ? 'cuenta' : 'cuentas'}
         </span>
       </div>
