@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
     Home,
@@ -27,10 +28,18 @@ export const Sidebar = () => {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 lg:w-24 border-r border-white/5 bg-dark-sidebar flex flex-col items-center py-8 z-20 flex-shrink-0 h-screen sticky top-0">
+        <aside className="w-20 lg:w-24 border-r border-zinc-200 bg-white flex flex-col items-center py-8 z-20 flex-shrink-0 h-screen sticky top-0">
             {/* Brand Icon */}
-            <div className="mb-12 p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-900/10 border border-emerald-500/20 text-emerald-400">
-                <Activity className="w-6 h-6" />
+            <div className="mb-12">
+                <div className="relative w-12 h-12">
+                    <Image
+                        src="/logo.png"
+                        alt="EcoFinz Logo"
+                        fill
+                        className="object-contain"
+                        priority
+                    />
+                </div>
             </div>
 
             {/* Nav Items */}
@@ -42,14 +51,16 @@ export const Sidebar = () => {
                             key={item.href}
                             href={item.href}
                             className={`group relative p-3 rounded-xl transition-all ${isActive
-                                ? "text-white bg-white/10"
-                                : "text-neutral-500 hover:text-white hover:bg-white/5"
+                                ? "bg-black text-white shadow-md"
+                                : "text-zinc-400 hover:text-black hover:bg-zinc-100"
                                 }`}
                         >
                             <item.icon className="w-6 h-6 stroke-[1.5]" />
-                            {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-emerald-500 rounded-r-full -ml-[18px]" />
-                            )}
+                            {/* Removed the side marker for a cleaner button look, 
+                                but if needed for 'active' indication outside of bg color, 
+                                we can re-add or adjust. 
+                                The 'bg-black text-white' is a storing enough indicator per brand guide. 
+                            */}
                         </Link>
                     );
                 })}
@@ -59,12 +70,12 @@ export const Sidebar = () => {
             <div className="mt-auto flex flex-col gap-6">
                 <Link
                     href="/finance/settings"
-                    className="group p-3 rounded-xl text-neutral-500 hover:text-white hover:bg-white/5 transition-all"
+                    className="group p-3 rounded-xl text-zinc-400 hover:text-black hover:bg-zinc-100 transition-all"
                 >
                     <Settings className="w-6 h-6 stroke-[1.5]" />
                 </Link>
                 <button
-                    className="group p-3 rounded-xl text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="group p-3 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-all"
                     onClick={() => {/* Implement logout logic */ }}
                 >
                     <LogOut className="w-6 h-6 stroke-[1.5]" />
