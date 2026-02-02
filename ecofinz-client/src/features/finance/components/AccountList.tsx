@@ -62,7 +62,8 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="group relative bg-white border border-zinc-200 rounded-[24px] p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-zinc-300"
+            className="group relative bg-white/20 border border-white/30 rounded-2xl p-6 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] transition-all duration-300 hover:-translate-y-1"
+            style={{ backdropFilter: 'blur(5px)' }} // Ensuring cross-browser compatibility specifically if using older tailwind versions or just to be safe with the snippet
           >
             {/* Options Icon */}
             <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">

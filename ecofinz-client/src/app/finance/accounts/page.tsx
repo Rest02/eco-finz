@@ -7,6 +7,8 @@ import { useAccounts, useDeleteAccount } from "@/features/finance/hooks/useAccou
 import { Account } from "@/features/finance/types/finance";
 import { Wallet, Info, ArrowUpRight, TrendingUp, ShieldCheck } from "lucide-react";
 
+import { BackgroundAurora } from "@/features/ui/BackgroundAurora";
+
 export default function AccountsPage() {
     const { data: accounts = [], isLoading } = useAccounts();
     const deleteAccountMutation = useDeleteAccount();
@@ -36,7 +38,8 @@ export default function AccountsPage() {
     const totalBalance = accounts.reduce((acc, account) => acc + Number(account.balance), 0);
 
     return (
-        <div className="p-6 lg:p-10 space-y-8 animate-fade-in bg-white min-h-full">
+        <div className="p-6 lg:p-10 space-y-8 animate-fade-in relative min-h-full">
+            <BackgroundAurora />
             {/* Page Header & Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -60,7 +63,7 @@ export default function AccountsPage() {
                 </div>
 
                 {/* Total Balance Card */}
-                <div className="clean-card p-8 flex flex-col justify-between h-full bg-white border border-black shadow-sm rounded-[32px] hover:shadow-md transition-shadow">
+                <div className="clean-card p-8 flex flex-col justify-between h-full bg-white/20 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-2xl hover:shadow-md transition-shadow" style={{ backdropFilter: 'blur(5px)' }}>
                     <div className="flex justify-between items-start">
                         <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
                             <TrendingUp className="w-6 h-6 text-black stroke-1" />
@@ -94,7 +97,7 @@ export default function AccountsPage() {
                             <p className="text-zinc-400 font-medium animate-pulse">Sincronizando activos...</p>
                         </div>
                     ) : (
-                        <div className="rounded-[32px] border border-zinc-200 bg-white p-2 md:p-8 shadow-sm">
+                        <div className="clean-card rounded-[32px] border border-white/30 bg-white/20 p-2 md:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
                             <AccountList
                                 accounts={accounts}
                                 onAccountDeleted={handleDelete}
@@ -121,7 +124,7 @@ export default function AccountsPage() {
 
                 {/* Account Form (Right Sticky Side) */}
                 <div className="xl:col-span-4 xl:sticky xl:top-6 order-1 xl:order-2 space-y-6">
-                    <div className="clean-card p-6 border border-zinc-200 bg-white shadow-lg shadow-zinc-200/50 rounded-[32px]">
+                    <div className="clean-card p-6 border border-white/30 bg-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-[32px]" style={{ backdropFilter: 'blur(5px)' }}>
                         <AccountForm
                             isEditMode={!!editingAccount}
                             initialData={editingAccount || undefined}
