@@ -6,11 +6,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
     Home,
-    BarChart2,
     Wallet,
     Settings,
     LogOut,
-    Activity,
     Target,
     LayoutGrid,
     Calendar,
@@ -28,57 +26,57 @@ export const Sidebar = () => {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 lg:w-24 border-r border-zinc-200 bg-white flex flex-col items-center py-8 z-20 flex-shrink-0 h-screen sticky top-0">
+        <aside className="hidden lg:flex flex-col items-center py-8 z-50 flex-shrink-0 h-[calc(100vh-2rem)] sticky top-4 ml-4 my-4 w-24 rounded-[32px] bg-white/60 backdrop-blur-2xl border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
             {/* Brand Icon */}
-            <div className="mb-12">
-                <div className="relative w-12 h-12">
+            <div className="mb-10">
+                <div className="relative w-11 h-11 transition-transform duration-500 hover:scale-110">
                     <Image
                         src="/logo.png"
                         alt="EcoFinz Logo"
                         fill
-                        className="object-contain"
+                        className="object-contain drop-shadow-sm"
                         priority
                     />
                 </div>
             </div>
 
             {/* Nav Items */}
-            <nav className="flex flex-col gap-8 w-full items-center">
+            <nav className="flex flex-col gap-5 w-full items-center px-4">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`group relative p-3 rounded-xl transition-all ${isActive
-                                ? "bg-black text-white shadow-md"
-                                : "text-zinc-400 hover:text-black hover:bg-zinc-100"
+                            className={`group relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 ease-out ${isActive
+                                ? "bg-black text-white shadow-lg shadow-black/20 scale-105"
+                                : "text-zinc-500 hover:text-black hover:bg-white/80"
                                 }`}
                         >
-                            <item.icon className="w-6 h-6 stroke-[1.5]" />
-                            {/* Removed the side marker for a cleaner button look, 
-                                but if needed for 'active' indication outside of bg color, 
-                                we can re-add or adjust. 
-                                The 'bg-black text-white' is a storing enough indicator per brand guide. 
-                            */}
+                            <item.icon className="w-5 h-5 stroke-[1.5] transition-transform duration-300 group-hover:scale-110" />
+
+                            {/* Active Indicator Hover Effect */}
+                            {!isActive && (
+                                <div className="absolute inset-0 rounded-2xl bg-white/0 group-hover:bg-white/50 transition-colors pointer-events-none" />
+                            )}
                         </Link>
                     );
                 })}
             </nav>
 
             {/* Bottom Actions */}
-            <div className="mt-auto flex flex-col gap-6">
+            <div className="mt-auto flex flex-col gap-4 px-4 pb-2">
                 <Link
                     href="/finance/settings"
-                    className="group p-3 rounded-xl text-zinc-400 hover:text-black hover:bg-zinc-100 transition-all"
+                    className="group flex items-center justify-center w-12 h-12 rounded-2xl text-zinc-400 hover:text-black hover:bg-white/80 transition-all duration-300"
                 >
-                    <Settings className="w-6 h-6 stroke-[1.5]" />
+                    <Settings className="w-5 h-5 stroke-[1.5] transition-transform group-hover:rotate-90" />
                 </Link>
                 <button
-                    className="group p-3 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                    className="group flex items-center justify-center w-12 h-12 rounded-2xl text-zinc-400 hover:text-red-500 hover:bg-red-50/80 transition-all duration-300"
                     onClick={() => {/* Implement logout logic */ }}
                 >
-                    <LogOut className="w-6 h-6 stroke-[1.5]" />
+                    <LogOut className="w-5 h-5 stroke-[1.5]" />
                 </button>
             </div>
         </aside>
