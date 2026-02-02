@@ -102,7 +102,7 @@ const AccountForm: React.FC<Props> = ({
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Mi Billetera, Banco Galicia..."
             required
-            className="w-full bg-white border border-black rounded-xl px-4 py-3 text-black placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-zinc-400 transition-all"
           />
         </div>
 
@@ -115,7 +115,7 @@ const AccountForm: React.FC<Props> = ({
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as AccountType)}
-              className="w-full bg-white border border-black rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all appearance-none cursor-pointer"
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-zinc-400 transition-all appearance-none cursor-pointer"
             >
               {accountTypes.map(t => (
                 <option key={t.value} value={t.value} className="bg-white text-black">
@@ -143,7 +143,7 @@ const AccountForm: React.FC<Props> = ({
               }}
               required
               disabled={isEditMode}
-              className={`w-full bg-white border border-black rounded-xl pl-8 pr-4 py-3 text-black focus:outline-none transition-all ${isEditMode ? "opacity-50 cursor-not-allowed bg-zinc-50" : "focus:ring-2 focus:ring-black/5 focus:border-black"
+              className={`w-full bg-white border border-zinc-200 rounded-xl pl-8 pr-4 py-3 text-black focus:outline-none transition-all ${isEditMode ? "opacity-50 cursor-not-allowed bg-zinc-50" : "focus:ring-2 focus:ring-black/5 focus:border-zinc-400"
                 }`}
             />
           </div>

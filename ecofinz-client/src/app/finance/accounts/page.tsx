@@ -60,7 +60,7 @@ export default function AccountsPage() {
                 </div>
 
                 {/* Total Balance Card */}
-                <div className="clean-card p-8 flex flex-col justify-between h-full bg-white border border-zinc-200 shadow-sm rounded-[32px] hover:shadow-md transition-shadow">
+                <div className="clean-card p-8 flex flex-col justify-between h-full bg-white border border-black shadow-sm rounded-[32px] hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start">
                         <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
                             <TrendingUp className="w-6 h-6 text-black stroke-1" />
@@ -76,7 +76,7 @@ export default function AccountsPage() {
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl font-semibold text-zinc-400">$</span>
                             <span className="text-5xl md:text-6xl font-black tracking-tighter text-black">
-                                {totalBalance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                {totalBalance.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                             </span>
                         </div>
                     </div>
