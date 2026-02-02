@@ -75,16 +75,16 @@ const AccountForm: React.FC<Props> = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-2">
-        <div className={`p-2 rounded-lg ${isEditMode ? "bg-amber-500/10 text-amber-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+        <div className={`p-2 rounded-lg ${isEditMode ? "bg-zinc-100 text-black" : "bg-zinc-100 text-black"}`}>
           {isEditMode ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
-        <h2 className="text-xl font-semibold text-white">
+        <h2 className="text-xl font-bold text-black">
           {isEditMode ? "Editar Cuenta" : "Nueva Cuenta"}
         </h2>
       </div>
 
       {error && (
-        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm animate-in fade-in zoom-in duration-300">
+        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm animate-in fade-in zoom-in duration-300">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <p>{error}</p>
         </div>
@@ -92,7 +92,7 @@ const AccountForm: React.FC<Props> = ({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium text-neutral-400 ml-1">
+          <label htmlFor="name" className="text-sm font-semibold text-zinc-700 ml-1">
             Nombre de la Cuenta
           </label>
           <input
@@ -102,12 +102,12 @@ const AccountForm: React.FC<Props> = ({
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Mi Billetera, Banco Galicia..."
             required
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-zinc-400 transition-all"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="type" className="text-sm font-medium text-neutral-400 ml-1">
+          <label htmlFor="type" className="text-sm font-semibold text-zinc-700 ml-1">
             Tipo de Cuenta
           </label>
           <div className="grid grid-cols-1 gap-2">
@@ -115,10 +115,10 @@ const AccountForm: React.FC<Props> = ({
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as AccountType)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all appearance-none cursor-pointer"
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-zinc-400 transition-all appearance-none cursor-pointer"
             >
               {accountTypes.map(t => (
-                <option key={t.value} value={t.value} className="bg-neutral-900 text-white">
+                <option key={t.value} value={t.value} className="bg-white text-black">
                   {t.label}
                 </option>
               ))}
@@ -127,11 +127,11 @@ const AccountForm: React.FC<Props> = ({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="balance" className="text-sm font-medium text-neutral-400 ml-1">
+          <label htmlFor="balance" className="text-sm font-semibold text-zinc-700 ml-1">
             {isEditMode ? "Balance Actual" : "Balance Inicial"}
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-semibold">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold">$</span>
             <input
               id="balance"
               type="number"
@@ -143,12 +143,12 @@ const AccountForm: React.FC<Props> = ({
               }}
               required
               disabled={isEditMode}
-              className={`w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white focus:outline-none transition-all ${isEditMode ? "opacity-50 cursor-not-allowed" : "focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className={`w-full bg-white border border-zinc-200 rounded-xl pl-8 pr-4 py-3 text-black focus:outline-none transition-all ${isEditMode ? "opacity-50 cursor-not-allowed bg-zinc-50" : "focus:ring-2 focus:ring-black/5 focus:border-zinc-400"
                 }`}
             />
           </div>
           {isEditMode && (
-            <p className="flex items-center gap-1.5 text-[10px] text-neutral-500 mt-1 ml-1">
+            <p className="flex items-center gap-1.5 text-[10px] text-zinc-500 mt-1 ml-1">
               <Info className="w-3 h-3" />
               El balance se ajusta automáticamente mediante transacciones.
             </p>
@@ -159,11 +159,9 @@ const AccountForm: React.FC<Props> = ({
           <button
             type="submit"
             disabled={isLoading}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-300 backdrop-blur-md ${isLoading
-              ? "bg-neutral-800/50 text-neutral-500 cursor-not-allowed"
-              : isEditMode
-                ? "bg-amber-500/80 hover:bg-amber-500 text-white border border-amber-400/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-                : "bg-emerald-500/80 hover:bg-emerald-500 text-white border border-emerald-400/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full font-bold transition-all duration-300 ${isLoading
+              ? "bg-zinc-100 text-zinc-400 cursor-not-allowed"
+              : "bg-black text-white hover:bg-zinc-800 shadow-md hover:shadow-lg hover:scale-[1.02]"
               }`}
           >
             {isLoading ? (
@@ -185,7 +183,7 @@ const AccountForm: React.FC<Props> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all font-medium backdrop-blur-md"
+              className="px-5 rounded-full border border-zinc-200 text-black hover:bg-zinc-50 transition-all font-medium"
             >
               <X className="w-5 h-5" />
             </button>
