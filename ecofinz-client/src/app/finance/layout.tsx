@@ -32,7 +32,7 @@ export default function FinanceLayout({
 
   return (
     <ProtectedRoute>
-      <div className="flex h-screen w-full bg-dark-bg text-neutral-300 overflow-hidden">
+      <div className="flex h-screen w-full bg-zinc-50 text-zinc-900 overflow-hidden">
         {/* Navegación Izquierda */}
         <Sidebar />
 
@@ -53,7 +53,7 @@ export default function FinanceLayout({
               {/* Toggle Button - Border between content and panel */}
               <button
                 onClick={() => setIsRightPanelCollapsed(!isRightPanelCollapsed)}
-                className={`absolute bottom-6 -left-6 z-50 p-2 rounded-lg bg-dark-sidebar border border-white/10 text-neutral-500 hover:text-emerald-400 transition-all backdrop-blur-md shadow-xl ${isRightPanelCollapsed ? "translate-x-0" : ""}`}
+                className={`absolute bottom-6 -left-6 z-50 p-2 rounded-lg bg-white border border-zinc-200 text-zinc-400 hover:text-black transition-all shadow-md ${isRightPanelCollapsed ? "translate-x-0" : ""}`}
                 title={isRightPanelCollapsed ? "Mostrar panel" : "Ocultar panel"}
               >
                 {isRightPanelCollapsed ? <PanelRightOpen className="w-4 h-4" /> : <PanelRightClose className="w-4 h-4" />}
