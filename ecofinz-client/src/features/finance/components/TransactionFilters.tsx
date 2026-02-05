@@ -89,7 +89,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                 </div>
 
                 {/* Start Date */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 overflow-hidden">
                     <label className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-tighter ml-1">
                         <Calendar className="w-3 h-3" /> Desde
                     </label>
@@ -98,12 +98,12 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="startDate"
                         value={filters.startDate}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                        className="w-full max-w-full min-w-0 bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                     />
                 </div>
 
                 {/* End Date */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 overflow-hidden">
                     <label className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-tighter ml-1">
                         <Calendar className="w-3 h-3" /> Hasta
                     </label>
@@ -112,7 +112,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="endDate"
                         value={filters.endDate}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                        className="w-full max-w-full min-w-0 bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                     />
                 </div>
             </div>

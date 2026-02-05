@@ -321,7 +321,7 @@ const TransactionForm: React.FC<Props> = ({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
-              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="w-full max-w-full min-w-0 bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
             />
           </div>
         </div>
