@@ -88,8 +88,8 @@ export default function AccountDetailPage() {
 
   if (!account) {
     return (
-      <div className="p-8 text-center text-neutral-500">
-        Cuenta no encontrada. <Link href="/finance/accounts" className="text-emerald-400">Volver</Link>
+      <div className="p-8 text-center text-zinc-500">
+        Cuenta no encontrada. <Link href="/finance/accounts" className="text-emerald-500 font-bold">Volver</Link>
       </div>
     );
   }
@@ -102,7 +102,7 @@ export default function AccountDetailPage() {
         <div className="space-y-4">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors group"
+            className="flex items-center gap-2 text-zinc-500 hover:text-black transition-colors group"
           >
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-bold uppercase tracking-widest">Volver a Cuentas</span>
@@ -113,34 +113,35 @@ export default function AccountDetailPage() {
               {getAccountIcon(account.type)}
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic">
+              <h1 className="text-3xl md:text-4xl font-black text-black tracking-tighter uppercase italic">
                 {account.name}
               </h1>
-              <p className="text-neutral-500 text-sm font-medium tracking-widest uppercase">
+              <p className="text-zinc-500 text-sm font-medium tracking-widest uppercase">
                 Detalle de Movimientos
               </p>
             </div>
           </div>
         </div>
 
-        {/* Account Balance Card (Redesigned StatCard Style) */}
-        <div className="group relative glass-card p-6 md:p-8 rounded-3xl min-w-[280px] overflow-hidden transition-all duration-300">
-          <p className="text-xs font-semibold text-emerald-400/60 uppercase tracking-widest mb-1 relative z-10">Balance Disponible</p>
+        {/* Account Balance Card (Redesigned StatCard Style - Light Mode) */}
+        <div className="group relative bg-white/20 border border-white/30 p-6 md:p-8 rounded-3xl min-w-[280px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+          style={{ backdropFilter: 'blur(5px)' }}>
+          <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-1 relative z-10">Balance Disponible</p>
 
           <div className="flex items-baseline gap-2 relative z-10">
-            <span className="text-emerald-500 text-2xl font-bold">$</span>
-            <span className="text-4xl font-black text-white tracking-tighter">
+            <span className="text-emerald-600 text-2xl font-bold">$</span>
+            <span className="text-4xl font-black text-black tracking-tighter">
               {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-emerald-400/30 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
+          <div className="flex items-center gap-1.5 text-emerald-600/60 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
             <ArrowUpRight className="w-3 h-3" />
             Actualizado en tiempo real
           </div>
 
-          {/* Glow effect based on account color */}
-          <div className={`absolute -bottom-6 -right-6 w-32 h-32 blur-[50px] rounded-full opacity-20 group-hover:opacity-40 transition-opacity ${account.type === 'BANCO' ? 'bg-blue-500' :
+          {/* Glow effect based on account color - adjusted for light mode visibility */}
+          <div className={`absolute -bottom-6 -right-6 w-32 h-32 blur-[50px] rounded-full opacity-10 group-hover:opacity-20 transition-opacity ${account.type === 'BANCO' ? 'bg-blue-500' :
             account.type === 'BILLETERA_DIGITAL' ? 'bg-emerald-500' :
               account.type === 'EFECTIVO' ? 'bg-amber-500' :
                 'bg-purple-500'
@@ -154,10 +155,10 @@ export default function AccountDetailPage() {
         <div className="xl:col-span-2 space-y-6">
           <TransactionFilters onFilterChange={setFilterValues} />
 
-          <div className="glass-card bg-white/[0.01] p-6 rounded-[2rem] border border-white/5 backdrop-blur-sm">
+          <div className="bg-white/20 border border-white/30 p-6 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
             <div className="flex items-center gap-3 mb-6">
-              <History className="w-5 h-5 text-neutral-600" />
-              <h2 className="text-lg font-bold text-white/90 uppercase tracking-widest">
+              <History className="w-5 h-5 text-zinc-600" />
+              <h2 className="text-lg font-bold text-black uppercase tracking-widest">
                 Historial de Movimientos
               </h2>
             </div>
@@ -165,7 +166,7 @@ export default function AccountDetailPage() {
             {isLoadingTransactions ? (
               <div className="py-20 flex flex-col items-center gap-4">
                 <div className="w-10 h-10 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                <p className="text-neutral-600 text-sm animate-pulse">Obteniendo transacciones...</p>
+                <p className="text-zinc-600 text-sm animate-pulse">Obteniendo transacciones...</p>
               </div>
             ) : (
               <TransactionList
@@ -179,8 +180,8 @@ export default function AccountDetailPage() {
 
         {/* Sidebar Section (Form) */}
         <div className="xl:sticky xl:top-8">
-          <div className="glass-card p-8 rounded-[2rem] border border-white/5 bg-white/[0.03] shadow-2xl backdrop-blur-xl">
-            <div className="flex items-center gap-3 mb-6 text-neutral-400">
+          <div className="bg-white/20 border border-white/30 p-8 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
+            <div className="flex items-center gap-3 mb-6 text-zinc-500">
               <PlusCircle className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-widest">Registrar Acción</span>
             </div>
@@ -195,9 +196,9 @@ export default function AccountDetailPage() {
           </div>
 
           {/* Hint Card */}
-          <div className="mt-4 p-5 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent border border-white/5">
-            <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-black mb-1">Dato Útil</p>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+          <div className="mt-4 p-5 rounded-2xl bg-zinc-50 border border-zinc-200">
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-black mb-1">Dato Útil</p>
+            <p className="text-xs text-zinc-500 leading-relaxed">
               Registrar tus gastos e ingresos diariamente te ayuda a tener un control total de tu economía <b>¡No dejes pasar ninguno!</b>
             </p>
           </div>
