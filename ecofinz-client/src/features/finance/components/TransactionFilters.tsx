@@ -62,7 +62,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="type"
                         value={filters.type}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
+                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
                     >
                         <option value="" className="text-zinc-400">Todos los tipos</option>
                         <option value="INGRESO">Ingresos</option>
@@ -79,7 +79,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="categoryId"
                         value={filters.categoryId}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
+                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
                     >
                         <option value="" className="text-zinc-400">Cualquier categoría</option>
                         {categories.map(cat => (
@@ -98,7 +98,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="startDate"
                         value={filters.startDate}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                     />
                 </div>
 
@@ -112,7 +112,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         name="endDate"
                         value={filters.endDate}
                         onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                     />
                 </div>
             </div>

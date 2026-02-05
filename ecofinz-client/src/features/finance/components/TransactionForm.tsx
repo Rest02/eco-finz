@@ -239,7 +239,7 @@ const TransactionForm: React.FC<Props> = ({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Ej. Alquiler, Sueldo, Comida..."
             required
-            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
+            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
           />
         </div>
 
@@ -254,7 +254,7 @@ const TransactionForm: React.FC<Props> = ({
                 value={selectedAccountId}
                 onChange={(e) => setSelectedAccountId(e.target.value)}
                 required
-                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
               >
                 <option value="" className="text-zinc-400">Seleccionar cuenta</option>
                 {accounts.map(acc => (
@@ -275,7 +275,7 @@ const TransactionForm: React.FC<Props> = ({
                 value={destinationAccountId}
                 onChange={(e) => setDestinationAccountId(e.target.value)}
                 required={type === 'AHORRO'}
-                className="w-full bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                className="w-full bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
               >
                 <option value="" className="text-zinc-400">Seleccionar destino</option>
                 {accounts
@@ -299,7 +299,7 @@ const TransactionForm: React.FC<Props> = ({
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               required
-              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
             >
               <option value="" className="text-zinc-400">¿Categoría?</option>
               {categories
@@ -321,7 +321,7 @@ const TransactionForm: React.FC<Props> = ({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
-              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
             />
           </div>
         </div>
@@ -335,7 +335,7 @@ const TransactionForm: React.FC<Props> = ({
             <select
               value={budgetId}
               onChange={(e) => setBudgetId(e.target.value)}
-              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
             >
               <option value="">Sin presupuesto</option>
               {availableBudgets.map(b => (
