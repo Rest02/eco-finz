@@ -38,13 +38,8 @@ const getAccountIcon = (type: AccountType) => {
 };
 
 const getAccountColor = (type: AccountType) => {
-  switch (type) {
-    case "BANCO": return "bg-blue-500/20 text-blue-400 glow-blue-500";
-    case "BILLETERA_DIGITAL": return "bg-emerald-500/20 text-emerald-400 glow-emerald-500";
-    case "EFECTIVO": return "bg-amber-500/20 text-amber-400 glow-amber-500";
-    case "TARJETA_CREDITO": return "bg-purple-500/20 text-purple-400 glow-purple-500";
-    default: return "bg-neutral-500/20 text-neutral-400 glow-neutral-500";
-  }
+  // Ultra-Clean Neutral Style (Matches AccountList)
+  return "bg-zinc-100 border border-zinc-200 text-black";
 };
 
 export default function AccountDetailPage() {
@@ -95,7 +90,7 @@ export default function AccountDetailPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-8">
+    <div className="p-4 lg:p-10 space-y-8 min-h-full animate-fade-in">
 
       {/* Header & Back Button */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -109,14 +104,14 @@ export default function AccountDetailPage() {
           </button>
 
           <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${getAccountColor(account.type).split(' glow-')[0]}`}>
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${getAccountColor(account.type)}`}>
               {getAccountIcon(account.type)}
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-black tracking-tighter uppercase italic">
+              <h1 className="text-3xl md:text-4xl font-bold text-black tracking-tight">
                 {account.name}
               </h1>
-              <p className="text-zinc-500 text-sm font-medium tracking-widest uppercase">
+              <p className="text-zinc-500 text-sm font-medium tracking-wide">
                 Detalle de Movimientos
               </p>
             </div>
@@ -124,28 +119,24 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Account Balance Card (Redesigned StatCard Style - Light Mode) */}
-        <div className="group relative bg-white/20 border border-white/30 p-6 md:p-8 rounded-3xl min-w-[280px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+        <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
           style={{ backdropFilter: 'blur(5px)' }}>
           <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-1 relative z-10">Balance Disponible</p>
 
           <div className="flex items-baseline gap-2 relative z-10">
-            <span className="text-emerald-600 text-2xl font-bold">$</span>
-            <span className="text-4xl font-black text-black tracking-tighter">
-              {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+            <span className="text-zinc-400 text-2xl font-bold">$</span>
+            <span className="text-4xl font-bold text-black tracking-tight">
+              {Number(account.balance).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-emerald-600/60 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
+          <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
             <ArrowUpRight className="w-3 h-3" />
             Actualizado en tiempo real
           </div>
 
-          {/* Glow effect based on account color - adjusted for light mode visibility */}
-          <div className={`absolute -bottom-6 -right-6 w-32 h-32 blur-[50px] rounded-full opacity-10 group-hover:opacity-20 transition-opacity ${account.type === 'BANCO' ? 'bg-blue-500' :
-            account.type === 'BILLETERA_DIGITAL' ? 'bg-emerald-500' :
-              account.type === 'EFECTIVO' ? 'bg-amber-500' :
-                'bg-purple-500'
-            }`} />
+          {/* Subtle shine effect instead of colored glow */}
+          <div className="absolute top-0 right-0 p-12 bg-white/40 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         </div>
       </div>
 

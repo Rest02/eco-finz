@@ -90,11 +90,11 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) =>
                   : tx.type === 'AHORRO' ? 'text-blue-600'
                     : 'text-violet-600'
                 }`}>
-                {tx.isInflow ? '+' : '-'}${Math.abs(tx.amount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                {tx.isInflow ? '+' : '-'}${Math.abs(tx.amount).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
               </div>
             </div>
 
-            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
+            <div className="flex gap-1">
               <button
                 onClick={() => onEdit(tx)}
                 className="p-2 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-amber-500 transition-all"

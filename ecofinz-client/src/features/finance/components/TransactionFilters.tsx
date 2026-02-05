@@ -127,7 +127,7 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                 </button>
                 <button
                     onClick={handleApplyFilters}
-                    className="flex items-center gap-2 px-6 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-emerald-500/20"
+                    className="flex items-center gap-2 px-6 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-xl"
                 >
                     <Search className="w-3.5 h-3.5" />
                     Aplicar
