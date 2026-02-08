@@ -28,11 +28,11 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions, onSav
     const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]; // Simplified for design
 
     return (
-        <div className="flex flex-col h-full border border-white/5 rounded-2xl bg-white/[0.01] relative overflow-hidden">
+        <div className="flex flex-col h-full border border-zinc-200 rounded-2xl bg-white/10 relative overflow-hidden shadow-sm">
             {/* Weekday Headers */}
-            <div className="grid grid-cols-7 border-b border-white/5 bg-white/[0.02] sticky top-0 z-10">
+            <div className="grid grid-cols-7 border-b border-zinc-200 bg-zinc-100/80 sticky top-0 z-10 backdrop-blur-sm">
                 {weekDays.map((day) => (
-                    <div key={day} className="py-3 text-center text-sm font-medium text-neutral-500 uppercase tracking-wider">
+                    <div key={day} className="py-3 text-center text-xs font-bold text-zinc-500 uppercase tracking-widest">
                         {day}
                     </div>
                 ))}
@@ -44,12 +44,12 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions, onSav
                 // Scrollbar Styles
                 "[&::-webkit-scrollbar]:w-2",
                 "[&::-webkit-scrollbar-track]:bg-transparent",
-                "[&::-webkit-scrollbar-thumb]:bg-white/10",
+                "[&::-webkit-scrollbar-thumb]:bg-zinc-200",
                 "[&::-webkit-scrollbar-thumb]:rounded-full",
-                "hover:[&::-webkit-scrollbar-thumb]:bg-white/20"
+                "hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300"
             )}>
                 {/* Days Grid */}
-                <div className="grid grid-cols-7 auto-rows-fr min-h-full">
+                <div className="grid grid-cols-7 auto-rows-[minmax(120px,1fr)] min-h-full">
                     {days.map((day, index) => {
                         // Filter transactions for this specific day
                         const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));

@@ -86,24 +86,24 @@ export const DayCell: React.FC<Props> = ({
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)", zIndex: 10 }}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.5)", zIndex: 10 }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
             onClick={handleClick}
             className={cn(
-                "relative flex flex-col p-2 min-h-[100px] border-r border-b border-white/5 transition-colors group",
-                !isCurrentMonth && "bg-neutral-900/30 text-neutral-700",
+                "relative flex flex-col p-2 min-h-[100px] border-r border-b border-zinc-200 transition-colors group",
+                !isCurrentMonth && "bg-zinc-50/50 text-zinc-300",
                 "cursor-pointer",
-                isSelected && "bg-white/[0.05] ring-inset ring-1 ring-white/10 z-50"
+                isSelected && "bg-white/40 ring-inset ring-1 ring-black/5 z-50 shadow-sm"
             )}
         >
             {/* Date Number */}
             <div className="flex justify-between items-start">
                 <span
                     className={cn(
-                        "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full transition-colors",
+                        "text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full transition-colors",
                         isToday
-                            ? "bg-amber-400 text-black shadow-lg shadow-amber-900/20"
-                            : isCurrentMonth ? "text-neutral-400 group-hover:text-white" : "text-neutral-700"
+                            ? "bg-black text-white shadow-lg"
+                            : isCurrentMonth ? "text-zinc-500 group-hover:text-black" : "text-zinc-300"
                     )}
                 >
                     {format(date, "d")}
@@ -114,16 +114,16 @@ export const DayCell: React.FC<Props> = ({
             <div className="flex-1 flex flex-col justify-start gap-1 mt-1 overflow-hidden">
                 {transactions.map((t) => {
                     const colorClass =
-                        t.type === 'INGRESO' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                            t.type === 'EGRESO' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
-                                t.type === 'AHORRO' ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
-                                    "bg-purple-500/10 text-purple-400 border-purple-500/20";
+                        t.type === 'INGRESO' ? "bg-emerald-100/80 text-emerald-800 border-emerald-200/50" :
+                            t.type === 'EGRESO' ? "bg-rose-100/80 text-rose-800 border-rose-200/50" :
+                                t.type === 'AHORRO' ? "bg-cyan-100/80 text-cyan-800 border-cyan-200/50" :
+                                    "bg-purple-100/80 text-purple-800 border-purple-200/50";
 
                     return (
                         <div
                             key={t.id}
                             className={cn(
-                                "text-[10px] px-1.5 py-0.5 rounded border truncate font-medium",
+                                "text-[10px] px-1.5 py-0.5 rounded border truncate font-bold tracking-tight",
                                 colorClass
                             )}
                             title={t.description} // Tooltip nativo para ver nombre completo
@@ -136,7 +136,7 @@ export const DayCell: React.FC<Props> = ({
 
 
             {/* Selection Glow (Optional) */}
-            <div className="absolute inset-0 border border-transparent hover:border-white/10 rounded-lg pointer-events-none" />
+            <div className="absolute inset-0 border border-transparent hover:border-black/5 rounded-lg pointer-events-none" />
 
             {/* Floating Widget */}
             {isSelected && (
