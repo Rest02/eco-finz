@@ -4,15 +4,14 @@ import React, { useState, useMemo } from "react";
 import { Category, Transaction } from "../types/finance";
 import { useTransactions } from "../hooks/useTransactions";
 import {
-  LayoutGrid,
   Pencil,
   Trash2,
   ArrowUpCircle,
   ArrowDownCircle,
   ChevronDown,
   ChevronUp,
-  AlertTriangle,
-  History
+  History,
+  Tag
 } from "lucide-react";
 
 interface Props {
@@ -58,9 +57,9 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCatego
 
   if (categories.length === 0) {
     return (
-      <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-[2.5rem]">
-        <LayoutGrid className="w-12 h-12 text-neutral-700 mx-auto mb-4" />
-        <p className="text-neutral-500 text-lg">No has creado categorías todavía.</p>
+      <div className="text-center py-20 bg-zinc-50 border border-zinc-200 rounded-3xl">
+        <Tag className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+        <p className="text-zinc-500 text-lg">No has creado categorías todavía.</p>
       </div>
     );
   }
@@ -68,8 +67,8 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCatego
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-semibold text-white/90">Mis Categorías</h2>
-        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-400">
+        <h2 className="text-xl font-bold text-black tracking-tight">Mis Categorías</h2>
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-500">
           {categories.length} total
         </span>
       </div>
@@ -82,94 +81,93 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCatego
           return (
             <div
               key={category.id}
-              className={`group relative glass-card glass-card-hover rounded-3xl p-6 transition-all duration-300 overflow-hidden ${isExpanded ? "ring-1 ring-emerald-500/30" : ""
-                }`}
+              className={`group relative bg-white border transition-all duration-300 overflow-hidden rounded-2xl
+                ${isExpanded ? "border-emerald-500 shadow-md ring-1 ring-emerald-500/10" : "border-zinc-200 hover:border-zinc-300 hover:shadow-sm"}
+              `}
             >
               {/* Options */}
-              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
                 <button
                   onClick={() => onCategoryEdit(category)}
-                  className="p-2 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-amber-400 transition-all"
+                  className="p-1.5 rounded-lg hover:bg-amber-50 text-zinc-400 hover:text-amber-600 transition-colors"
                   title="Editar"
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDelete(category.id)}
-                  className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-all"
+                  className="p-1.5 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-600 transition-colors"
                   title="Eliminar"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Icon & Label */}
-              <div className="flex items-start gap-4 mb-4">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform ${category.type === 'INGRESO'
-                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  }`}>
-                  {category.type === 'INGRESO' ? <ArrowUpCircle className="w-6 h-6" /> : <ArrowDownCircle className="w-6 h-6" />}
-                </div>
+              <div className="p-5">
+                {/* Icon & Label */}
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${category.type === 'INGRESO'
+                    ? 'bg-emerald-50 text-emerald-600'
+                    : 'bg-rose-50 text-rose-600'
+                    }`}>
+                    {category.type === 'INGRESO' ? <ArrowUpCircle className="w-6 h-6" /> : <ArrowDownCircle className="w-6 h-6" />}
+                  </div>
 
-                <div className="flex-1 min-w-0 pr-12">
-                  <h3 className="font-semibold text-white uppercase tracking-wider text-sm truncate">
-                    {category.name}
-                  </h3>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className={`text-[10px] font-bold uppercase tracking-widest ${category.type === 'INGRESO' ? 'text-emerald-500/60' : 'text-red-500/60'
-                      }`}>
-                      {category.type === 'INGRESO' ? 'Entrada' : 'Salida'}
-                    </span>
+                  <div className="flex-1 min-w-0 pr-12">
+                    <h3 className="font-bold text-black text-sm truncate">
+                      {category.name}
+                    </h3>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className={`text-[10px] font-bold uppercase tracking-widest ${category.type === 'INGRESO' ? 'text-emerald-600' : 'text-rose-600'
+                        }`}>
+                        {category.type === 'INGRESO' ? 'Entrada' : 'Salida'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Stats & Expand */}
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold text-neutral-500 uppercase tracking-tighter">
-                  <History className="w-3.5 h-3.5" />
-                  {count} {count === 1 ? 'Movimiento' : 'Movimientos'}
-                </div>
-
-                {count > 0 && (
-                  <button
-                    onClick={() => toggleExpand(category.id)}
-                    className="flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white border border-white/5 text-[9px] font-bold uppercase tracking-tighter transition-all"
-                  >
-                    {isExpanded ? 'Ocultar' : 'Ver Detalles'}
-                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                  </button>
-                )}
-              </div>
-
-              {/* Expandable Content */}
-              {isExpanded && (
-                <div className="mt-4 pt-4 border-t border-white/5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-600 uppercase tracking-widest">
-                    <History className="w-3 h-3" /> Actividad Reciente
+                {/* Stats & Expand */}
+                <div className="flex items-center justify-between pt-2 border-t border-zinc-100 mt-2">
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                    <History className="w-3.5 h-3.5" />
+                    {count} {count === 1 ? 'Movimiento' : 'Movimientos'}
                   </div>
-                  <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
-                    {categoryTransactions.slice(0, 5).map(tx => (
-                      <div key={tx.id} className="flex justify-between items-center bg-white/[0.02] p-2 rounded-lg border border-white/5">
-                        <span className="text-[11px] text-white/80 truncate pr-4">{tx.description}</span>
-                        <span className="text-[11px] font-bold text-neutral-500 shrink-0">
-                          ${tx.amount.toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  {count > 5 && (
-                    <p className="text-[9px] text-center text-neutral-600 uppercase font-bold">
-                      + {count - 5} movimientos más
-                    </p>
+
+                  {count > 0 && (
+                    <button
+                      onClick={() => toggleExpand(category.id)}
+                      className="flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-zinc-50 hover:bg-zinc-100 text-zinc-500 border border-zinc-200 text-[10px] font-bold uppercase tracking-wide transition-colors"
+                    >
+                      {isExpanded ? 'Ocultar' : 'Ver'}
+                      {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
                   )}
                 </div>
-              )}
 
-              {/* Glow effect */}
-              <div className={`absolute -bottom-6 -right-6 w-24 h-24 blur-[40px] rounded-full transition-colors opacity-20 group-hover:opacity-40 ${category.type === 'INGRESO' ? 'bg-emerald-500' : 'bg-red-500'
-                }`} />
+                {/* Expandable Content */}
+                {isExpanded && (
+                  <div className="mt-4 pt-3 border-t border-zinc-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                      Actividad Reciente
+                    </div>
+                    <div className="space-y-1.5">
+                      {categoryTransactions.slice(0, 5).map(tx => (
+                        <div key={tx.id} className="flex justify-between items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100">
+                          <span className="text-xs text-zinc-700 truncate pr-4">{tx.description}</span>
+                          <span className={`text-xs font-bold shrink-0 ${category.type === 'INGRESO' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            ${tx.amount.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {count > 5 && (
+                      <p className="text-[10px] text-center text-zinc-400 font-medium">
+                        + {count - 5} movimientos más
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
@@ -179,3 +177,4 @@ const CategoryList: React.FC<Props> = ({ categories, onCategoryDeleted, onCatego
 };
 
 export default CategoryList;
+

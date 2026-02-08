@@ -28,9 +28,9 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
 
   if (budgets.length === 0) {
     return (
-      <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-[2.5rem]">
-        <Trophy className="w-12 h-12 text-neutral-700 mx-auto mb-4" />
-        <p className="text-neutral-500 text-lg">No hay presupuestos configurados para este mes.</p>
+      <div className="text-center py-20 bg-zinc-50 border border-dashed border-zinc-200 rounded-[2.5rem]">
+        <Trophy className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+        <p className="text-zinc-500 text-lg font-medium">No hay presupuestos configurados para este mes.</p>
       </div>
     );
   }
@@ -38,8 +38,8 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-semibold text-white/90">Objetivos Mensuales</h2>
-        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-400">
+        <h2 className="text-xl font-bold text-black group-hover:text-emerald-600 transition-colors">Objetivos Mensuales</h2>
+        <span className="text-xs font-bold px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-500">
           {budgets.length} {budgets.length === 1 ? 'objetivo' : 'objetivos'}
         </span>
       </div>
@@ -50,17 +50,17 @@ const BudgetList: React.FC<Props> = ({ budgets, categories, onBudgetDeleted, onB
             <BudgetCard budget={budget} />
 
             {/* Floating Actions */}
-            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/wrapper:opacity-100 transition-opacity">
+            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/wrapper:opacity-100 transition-opacity translate-y-2 group-hover/wrapper:translate-y-0 duration-300">
               <button
                 onClick={() => onBudgetEdit(budget)}
-                className="p-2 rounded-xl bg-neutral-900/80 hover:bg-neutral-800 text-neutral-400 hover:text-amber-400 transition-colors backdrop-blur-md border border-white/10"
+                className="p-2.5 rounded-xl bg-white text-zinc-400 hover:text-amber-500 hover:bg-amber-50 shadow-sm border border-zinc-100 transition-all hover:scale-105"
                 title="Editar"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <button
                 onClick={() => onBudgetDeleted(budget.id)}
-                className="p-2 rounded-xl bg-neutral-900/80 hover:bg-neutral-800 text-neutral-400 hover:text-red-400 transition-colors backdrop-blur-md border border-white/10"
+                className="p-2.5 rounded-xl bg-white text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-sm border border-zinc-100 transition-all hover:scale-105"
                 title="Eliminar"
               >
                 <Trash2 className="w-4 h-4" />

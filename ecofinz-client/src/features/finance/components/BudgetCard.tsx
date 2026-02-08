@@ -35,19 +35,19 @@ const BudgetCard: React.FC<Props> = ({ budget }) => {
         val.toLocaleString("es-ES", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
     return (
-        <div className="glass-card p-5 rounded-2xl space-y-4 hover:bg-white/[0.05] transition-all group">
+        <div className="bg-white border border-zinc-100 rounded-2xl p-5 space-y-4 hover:shadow-md transition-all group">
             {/* Header */}
             <div className="flex justify-between items-start">
                 <div>
-                    <h3 className="text-white font-semibold text-lg">{name}</h3>
+                    <h3 className="text-black font-bold text-lg">{name}</h3>
                     {category && (
-                        <div className="flex items-center gap-1.5 mt-1 text-xs text-neutral-500 uppercase tracking-wider font-medium">
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500 uppercase tracking-wider font-medium">
                             <Tag className="w-3 h-3" />
                             <span>{category.name}</span>
                         </div>
                     )}
                 </div>
-                <div className={`p-2 rounded-xl bg-white/5 border border-white/5 ${isOverBudget ? 'animate-pulse' : ''}`}>
+                <div className={`p-2 rounded-xl bg-zinc-50 border border-zinc-100 ${isOverBudget ? 'animate-pulse' : ''}`}>
                     {icon}
                 </div>
             </div>
@@ -55,14 +55,14 @@ const BudgetCard: React.FC<Props> = ({ budget }) => {
             {/* Amounts */}
             <div className="flex justify-between items-end">
                 <div>
-                    <p className="text-sm text-neutral-400 mb-0.5">Gastado</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Gastado</p>
                     <p className={`text-2xl font-bold ${textColor}`}>
                         ${formatCurrency(spent)}
                     </p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-neutral-400 mb-0.5">Total</p>
-                    <p className="text-lg font-medium text-white">
+                    <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Total</p>
+                    <p className="text-lg font-bold text-black">
                         ${formatCurrency(amount)}
                     </p>
                 </div>
@@ -72,14 +72,14 @@ const BudgetCard: React.FC<Props> = ({ budget }) => {
             <div className="space-y-2">
                 <div className="flex justify-between text-xs font-medium">
                     <span className={textColor}>{percentage.toFixed(0)}%</span>
-                    <span className="text-neutral-500">
+                    <span className="text-zinc-500">
                         {isOverBudget
                             ? `Excedido por $${formatCurrency(Math.abs(remaining))}`
                             : `Quedan $${formatCurrency(remaining)}`
                         }
                     </span>
                 </div>
-                <div className="h-3 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-0.5">
+                <div className="h-3 w-full bg-zinc-100 rounded-full overflow-hidden border border-zinc-100">
                     <div
                         className={`h-full rounded-full transition-all duration-1000 ease-out ${progressBarColor} ${isOverBudget ? 'w-full' : ''}`}
                         style={{ width: isOverBudget ? '100%' : `${percentage}%` }}
