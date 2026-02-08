@@ -109,7 +109,7 @@ export const FinancialCalendar: React.FC = () => {
                 onViewChange={setView}
             />
 
-            <div className="flex-1 min-h-[600px] relative overflow-hidden">
+            <div className="flex-1 relative overflow-hidden">
                 <AnimatePresence initial={false} mode="wait" custom={direction}>
                     <motion.div
                         key={`${view}-${currentDate.toISOString()}`}

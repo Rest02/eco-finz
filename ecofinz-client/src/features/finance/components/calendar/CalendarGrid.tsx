@@ -49,7 +49,7 @@ export const CalendarGrid: React.FC<Props> = ({ currentDate, transactions, onSav
                 "hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300"
             )}>
                 {/* Days Grid */}
-                <div className="grid grid-cols-7 auto-rows-fr min-h-full">
+                <div className="grid grid-cols-7 auto-rows-[minmax(120px,1fr)] min-h-full">
                     {days.map((day, index) => {
                         // Filter transactions for this specific day
                         const dayTransactions = transactions.filter(t => isSameDay(new Date(t.date), day));
