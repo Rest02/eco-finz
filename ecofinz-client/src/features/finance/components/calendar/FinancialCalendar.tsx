@@ -100,7 +100,7 @@ export const FinancialCalendar: React.FC = () => {
     };
 
     return (
-        <div className="w-full h-full p-6 bg-neutral-900/60 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden flex flex-col">
+        <div className="w-full h-full p-6 bg-white/20 backdrop-blur-md border border-white/30 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col" style={{ backdropFilter: 'blur(10px)' }}>
             <CalendarHeader
                 currentDate={currentDate}
                 onPrevMonth={handlePrev}

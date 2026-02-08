@@ -38,8 +38,8 @@ export default function CalendarPage() {
         >
             <div className="flex flex-col h-full gap-6">
                 <motion.div variants={itemVariants}>
-                    <h1 className="text-3xl font-bold text-white mb-2">Calendario Financiero</h1>
-                    <p className="text-neutral-400">Visualiza tus ingresos, egresos y ahorros día a día.</p>
+                    <h1 className="text-3xl font-bold text-black mb-2">Calendario Financiero</h1>
+                    <p className="text-zinc-500">Visualiza tus ingresos, egresos y ahorros día a día.</p>
                 </motion.div>
 
                 <motion.div className="flex-1 min-h-0" variants={itemVariants}>

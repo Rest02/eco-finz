@@ -23,20 +23,21 @@ export const CalendarHeader: React.FC<Props> = ({
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
 
             {/* Month Navigation */}
+            {/* Month Navigation */}
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                     <button
                         onClick={onPrevMonth}
-                        className="p-2 rounded-xl hover:bg-white/5 text-neutral-400 hover:text-white transition-colors"
+                        className="p-2 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-black transition-colors"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <h2 className="text-2xl font-semibold text-white tracking-tight capitalize w-48 text-center md:text-left">
+                    <h2 className="text-2xl font-semibold text-black tracking-tight capitalize w-48 text-center md:text-left">
                         {format(currentDate, "MMMM yyyy", { locale: es })}
                     </h2>
                     <button
                         onClick={onNextMonth}
-                        className="p-2 rounded-xl hover:bg-white/5 text-neutral-400 hover:text-white transition-colors"
+                        className="p-2 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-black transition-colors"
                     >
                         <ChevronRight className="w-5 h-5" />
                     </button>
@@ -44,16 +45,16 @@ export const CalendarHeader: React.FC<Props> = ({
             </div>
 
             {/* View Switcher */}
-            <div className="flex bg-neutral-900/50 p-1 rounded-xl border border-white/5">
+            <div className="flex bg-white/40 p-1 rounded-xl border border-white/40 shadow-sm">
                 {(['month', 'week', 'day'] as const).map((v) => (
                     <button
                         key={v}
                         onClick={() => onViewChange(v)}
                         className={cn(
-                            "px-4 py-1.5 rounded-lg text-sm font-medium transition-all capitalize",
+                            "px-4 py-1.5 rounded-lg text-sm font-bold transition-all capitalize tracking-wide",
                             view === v
-                                ? "bg-white/10 text-white shadow-sm"
-                                : "text-neutral-500 hover:text-neutral-300"
+                                ? "bg-black text-white shadow-md"
+                                : "text-zinc-500 hover:text-zinc-800 hover:bg-white/50"
                         )}
                     >
                         {v === 'month' ? 'Mes' : v === 'week' ? 'Semana' : 'Día'}

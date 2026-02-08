@@ -51,7 +51,7 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTran
     };
 
     return (
-        <div className="flex h-full border border-white/5 rounded-2xl overflow-hidden bg-white/[0.01] relative">
+        <div className="flex h-full border border-zinc-200 rounded-2xl overflow-hidden bg-white/40 relative">
 
             {/* Scrollable Container */}
             <div className={cn(
@@ -60,26 +60,26 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTran
                 // Scrollbar Styles
                 "[&::-webkit-scrollbar]:w-2",
                 "[&::-webkit-scrollbar-track]:bg-transparent",
-                "[&::-webkit-scrollbar-thumb]:bg-white/10",
+                "[&::-webkit-scrollbar-thumb]:bg-zinc-200",
                 "[&::-webkit-scrollbar-thumb]:rounded-full",
-                "hover:[&::-webkit-scrollbar-thumb]:bg-white/20"
+                "hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300"
             )}>
                 <div className="flex min-w-full relative">
 
                     {/* Time Column (Fixed Width) */}
-                    <div className="w-16 flex-shrink-0 border-r border-white/5 bg-neutral-900/10 backdrop-blur-sm sticky left-0 z-20">
+                    <div className="w-16 flex-shrink-0 border-r border-zinc-200 bg-white/40 backdrop-blur-sm sticky left-0 z-20">
                         {/* Header Spacer */}
-                        <div className="h-10 border-b border-white/5 sticky top-0 bg-neutral-900/90 z-30" />
+                        <div className="h-10 border-b border-zinc-200 sticky top-0 bg-white/95 z-30" />
 
                         {/* Hours */}
                         {hours.map((hour) => (
                             <div
                                 key={hour.toISOString()}
-                                className="h-[60px] border-b border-white/5 text-[10px] text-neutral-500 flex items-start justify-center pt-2 font-mono relative"
+                                className="h-[60px] border-b border-zinc-100 text-[10px] text-zinc-400 flex items-start justify-center pt-2 font-mono relative"
                             >
                                 {format(hour, "HH:mm")}
                                 {/* Horizontal Guideline */}
-                                <div className="absolute right-0 top-0 w-2 border-t border-white/5" />
+                                <div className="absolute right-0 top-0 w-2 border-t border-zinc-200" />
                             </div>
                         ))}
                     </div>
@@ -88,20 +88,20 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTran
                     <div className="flex-1 flex flex-col min-w-0">
 
                         {/* Days Header */}
-                        <div className="flex border-b border-white/5 sticky top-0 bg-neutral-900/90 z-30">
+                        <div className="flex border-b border-zinc-200 sticky top-0 bg-zinc-100/95 z-30 backdrop-blur-sm">
                             {days.map((day) => {
                                 const isToday = isSameDay(day, new Date());
                                 return (
                                     <div
                                         key={day.toISOString()}
-                                        className="flex-1 h-10 flex items-center justify-center gap-2 border-r border-white/5 last:border-r-0"
+                                        className="flex-1 h-10 flex items-center justify-center gap-2 border-r border-zinc-200 last:border-r-0"
                                     >
-                                        <span className="text-neutral-500 text-xs font-medium uppercase">
+                                        <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">
                                             {format(day, "EEE", { locale: es })}
                                         </span>
                                         <span className={cn(
                                             "w-6 h-6 flex items-center justify-center rounded-full text-sm font-bold",
-                                            isToday ? "bg-amber-400 text-black" : "text-white"
+                                            isToday ? "bg-black text-white" : "text-black"
                                         )}>
                                             {format(day, "d")}
                                         </span>
@@ -116,7 +116,7 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTran
                             {/* Background Lines & Interaction Layer */}
                             <div className="absolute inset-0 flex">
                                 {days.map((day) => (
-                                    <div key={`bg-${day.toISOString()}`} className="flex-1 border-r border-white/5 last:border-r-0 relative">
+                                    <div key={`bg-${day.toISOString()}`} className="flex-1 border-r border-zinc-100 last:border-r-0 relative">
                                         {hours.map((hour) => {
                                             const hourNum = getHours(hour);
                                             const isSelected = selectedSlot && isSameDay(selectedSlot.date, day) && selectedSlot.hour === hourNum;
@@ -130,9 +130,9 @@ export const TimeGrid: React.FC<Props> = ({ date, days, transactions, onSaveTran
                                                     key={`slot-${day.toISOString()}-${hourNum}`}
                                                     onClick={() => handleSlotClick(day, hourNum)}
                                                     className={cn(
-                                                        "h-[60px] border-b border-white/[0.02] cursor-pointer transition-colors relative",
-                                                        "hover:bg-white/[0.02]",
-                                                        isSelected && "bg-white/[0.05] ring-inset ring-1 ring-white/10"
+                                                        "h-[60px] border-b border-zinc-100 cursor-pointer transition-colors relative",
+                                                        "hover:bg-zinc-50",
+                                                        isSelected && "bg-white ring-inset ring-1 ring-black/5 shadow-sm z-10"
                                                     )}
                                                 >
                                                     {isSelected && (() => {
