@@ -19,6 +19,8 @@ import {
   History,
   PlusCircle
 } from "lucide-react";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 interface FilterValues {
   type?: TransactionType | "";
@@ -90,10 +92,15 @@ export default function AccountDetailPage() {
   }
 
   return (
-    <div className="p-4 lg:p-10 space-y-8 min-h-full animate-fade-in">
+    <motion.div
+      className="p-4 lg:p-10 space-y-8 min-h-full animate-fade-in"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
 
       {/* Header & Back Button */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-4">
           <button
             onClick={() => router.back()}
@@ -138,12 +145,12 @@ export default function AccountDetailPage() {
           {/* Subtle shine effect instead of colored glow */}
           <div className="absolute top-0 right-0 p-12 bg-white/40 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
 
         {/* Main Section (List & Filters) */}
-        <div className="xl:col-span-2 space-y-6">
+        <motion.div variants={itemVariants} className="xl:col-span-2 space-y-6">
           <TransactionFilters onFilterChange={setFilterValues} />
 
           <div className="bg-white/20 border border-white/30 p-6 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
@@ -167,10 +174,10 @@ export default function AccountDetailPage() {
               />
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Sidebar Section (Form) */}
-        <div className="xl:sticky xl:top-8">
+        <motion.div variants={itemVariants} className="xl:sticky xl:top-8">
           <div className="bg-white/20 border border-white/30 p-8 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
             <div className="flex items-center gap-3 mb-6 text-zinc-500">
               <PlusCircle className="w-5 h-5" />
@@ -193,8 +200,8 @@ export default function AccountDetailPage() {
               Registrar tus gastos e ingresos diariamente te ayuda a tener un control total de tu economía <b>¡No dejes pasar ninguno!</b>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

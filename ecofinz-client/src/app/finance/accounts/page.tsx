@@ -8,6 +8,8 @@ import { Account } from "@/features/finance/types/finance";
 import { Wallet, Info, ArrowUpRight, TrendingUp, ShieldCheck } from "lucide-react";
 
 import { BackgroundAurora } from "@/features/ui/BackgroundAurora";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 export default function AccountsPage() {
     const { data: accounts = [], isLoading } = useAccounts();
@@ -40,9 +42,14 @@ export default function AccountsPage() {
     return (
         <>
             <BackgroundAurora />
-            <div className="p-4 lg:p-10 space-y-6 lg:space-y-8 animate-fade-in relative min-h-full">
+            <motion.div
+                className="p-4 lg:p-10 space-y-6 lg:space-y-8 animate-fade-in relative min-h-full"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
                 {/* Page Header & Stats */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Header Title Section */}
                     <div className="lg:col-span-2 flex flex-col justify-center gap-4 py-4">
@@ -85,13 +92,13 @@ export default function AccountsPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Main Content Layout */}
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-start">
 
                     {/* Account List (Left Side) */}
-                    <div className="xl:col-span-8 space-y-6">
+                    <motion.div variants={itemVariants} className="xl:col-span-8 space-y-6">
                         {isLoading ? (
                             <div className="rounded-[32px] border border-zinc-100 bg-zinc-50 p-20 flex flex-col items-center justify-center gap-4 min-h-[400px]">
                                 <div className="w-10 h-10 border-4 border-zinc-200 border-t-black rounded-full animate-spin" />
@@ -121,10 +128,10 @@ export default function AccountsPage() {
                                 )}
                             </div>
                         )}
-                    </div>
+                    </motion.div>
 
                     {/* Account Form (Right Sticky Side) */}
-                    <div className="xl:col-span-4 xl:sticky xl:top-6 space-y-6">
+                    <motion.div variants={itemVariants} className="xl:col-span-4 xl:sticky xl:top-6 space-y-6">
                         <div className="clean-card p-6 border border-white/30 bg-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-[32px]" style={{ backdropFilter: 'blur(5px)' }}>
                             <AccountForm
                                 isEditMode={!!editingAccount}
@@ -146,10 +153,10 @@ export default function AccountsPage() {
                                 </p>
                             </div>
                         )}
-                    </div>
+                    </motion.div>
 
                 </div>
-            </div>
+            </motion.div>
         </>
     );
 }

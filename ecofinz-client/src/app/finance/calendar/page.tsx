@@ -6,29 +6,8 @@ import { motion, Variants } from "framer-motion";
 import { FinancialCalendar } from "@/features/finance/components/calendar/FinancialCalendar";
 
 export default function CalendarPage() {
-    const containerVariants: Variants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.1
-            }
-        }
-    };
+    const { containerVariants, itemVariants } = require("@/lib/animations");
 
-    const itemVariants: Variants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 20
-            }
-        }
-    };
 
     return (
         <motion.div
