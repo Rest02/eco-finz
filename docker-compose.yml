@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ecofinz-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ecofinz"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./ecofinz-server
+      dockerfile: Dockerfile
+    container_name: ecofinz-server
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=${PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - SENDGRID_FROM_EMAIL=${SENDGRID_FROM_EMAIL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./ecofinz-server:/app
+      - /app/node_modules
+    # Corre las migraciones y genera el cliente antes de arrancar en modo desarrollo
+    command: >
+      sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"
+
+  client:
+    build:
+      context: ./ecofinz-client
+      dockerfile: Dockerfile
+    container_name: ecofinz-client
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
+    depends_on:
+      - server
+    volumes:
+      - ./ecofinz-client:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  postgres_data:
