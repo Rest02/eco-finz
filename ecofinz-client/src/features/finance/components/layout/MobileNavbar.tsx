@@ -9,6 +9,7 @@ import {
     Target,
     LayoutGrid,
     Calendar,
+    CreditCard,
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +18,7 @@ const navItems = [
     { icon: Calendar, href: "/finance/calendar", label: "Calendario" },
     { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
     { icon: LayoutGrid, href: "/finance/categories", label: "Categorías" },
+    { icon: CreditCard, href: "/finance/projection", label: "Proyección" },
 ];
 
 export const MobileNavbar = () => {
