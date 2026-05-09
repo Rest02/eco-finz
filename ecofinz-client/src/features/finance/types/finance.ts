@@ -11,6 +11,11 @@ export interface Account {
   type: AccountType;
   balance: number;
   userId: string;
+  creditLimit?: number;
+  closingDay?: number;
+  dueDay?: number;
+  lastDigits?: string;
+  color?: string;
 }
 
 export interface Category {

@@ -28,10 +28,16 @@ export type AggregateAccount = {
 
 export type AccountAvgAggregateOutputType = {
   balance: runtime.Decimal | null
+  creditLimit: runtime.Decimal | null
+  closingDay: number | null
+  dueDay: number | null
 }
 
 export type AccountSumAggregateOutputType = {
   balance: runtime.Decimal | null
+  creditLimit: runtime.Decimal | null
+  closingDay: number | null
+  dueDay: number | null
 }
 
 export type AccountMinAggregateOutputType = {
@@ -42,6 +48,11 @@ export type AccountMinAggregateOutputType = {
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  creditLimit: runtime.Decimal | null
+  closingDay: number | null
+  dueDay: number | null
+  lastDigits: string | null
+  color: string | null
 }
 
 export type AccountMaxAggregateOutputType = {
@@ -52,6 +63,11 @@ export type AccountMaxAggregateOutputType = {
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  creditLimit: runtime.Decimal | null
+  closingDay: number | null
+  dueDay: number | null
+  lastDigits: string | null
+  color: string | null
 }
 
 export type AccountCountAggregateOutputType = {
@@ -62,16 +78,27 @@ export type AccountCountAggregateOutputType = {
   userId: number
   createdAt: number
   updatedAt: number
+  creditLimit: number
+  closingDay: number
+  dueDay: number
+  lastDigits: number
+  color: number
   _all: number
 }
 
 
 export type AccountAvgAggregateInputType = {
   balance?: true
+  creditLimit?: true
+  closingDay?: true
+  dueDay?: true
 }
 
 export type AccountSumAggregateInputType = {
   balance?: true
+  creditLimit?: true
+  closingDay?: true
+  dueDay?: true
 }
 
 export type AccountMinAggregateInputType = {
@@ -82,6 +109,11 @@ export type AccountMinAggregateInputType = {
   userId?: true
   createdAt?: true
   updatedAt?: true
+  creditLimit?: true
+  closingDay?: true
+  dueDay?: true
+  lastDigits?: true
+  color?: true
 }
 
 export type AccountMaxAggregateInputType = {
@@ -92,6 +124,11 @@ export type AccountMaxAggregateInputType = {
   userId?: true
   createdAt?: true
   updatedAt?: true
+  creditLimit?: true
+  closingDay?: true
+  dueDay?: true
+  lastDigits?: true
+  color?: true
 }
 
 export type AccountCountAggregateInputType = {
@@ -102,6 +139,11 @@ export type AccountCountAggregateInputType = {
   userId?: true
   createdAt?: true
   updatedAt?: true
+  creditLimit?: true
+  closingDay?: true
+  dueDay?: true
+  lastDigits?: true
+  color?: true
   _all?: true
 }
 
@@ -199,6 +241,11 @@ export type AccountGroupByOutputType = {
   userId: string
   createdAt: Date
   updatedAt: Date
+  creditLimit: runtime.Decimal | null
+  closingDay: number | null
+  dueDay: number | null
+  lastDigits: string | null
+  color: string | null
   _count: AccountCountAggregateOutputType | null
   _avg: AccountAvgAggregateOutputType | null
   _sum: AccountSumAggregateOutputType | null
@@ -232,6 +279,11 @@ export type AccountWhereInput = {
   userId?: Prisma.StringFilter<"Account"> | string
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
+  creditLimit?: Prisma.DecimalNullableFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
+  color?: Prisma.StringNullableFilter<"Account"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
 }
@@ -244,6 +296,11 @@ export type AccountOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  closingDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  dueDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDigits?: Prisma.SortOrderInput | Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
 }
@@ -259,6 +316,11 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Account"> | string
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
+  creditLimit?: Prisma.DecimalNullableFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
+  color?: Prisma.StringNullableFilter<"Account"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
 }, "id">
@@ -271,6 +333,11 @@ export type AccountOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  closingDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  dueDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDigits?: Prisma.SortOrderInput | Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AccountCountOrderByAggregateInput
   _avg?: Prisma.AccountAvgOrderByAggregateInput
   _max?: Prisma.AccountMaxOrderByAggregateInput
@@ -289,6 +356,11 @@ export type AccountScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Account"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
+  creditLimit?: Prisma.DecimalNullableWithAggregatesFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.IntNullableWithAggregatesFilter<"Account"> | number | null
+  dueDay?: Prisma.IntNullableWithAggregatesFilter<"Account"> | number | null
+  lastDigits?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
+  color?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
 }
 
 export type AccountCreateInput = {
@@ -298,6 +370,11 @@ export type AccountCreateInput = {
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
 }
@@ -310,6 +387,11 @@ export type AccountUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -320,6 +402,11 @@ export type AccountUpdateInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
 }
@@ -332,6 +419,11 @@ export type AccountUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -343,6 +435,11 @@ export type AccountCreateManyInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
 }
 
 export type AccountUpdateManyMutationInput = {
@@ -352,6 +449,11 @@ export type AccountUpdateManyMutationInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AccountUncheckedUpdateManyInput = {
@@ -362,6 +464,11 @@ export type AccountUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AccountListRelationFilter = {
@@ -382,10 +489,18 @@ export type AccountCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  closingDay?: Prisma.SortOrder
+  dueDay?: Prisma.SortOrder
+  lastDigits?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type AccountAvgOrderByAggregateInput = {
   balance?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  closingDay?: Prisma.SortOrder
+  dueDay?: Prisma.SortOrder
 }
 
 export type AccountMaxOrderByAggregateInput = {
@@ -396,6 +511,11 @@ export type AccountMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  closingDay?: Prisma.SortOrder
+  dueDay?: Prisma.SortOrder
+  lastDigits?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type AccountMinOrderByAggregateInput = {
@@ -406,10 +526,18 @@ export type AccountMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  closingDay?: Prisma.SortOrder
+  dueDay?: Prisma.SortOrder
+  lastDigits?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type AccountSumOrderByAggregateInput = {
   balance?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  closingDay?: Prisma.SortOrder
+  dueDay?: Prisma.SortOrder
 }
 
 export type AccountScalarRelationFilter = {
@@ -471,6 +599,22 @@ export type DecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type AccountCreateNestedOneWithoutTransactionsInput = {
   create?: Prisma.XOR<Prisma.AccountCreateWithoutTransactionsInput, Prisma.AccountUncheckedCreateWithoutTransactionsInput>
   connectOrCreate?: Prisma.AccountCreateOrConnectWithoutTransactionsInput
@@ -492,6 +636,11 @@ export type AccountCreateWithoutUserInput = {
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
 }
 
@@ -502,6 +651,11 @@ export type AccountUncheckedCreateWithoutUserInput = {
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -542,6 +696,11 @@ export type AccountScalarWhereInput = {
   userId?: Prisma.StringFilter<"Account"> | string
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
+  creditLimit?: Prisma.DecimalNullableFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
+  lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
+  color?: Prisma.StringNullableFilter<"Account"> | string | null
 }
 
 export type AccountCreateWithoutTransactionsInput = {
@@ -551,6 +710,11 @@ export type AccountCreateWithoutTransactionsInput = {
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
 }
 
@@ -562,6 +726,11 @@ export type AccountUncheckedCreateWithoutTransactionsInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
 }
 
 export type AccountCreateOrConnectWithoutTransactionsInput = {
@@ -587,6 +756,11 @@ export type AccountUpdateWithoutTransactionsInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
 }
 
@@ -598,6 +772,11 @@ export type AccountUncheckedUpdateWithoutTransactionsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AccountCreateManyUserInput = {
@@ -607,6 +786,11 @@ export type AccountCreateManyUserInput = {
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: number | null
+  dueDay?: number | null
+  lastDigits?: string | null
+  color?: string | null
 }
 
 export type AccountUpdateWithoutUserInput = {
@@ -616,6 +800,11 @@ export type AccountUpdateWithoutUserInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
 }
 
@@ -626,6 +815,11 @@ export type AccountUncheckedUpdateWithoutUserInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -636,6 +830,11 @@ export type AccountUncheckedUpdateManyWithoutUserInput = {
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closingDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -677,6 +876,11 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  creditLimit?: boolean
+  closingDay?: boolean
+  dueDay?: boolean
+  lastDigits?: boolean
+  color?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -690,6 +894,11 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  creditLimit?: boolean
+  closingDay?: boolean
+  dueDay?: boolean
+  lastDigits?: boolean
+  color?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -701,6 +910,11 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  creditLimit?: boolean
+  closingDay?: boolean
+  dueDay?: boolean
+  lastDigits?: boolean
+  color?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -712,9 +926,14 @@ export type AccountSelectScalar = {
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  creditLimit?: boolean
+  closingDay?: boolean
+  dueDay?: boolean
+  lastDigits?: boolean
+  color?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "balance" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "balance" | "userId" | "createdAt" | "updatedAt" | "creditLimit" | "closingDay" | "dueDay" | "lastDigits" | "color", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
@@ -741,6 +960,11 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     userId: string
     createdAt: Date
     updatedAt: Date
+    creditLimit: runtime.Decimal | null
+    closingDay: number | null
+    dueDay: number | null
+    lastDigits: string | null
+    color: string | null
   }, ExtArgs["result"]["account"]>
   composites: {}
 }
@@ -1173,6 +1397,11 @@ export interface AccountFieldRefs {
   readonly userId: Prisma.FieldRef<"Account", 'String'>
   readonly createdAt: Prisma.FieldRef<"Account", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Account", 'DateTime'>
+  readonly creditLimit: Prisma.FieldRef<"Account", 'Decimal'>
+  readonly closingDay: Prisma.FieldRef<"Account", 'Int'>
+  readonly dueDay: Prisma.FieldRef<"Account", 'Int'>
+  readonly lastDigits: Prisma.FieldRef<"Account", 'String'>
+  readonly color: Prisma.FieldRef<"Account", 'String'>
 }
     
 
