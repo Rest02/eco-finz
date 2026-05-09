@@ -30,6 +30,7 @@ import {
 
 interface Props {
   accountId?: string;
+  isCreditCard?: boolean;
   onTransactionCreated?: (newTransaction: Transaction) => void;
   onTransactionUpdated?: (updatedTransaction: Transaction) => void;
   initialData?: Transaction;
@@ -39,13 +40,14 @@ interface Props {
 
 const TransactionForm: React.FC<Props> = ({
   accountId: propAccountId,
+  isCreditCard = false,
   onTransactionCreated,
   onTransactionUpdated,
   initialData,
   isEditMode = false,
   onCancel
 }) => {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number | "">("");
   const [type, setType] = useState<TransactionType>("EGRESO");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -86,7 +88,7 @@ const TransactionForm: React.FC<Props> = ({
       setSelectedAccountId(initialData.accountId);
       setBudgetId(initialData.budgetId || "");
     } else {
-      setAmount(0);
+      setAmount("");
       setType("EGRESO");
       setDescription("");
       setDate(new Date().toISOString().split("T")[0]);
@@ -97,9 +99,20 @@ const TransactionForm: React.FC<Props> = ({
     }
   }, [isEditMode, initialData, propAccountId]);
 
+  useEffect(() => {
+    if (isCreditCard) {
+      setType("EGRESO");
+    }
+  }, [isCreditCard]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    if (!amount || Number(amount) <= 0) {
+      setError("Por favor, ingresa un monto válido mayor a 0.");
+      return;
+    }
 
     if (!categoryId) {
       setError("Por favor, selecciona una categoría.");
@@ -125,7 +138,7 @@ const TransactionForm: React.FC<Props> = ({
     try {
       if (isEditMode && initialData) {
         const updateData: UpdateTransactionDto = {
-          amount,
+          amount: Number(amount),
           type,
           description,
           date,
@@ -138,7 +151,7 @@ const TransactionForm: React.FC<Props> = ({
         if (onTransactionUpdated) onTransactionUpdated(response.data);
       } else {
         const newTransaction: CreateTransactionDto = {
-          amount,
+          amount: Number(amount),
           type,
           description,
           date,
@@ -151,7 +164,7 @@ const TransactionForm: React.FC<Props> = ({
         if (onTransactionCreated) onTransactionCreated(response.data);
 
         // Reset form
-        setAmount(0);
+        setAmount("");
         setDescription("");
         setDestinationAccountId("");
         setBudgetId("");
@@ -169,7 +182,10 @@ const TransactionForm: React.FC<Props> = ({
           {isEditMode ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
         <h2 className="text-xl font-semibold text-black">
-          {isEditMode ? "Editar Movimiento" : "Nuevo Movimiento"}
+          {isEditMode 
+            ? (isCreditCard ? "Editar Movimiento - Egreso" : "Editar Movimiento") 
+            : (isCreditCard ? "Nuevo Movimiento - Egreso" : "Nuevo Movimiento")
+          }
         </h2>
       </div>
 
@@ -182,52 +198,54 @@ const TransactionForm: React.FC<Props> = ({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Type Toggle */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 p-1 bg-zinc-100 border border-zinc-200 rounded-2xl gap-1">
-          <button
-            type="button"
-            onClick={() => setType("INGRESO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
-              ? "bg-white text-emerald-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <ArrowUpCircle className="w-4 h-4" />
-            Ingreso
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("EGRESO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
-              ? "bg-white text-red-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <ArrowDownCircle className="w-4 h-4" />
-            Egreso
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("AHORRO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "AHORRO"
-              ? "bg-white text-blue-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <PiggyBank className="w-4 h-4" />
-            Ahorro
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("INVERSION")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INVERSION"
-              ? "bg-white text-violet-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            Inversión
-          </button>
-        </div>
+        {!isCreditCard && (
+          <div className="grid grid-cols-2 p-1 bg-zinc-100 border border-zinc-200 rounded-2xl gap-1">
+            <button
+              type="button"
+              onClick={() => setType("INGRESO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
+                ? "bg-white text-emerald-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <ArrowUpCircle className="w-4 h-4" />
+              Ingreso
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("EGRESO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
+                ? "bg-white text-red-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <ArrowDownCircle className="w-4 h-4" />
+              Egreso
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("AHORRO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "AHORRO"
+                ? "bg-white text-blue-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <PiggyBank className="w-4 h-4" />
+              Ahorro
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("INVERSION")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INVERSION"
+                ? "bg-white text-violet-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Inversión
+            </button>
+          </div>
+        )}
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-500 ml-1 flex items-center gap-1.5">
@@ -361,10 +379,10 @@ const TransactionForm: React.FC<Props> = ({
             <input
               type="number"
               step="0.01"
-              value={isNaN(amount) ? "" : amount}
+              value={amount === 0 ? "" : amount}
               onChange={(e) => {
-                const val = parseFloat(e.target.value);
-                setAmount(isNaN(val) ? 0 : val);
+                const val = e.target.value;
+                setAmount(val === "" ? "" : parseFloat(val));
               }}
               required
               className={`w-full bg-white border border-zinc-200 rounded-xl pl-10 pr-4 py-4 text-2xl font-black text-black focus:outline-none focus:ring-2 transition-all shadow-sm ${type === 'EGRESO' ? 'focus:ring-red-500/20 focus:border-red-500'

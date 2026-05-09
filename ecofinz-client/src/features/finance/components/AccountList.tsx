@@ -111,13 +111,14 @@ const AccountList: React.FC<Props> = ({ accounts, onAccountDeleted, onAccountEdi
                 <div>
                   <div className={`text-2xl font-bold tracking-tight ${textColorClass}`}>
                     <span className={`${isCreditCard ? "text-white/60" : "text-zinc-400"} mr-1`}>$</span>
-                    {account.balance.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                    {(isCreditCard
+                      ? (Number(account.creditLimit || 0) + Number(account.balance))
+                      : Number(account.balance)
+                    ).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                   </div>
-                  {isCreditCard && account.creditLimit !== undefined && account.creditLimit !== null && (
-                    <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider mt-1">
-                      Cupo: ${Number(account.creditLimit).toLocaleString('es-ES', { minimumFractionDigits: 0 })}
-                    </p>
-                  )}
+                  <p className={`text-[10px] font-black uppercase tracking-widest mt-1 ${isCreditCard ? "text-white/70" : "text-zinc-400"}`}>
+                    {isCreditCard ? "Crédito" : "Débito"}
+                  </p>
                 </div>
 
                 <Link
