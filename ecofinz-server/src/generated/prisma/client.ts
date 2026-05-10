@@ -67,3 +67,8 @@ export type Transaction = Prisma.TransactionModel
  * 
  */
 export type Budget = Prisma.BudgetModel
+/**
+ * Model Projection
+ * 
+ */
+export type Projection = Prisma.ProjectionModel

@@ -56,7 +56,8 @@ export const ModelName = {
   MonthlySummary: 'MonthlySummary',
   Category: 'Category',
   Transaction: 'Transaction',
-  Budget: 'Budget'
+  Budget: 'Budget',
+  Projection: 'Projection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -166,6 +167,24 @@ export const BudgetScalarFieldEnum = {
 } as const
 
 export type BudgetScalarFieldEnum = (typeof BudgetScalarFieldEnum)[keyof typeof BudgetScalarFieldEnum]
+
+
+export const ProjectionScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  amount: 'amount',
+  installments: 'installments',
+  startMonth: 'startMonth',
+  startYear: 'startYear',
+  accountId: 'accountId',
+  categoryId: 'categoryId',
+  isSimulation: 'isSimulation',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectionScalarFieldEnum = (typeof ProjectionScalarFieldEnum)[keyof typeof ProjectionScalarFieldEnum]
 
 
 export const SortOrder = {

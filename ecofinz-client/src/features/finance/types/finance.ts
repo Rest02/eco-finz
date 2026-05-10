@@ -103,3 +103,26 @@ export interface MonthlySummary {
   balance: number;
   categorySummaries: SummaryCategory[];
 }
+
+// ========== Projection Entities & DTOs ==========
+
+export interface Projection {
+  id: string;
+  description: string;
+  amount: number;
+  installments: number;
+  startMonth: number; // 1-12
+  startYear: number;  // YYYY
+  accountId: string;
+  categoryId?: string;
+  isSimulation: boolean;
+  userId: string;
+  account?: Account;
+  category?: Category;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type CreateProjectionDto = Omit<Projection, "id" | "userId" | "account" | "category" | "createdAt" | "updatedAt">;
+export type UpdateProjectionDto = Partial<CreateProjectionDto>;
+

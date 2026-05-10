@@ -66,6 +66,16 @@ export default function AccountDetailPage() {
 
   const isCreditCard = account?.type === "TARJETA_CREDITO";
   const totalDeuda = transactions.reduce((sum, tx) => tx.type === "EGRESO" ? sum + Number(tx.amount) : sum, 0);
+  
+  const closingDay = Number(account?.closingDay || 15);
+  const deudaPeriodoActual = transactions
+    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() <= closingDay)
+    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+  
+  const deudaPeriodoSiguiente = transactions
+    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() > closingDay)
+    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
   const cupoDisponible = isCreditCard
     ? Number(account?.creditLimit || 0) - totalDeuda
     : Number(account?.balance || 0);
@@ -136,9 +146,9 @@ export default function AccountDetailPage() {
 
           {/* New Deuda Actual Card - Placed in the highlighted section of the image */}
           {isCreditCard && (
-            <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[260px] md:min-w-[280px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+            <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] md:min-w-[320px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
               style={{ backdropFilter: 'blur(5px)' }}>
-              <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-1 relative z-10">Deuda Actual</p>
+              <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-1 relative z-10">Deuda Total Utilizada</p>
 
               <div className="flex items-baseline gap-2 relative z-10">
                 <span className="text-red-400 text-2xl font-bold">$</span>
@@ -147,10 +157,22 @@ export default function AccountDetailPage() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
-                <ArrowUpRight className="w-3 h-3 text-red-500 animate-pulse" />
-                Monto utilizado de la tarjeta
+              {/* Subscript Period breakdown as requested by user */}
+              <div className="mt-4 pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
+                <div className="flex justify-between items-center">
+                  <span>Facturado (Cierre el {closingDay}):</span>
+                  <span className="text-red-600 font-extrabold">
+                    ${deudaPeriodoActual.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Próximo Periodo (Post-{closingDay}):</span>
+                  <span className="text-zinc-600 font-extrabold">
+                    ${deudaPeriodoSiguiente.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
               </div>
+
               <div className="absolute top-0 right-0 p-12 bg-red-100/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             </div>
           )}

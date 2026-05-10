@@ -23,6 +23,7 @@ model User {
   categories           Category[]
   monthlySummaries     MonthlySummary[]
   transactions         Transaction[]
+  projections          Projection[]
 }
 
 model Account {
@@ -35,6 +36,7 @@ model Account {
   updatedAt    DateTime      @updatedAt
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
+  projections  Projection[]
 
   creditLimit  Decimal?      @db.Decimal(10, 2)
   closingDay   Int?
@@ -67,6 +69,7 @@ model Category {
   budgets      Budget[]
   user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
+  projections  Projection[]
 
   @@unique([userId, name, type])
 }
@@ -124,3 +127,23 @@ enum AccountType {
   TARJETA_CREDITO
   BILLETERA_DIGITAL
 }
+
+model Projection {
+  id           String    @id @default(cuid())
+  description  String
+  amount       Decimal   @db.Decimal(10, 2)
+  installments Int
+  startMonth   Int       // 1-12
+  startYear    Int       // YYYY
+  accountId    String
+  categoryId   String?
+  isSimulation Boolean   @default(true)
+  userId       String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  account      Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+}
+

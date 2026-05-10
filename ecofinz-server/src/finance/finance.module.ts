@@ -7,10 +7,12 @@ import { CategoryService } from './category/category.service';
 import { AccountModule } from './account/account.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { BudgetModule } from './budget/budget.module';
+import { ProjectionModule } from './projection/projection.module';
 
 @Module({
-  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule],
+  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule, ProjectionModule],
   controllers: [FinanceController, CategoryController],
   providers: [FinanceService, CategoryService]
 })
 export class FinanceModule {}
+
