@@ -85,7 +85,20 @@ const TransactionForm: React.FC<Props> = ({
     if (isEditMode && initialData) {
       setAmount(initialData.amount);
       setType(initialData.type);
-      setDescription(initialData.description);
+      
+      // Parse and remove installment suffix for editing
+      if (initialData.description.includes(" | cuotas: ")) {
+        const parts = initialData.description.split(" | cuotas: ");
+        setDescription(parts[0].trim());
+        const count = parseInt(parts[1]);
+        if (!isNaN(count)) {
+          setInstallments(count);
+        }
+      } else {
+        setDescription(initialData.description);
+        setInstallments(1);
+      }
+
       setDate(initialData.date.split("T")[0]);
       setCategoryId(initialData.categoryId);
       setSelectedAccountId(initialData.accountId);
@@ -140,10 +153,17 @@ const TransactionForm: React.FC<Props> = ({
 
     try {
       if (isEditMode && initialData) {
+        let finalDescription = description;
+        
+        // Re-append installment count if valid credit card context
+        if (isCreditCard && installments > 1) {
+          finalDescription = `${description} | cuotas: ${installments}`;
+        }
+
         const updateData: UpdateTransactionDto = {
           amount: Number(amount),
           type,
-          description,
+          description: finalDescription,
           date,
           accountId: accountIdToUse,
           categoryId,
@@ -420,7 +440,7 @@ const TransactionForm: React.FC<Props> = ({
           </div>
         )}
 
-        {isCreditCard && !isEditMode && (
+        {isCreditCard && (
           <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
             <label className="text-sm font-medium text-zinc-500 ml-1 flex items-center gap-1.5">
               Plan de Cuotas

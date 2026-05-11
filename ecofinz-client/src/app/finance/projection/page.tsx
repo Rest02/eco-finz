@@ -356,7 +356,7 @@ export default function ProjectionPage() {
 
                 <motion.div variants={itemVariants}>
                     <SimulationList
-                        simulations={simulations}
+                        simulations={simulations.filter(s => s.isSimulation)}
                         cards={cards}
                         onDelete={handleDeleteSimulation}
                         onAddCard={handleAddCard}

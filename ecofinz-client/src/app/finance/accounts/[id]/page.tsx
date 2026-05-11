@@ -116,11 +116,11 @@ export default function AccountDetailPage() {
     >
 
       {/* Header & Back Button */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-center">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-stretch">
         
         {/* Left Section (xl:col-span-2) */}
-        <div className="xl:col-span-2 flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
-          <div className="space-y-4">
+        <div className="xl:col-span-2 flex flex-col md:flex-row md:items-stretch justify-between gap-6 w-full">
+          <div className="space-y-4 flex flex-col justify-center">
             <button
               onClick={() => router.back()}
               className="flex items-center gap-2 text-zinc-500 hover:text-black transition-colors group"
@@ -146,7 +146,7 @@ export default function AccountDetailPage() {
 
           {/* New Deuda Actual Card - Placed in the highlighted section of the image */}
           {isCreditCard && (
-            <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] md:min-w-[320px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+            <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] md:min-w-[320px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] flex flex-col h-full"
               style={{ backdropFilter: 'blur(5px)' }}>
               <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-1 relative z-10">Deuda Total Utilizada</p>
 
@@ -158,7 +158,7 @@ export default function AccountDetailPage() {
               </div>
 
               {/* Subscript Period breakdown as requested by user */}
-              <div className="mt-4 pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
+              <div className="mt-auto pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
                 <div className="flex justify-between items-center">
                   <span>Facturado (Cierre el {closingDay}):</span>
                   <span className="text-red-600 font-extrabold">
@@ -179,8 +179,8 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Right Section (xl:col-span-1) - stretches to match the sidebar form exactly! */}
-        <div className="xl:col-span-1 w-full">
-          <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl w-full overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+        <div className="xl:col-span-1 w-full h-full">
+          <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl w-full h-full flex flex-col overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
             style={{ backdropFilter: 'blur(5px)' }}>
             <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-1 relative z-10">
               {isCreditCard ? "Cupo Disponible" : "Balance Disponible"}
@@ -193,7 +193,7 @@ export default function AccountDetailPage() {
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
+            <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-auto pt-4 font-bold tracking-widest uppercase relative z-10">
               <ArrowUpRight className="w-3 h-3" />
               {isCreditCard 
                 ? `Cupo Total: $${Number(account.creditLimit || 0).toLocaleString('es-CL', { maximumFractionDigits: 0 })}`

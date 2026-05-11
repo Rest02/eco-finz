@@ -359,11 +359,22 @@ export class TransactionService {
               }
             }
 
+            // Extract new installment count from updated description if present
+            let newInstallments: number | undefined = undefined;
+            if (updateTransactionDto.description && updateTransactionDto.description.includes(' | cuotas: ')) {
+              const descParts = updateTransactionDto.description.split(' | cuotas: ');
+              const parsed = parseInt(descParts[1]);
+              if (!isNaN(parsed)) {
+                newInstallments = parsed;
+              }
+            }
+
             await tx.projection.update({
               where: { id: linkedProjection.id },
               data: {
                 startMonth: newMonth,
                 startYear: newYear,
+                installments: newInstallments,
                 // Keep sync in case description or amount was edited too
                 amount: updateTransactionDto.amount,
                 description: updateTransactionDto.description 
