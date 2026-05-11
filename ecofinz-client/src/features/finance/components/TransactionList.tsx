@@ -64,8 +64,13 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) =>
             {/* Info */}
             <div className="min-w-0 flex-1">
               <h4 className="font-semibold text-black group-hover:text-emerald-600 transition-colors uppercase tracking-wider text-xs md:text-sm mb-0.5 truncate">
-                {tx.description}
+                {tx.description.includes(" | cuotas: ") ? tx.description.split(" | cuotas: ")[0] : tx.description}
               </h4>
+              {tx.description.includes(" | cuotas: ") && (
+                <p className="text-[11px] text-red-500 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                  Compra en {tx.description.split(" | cuotas: ")[1]} cuotas de ${Math.round(Number(tx.amount) / parseInt(tx.description.split(" | cuotas: ")[1])).toLocaleString('es-CL', { maximumFractionDigits: 0 })} c/u
+                </p>
+              )}
               <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs text-zinc-500">
                 <span className="flex items-center gap-1 shrink-0">
                   <Calendar className="w-3 h-3" />

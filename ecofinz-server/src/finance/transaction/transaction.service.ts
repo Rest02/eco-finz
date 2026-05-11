@@ -7,7 +7,7 @@ import {
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TransactionType } from 'src/generated/prisma/enums';
+import { TransactionType, AccountType } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class TransactionService {
@@ -318,6 +318,75 @@ export class TransactionService {
         data: { balance: { increment: impactAmount } },
       });
 
+      // --- SYNC LINKED PROJECTION (INSTALLMENTS) ON DATE CHANGE ---
+      if (
+        originalTransaction.type === TransactionType.EGRESO &&
+        originalTransaction.description.includes(' | cuotas: ') &&
+        updateTransactionDto.date
+      ) {
+        const txCreatedAt = new Date(originalTransaction.createdAt);
+        const windowStart = new Date(txCreatedAt.getTime() - 60000);
+        const windowEnd = new Date(txCreatedAt.getTime() + 60000);
+
+        const linkedProjection = await tx.projection.findFirst({
+          where: {
+            userId: userId,
+            accountId: originalTransaction.accountId,
+            amount: originalTransaction.amount,
+            isSimulation: false,
+            createdAt: { gte: windowStart, lte: windowEnd }
+          }
+        });
+
+        if (linkedProjection) {
+          const account = await tx.account.findUnique({
+            where: { id: originalTransaction.accountId }
+          });
+
+          if (account) {
+            const newDate = new Date(updateTransactionDto.date);
+            // Use UTC to calculate absolute effective billing cycle month.
+            let newMonth = newDate.getUTCMonth() + 1;
+            let newYear = newDate.getUTCFullYear();
+            const newDay = newDate.getUTCDate();
+            const closingDay = Number(account.closingDay || 15);
+
+            if (account.type === AccountType.TARJETA_CREDITO && newDay > closingDay) {
+              newMonth += 1;
+              if (newMonth > 12) {
+                newMonth = 1;
+                newYear += 1;
+              }
+            }
+
+            // Extract new installment count from updated description if present
+            let newInstallments: number | undefined = undefined;
+            if (updateTransactionDto.description && updateTransactionDto.description.includes(' | cuotas: ')) {
+              const descParts = updateTransactionDto.description.split(' | cuotas: ');
+              const parsed = parseInt(descParts[1]);
+              if (!isNaN(parsed)) {
+                newInstallments = parsed;
+              }
+            }
+
+            await tx.projection.update({
+              where: { id: linkedProjection.id },
+              data: {
+                startMonth: newMonth,
+                startYear: newYear,
+                installments: newInstallments,
+                // Keep sync in case description or amount was edited too
+                amount: updateTransactionDto.amount,
+                description: updateTransactionDto.description 
+                  ? updateTransactionDto.description.split(' | cuotas: ')[0].trim()
+                  : undefined
+              }
+            });
+          }
+        }
+      }
+      // -------------------------------------------------------------
+
       // 4. Handle MonthlySummary if date changes
       let monthlySummaryId = originalTransaction.monthlySummaryId;
       if (updateTransactionDto.date) {
@@ -537,6 +606,72 @@ export class TransactionService {
       const amount = transaction.amount as unknown as number;
       const revertAmount =
         transaction.type === TransactionType.INGRESO ? -amount : amount;
+
+      // --- CLEANUP LINKED PROJECTION (INSTALLMENTS) ---
+      // When a user creates a credit card installment transaction, it simultaneously
+      // creates a non-simulation Projection. We locate and delete it using metadata heuristic.
+      
+      // We ONLY look for Linked Projections if description indicates installments OR if we just look by timestamp to be safe?
+      // Let's do BOTH to narrow it down, but prioritize the timestamp proxy.
+      if (
+        transaction.type === TransactionType.EGRESO &&
+        transaction.description.includes(' | cuotas: ')
+      ) {
+        // 1. Set time window (typically created within 1s of each other)
+        const txCreatedAt = new Date(transaction.createdAt);
+        const windowStart = new Date(txCreatedAt.getTime() - 60000); // 1 min before
+        const windowEnd = new Date(txCreatedAt.getTime() + 60000);   // 1 min after
+
+        // 2. Look for matching projection within creation window
+        const matchingProjection = await tx.projection.findFirst({
+          where: {
+            userId: userId,
+            accountId: transaction.accountId,
+            // Same amount
+            amount: transaction.amount,
+            isSimulation: false,
+            // The core connector: Created virtually at the same exact moment
+            createdAt: {
+              gte: windowStart,
+              lte: windowEnd
+            }
+          },
+        });
+
+        if (matchingProjection) {
+          await tx.projection.delete({
+            where: { id: matchingProjection.id },
+          });
+        } else {
+          // Fallback heuristic - without timestamp, but strict description + installments
+          const descParts = transaction.description.split(' | cuotas: ');
+          const baseDesc = descParts[0].trim();
+          const installmentCount = parseInt(descParts[1]);
+
+          const fallbackProjection = await tx.projection.findFirst({
+            where: {
+              userId: userId,
+              accountId: transaction.accountId,
+              amount: transaction.amount,
+              description: {
+                contains: baseDesc
+              },
+              installments: installmentCount,
+              isSimulation: false,
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          });
+
+          if (fallbackProjection) {
+             await tx.projection.delete({
+               where: { id: fallbackProjection.id },
+             });
+          }
+        }
+      }
+      // ------------------------------------------------
 
       await tx.account.update({
         where: { id: transaction.accountId },

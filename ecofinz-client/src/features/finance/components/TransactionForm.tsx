@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useCreateTransaction, useUpdateTransaction } from "../hooks/useTransactions";
+import { useCreateProjection } from "../hooks/useProjections";
 import { useCategories } from "../hooks/useCategories";
 import { useAccounts } from "../hooks/useAccounts";
 import { useBudgets } from "../hooks/useBudgets";
@@ -30,6 +31,7 @@ import {
 
 interface Props {
   accountId?: string;
+  isCreditCard?: boolean;
   onTransactionCreated?: (newTransaction: Transaction) => void;
   onTransactionUpdated?: (updatedTransaction: Transaction) => void;
   initialData?: Transaction;
@@ -39,13 +41,14 @@ interface Props {
 
 const TransactionForm: React.FC<Props> = ({
   accountId: propAccountId,
+  isCreditCard = false,
   onTransactionCreated,
   onTransactionUpdated,
   initialData,
   isEditMode = false,
   onCancel
 }) => {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number | "">("");
   const [type, setType] = useState<TransactionType>("EGRESO");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -53,6 +56,7 @@ const TransactionForm: React.FC<Props> = ({
   const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || "");
   const [destinationAccountId, setDestinationAccountId] = useState("");
   const [budgetId, setBudgetId] = useState("");
+  const [installments, setInstallments] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
 
   // Derive month/year from date for budget fetching
@@ -66,8 +70,9 @@ const TransactionForm: React.FC<Props> = ({
 
   const createTransactionMutation = useCreateTransaction();
   const updateTransactionMutation = useUpdateTransaction();
+  const createProjectionMutation = useCreateProjection();
 
-  const isLoading = createTransactionMutation.isPending || updateTransactionMutation.isPending;
+  const isLoading = createTransactionMutation.isPending || updateTransactionMutation.isPending || createProjectionMutation.isPending;
   const showAccountSelector = !propAccountId;
 
   // Filter budgets for selected category
@@ -80,13 +85,26 @@ const TransactionForm: React.FC<Props> = ({
     if (isEditMode && initialData) {
       setAmount(initialData.amount);
       setType(initialData.type);
-      setDescription(initialData.description);
+      
+      // Parse and remove installment suffix for editing
+      if (initialData.description.includes(" | cuotas: ")) {
+        const parts = initialData.description.split(" | cuotas: ");
+        setDescription(parts[0].trim());
+        const count = parseInt(parts[1]);
+        if (!isNaN(count)) {
+          setInstallments(count);
+        }
+      } else {
+        setDescription(initialData.description);
+        setInstallments(1);
+      }
+
       setDate(initialData.date.split("T")[0]);
       setCategoryId(initialData.categoryId);
       setSelectedAccountId(initialData.accountId);
       setBudgetId(initialData.budgetId || "");
     } else {
-      setAmount(0);
+      setAmount("");
       setType("EGRESO");
       setDescription("");
       setDate(new Date().toISOString().split("T")[0]);
@@ -97,9 +115,20 @@ const TransactionForm: React.FC<Props> = ({
     }
   }, [isEditMode, initialData, propAccountId]);
 
+  useEffect(() => {
+    if (isCreditCard) {
+      setType("EGRESO");
+    }
+  }, [isCreditCard]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    if (!amount || Number(amount) <= 0) {
+      setError("Por favor, ingresa un monto válido mayor a 0.");
+      return;
+    }
 
     if (!categoryId) {
       setError("Por favor, selecciona una categoría.");
@@ -124,10 +153,17 @@ const TransactionForm: React.FC<Props> = ({
 
     try {
       if (isEditMode && initialData) {
+        let finalDescription = description;
+        
+        // Re-append installment count if valid credit card context
+        if (isCreditCard && installments > 1) {
+          finalDescription = `${description} | cuotas: ${installments}`;
+        }
+
         const updateData: UpdateTransactionDto = {
-          amount,
+          amount: Number(amount),
           type,
-          description,
+          description: finalDescription,
           date,
           accountId: accountIdToUse,
           categoryId,
@@ -137,24 +173,73 @@ const TransactionForm: React.FC<Props> = ({
         const response = await updateTransactionMutation.mutateAsync({ id: initialData.id, data: updateData });
         if (onTransactionUpdated) onTransactionUpdated(response.data);
       } else {
-        const newTransaction: CreateTransactionDto = {
-          amount,
-          type,
-          description,
-          date,
-          accountId: accountIdToUse,
-          categoryId,
-          budgetId: budgetId || undefined,
-          destinationAccountId: destinationAccountId || undefined,
-        };
-        const response = await createTransactionMutation.mutateAsync(newTransaction);
-        if (onTransactionCreated) onTransactionCreated(response.data);
+        if (isCreditCard && installments > 1) {
+          const selectedDate = new Date(date);
+          // IMPORTANT: Date strings "YYYY-MM-DD" parsed with `new Date(string)` are UTC midnight.
+          // We should make sure to get the day component in local time, or adjust correctly.
+          // To make it simple and consistent with the rest of the code, we use the actual numeric components of the string.
+          const [y, m, d] = date.split("-").map(Number);
+          
+          let effectiveMonth = m; // 1-12
+          let effectiveYear = y;
+          
+          // Fetch the account details to get its closing day
+          const selectedAccount = accounts.find(acc => acc.id === accountIdToUse);
+          const cardClosingDay = Number(selectedAccount?.closingDay || 15);
+
+          // If day of transaction is greater than closing day, shift to the next cycle
+          if (d > cardClosingDay) {
+            effectiveMonth += 1;
+            if (effectiveMonth > 12) {
+              effectiveMonth = 1;
+              effectiveYear += 1;
+            }
+          }
+
+          await createProjectionMutation.mutateAsync({
+            description,
+            amount: Number(amount),
+            installments,
+            startMonth: effectiveMonth,
+            startYear: effectiveYear,
+            accountId: accountIdToUse,
+            categoryId,
+            isSimulation: false, // This is a REAL movement in installments!
+          });
+
+          const newTransaction: CreateTransactionDto = {
+            amount: Number(amount),
+            type,
+            description: `${description} | cuotas: ${installments}`,
+            date,
+            accountId: accountIdToUse,
+            categoryId,
+            budgetId: budgetId || undefined,
+            destinationAccountId: destinationAccountId || undefined,
+          };
+          const response = await createTransactionMutation.mutateAsync(newTransaction);
+          if (onTransactionCreated) onTransactionCreated(response.data);
+        } else {
+          const newTransaction: CreateTransactionDto = {
+            amount: Number(amount),
+            type,
+            description,
+            date,
+            accountId: accountIdToUse,
+            categoryId,
+            budgetId: budgetId || undefined,
+            destinationAccountId: destinationAccountId || undefined,
+          };
+          const response = await createTransactionMutation.mutateAsync(newTransaction);
+          if (onTransactionCreated) onTransactionCreated(response.data);
+        }
 
         // Reset form
-        setAmount(0);
+        setAmount("");
         setDescription("");
         setDestinationAccountId("");
         setBudgetId("");
+        setInstallments(1);
       }
     } catch (err) {
       console.error("Failed to save transaction:", err);
@@ -169,7 +254,10 @@ const TransactionForm: React.FC<Props> = ({
           {isEditMode ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
         <h2 className="text-xl font-semibold text-black">
-          {isEditMode ? "Editar Movimiento" : "Nuevo Movimiento"}
+          {isEditMode 
+            ? (isCreditCard ? "Editar Movimiento - Egreso" : "Editar Movimiento") 
+            : (isCreditCard ? "Nuevo Movimiento - Egreso" : "Nuevo Movimiento")
+          }
         </h2>
       </div>
 
@@ -182,52 +270,54 @@ const TransactionForm: React.FC<Props> = ({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Type Toggle */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 p-1 bg-zinc-100 border border-zinc-200 rounded-2xl gap-1">
-          <button
-            type="button"
-            onClick={() => setType("INGRESO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
-              ? "bg-white text-emerald-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <ArrowUpCircle className="w-4 h-4" />
-            Ingreso
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("EGRESO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
-              ? "bg-white text-red-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <ArrowDownCircle className="w-4 h-4" />
-            Egreso
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("AHORRO")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "AHORRO"
-              ? "bg-white text-blue-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <PiggyBank className="w-4 h-4" />
-            Ahorro
-          </button>
-          <button
-            type="button"
-            onClick={() => setType("INVERSION")}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INVERSION"
-              ? "bg-white text-violet-600 shadow-sm border border-black/5"
-              : "text-zinc-500 hover:text-black hover:bg-black/5"
-              }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            Inversión
-          </button>
-        </div>
+        {!isCreditCard && (
+          <div className="grid grid-cols-2 p-1 bg-zinc-100 border border-zinc-200 rounded-2xl gap-1">
+            <button
+              type="button"
+              onClick={() => setType("INGRESO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INGRESO"
+                ? "bg-white text-emerald-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <ArrowUpCircle className="w-4 h-4" />
+              Ingreso
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("EGRESO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "EGRESO"
+                ? "bg-white text-red-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <ArrowDownCircle className="w-4 h-4" />
+              Egreso
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("AHORRO")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "AHORRO"
+                ? "bg-white text-blue-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <PiggyBank className="w-4 h-4" />
+              Ahorro
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("INVERSION")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${type === "INVERSION"
+                ? "bg-white text-violet-600 shadow-sm border border-black/5"
+                : "text-zinc-500 hover:text-black hover:bg-black/5"
+                }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Inversión
+            </button>
+          </div>
+        )}
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-500 ml-1 flex items-center gap-1.5">
@@ -350,6 +440,26 @@ const TransactionForm: React.FC<Props> = ({
           </div>
         )}
 
+        {isCreditCard && (
+          <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+            <label className="text-sm font-medium text-zinc-500 ml-1 flex items-center gap-1.5">
+              Plan de Cuotas
+            </label>
+            <select
+              value={installments}
+              onChange={(e) => setInstallments(parseInt(e.target.value))}
+              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer shadow-sm"
+            >
+              <option value="1">1 pago / Sin cuotas</option>
+              <option value="3">3 cuotas</option>
+              <option value="6">6 cuotas</option>
+              <option value="12">12 cuotas</option>
+              <option value="18">18 cuotas</option>
+              <option value="24">24 cuotas</option>
+            </select>
+          </div>
+        )}
+
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-500 ml-1">Monto del Movimiento</label>
           <div className="relative group">
@@ -361,10 +471,10 @@ const TransactionForm: React.FC<Props> = ({
             <input
               type="number"
               step="0.01"
-              value={isNaN(amount) ? "" : amount}
+              value={amount === 0 ? "" : amount}
               onChange={(e) => {
-                const val = parseFloat(e.target.value);
-                setAmount(isNaN(val) ? 0 : val);
+                const val = e.target.value;
+                setAmount(val === "" ? "" : parseFloat(val));
               }}
               required
               className={`w-full bg-white border border-zinc-200 rounded-xl pl-10 pr-4 py-4 text-2xl font-black text-black focus:outline-none focus:ring-2 transition-all shadow-sm ${type === 'EGRESO' ? 'focus:ring-red-500/20 focus:border-red-500'

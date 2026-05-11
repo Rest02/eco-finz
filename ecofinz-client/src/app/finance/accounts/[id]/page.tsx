@@ -64,6 +64,22 @@ export default function AccountDetailPage() {
   const deleteTransactionMutation = useDeleteTransaction();
   const transactions = transactionResponse?.data || [];
 
+  const isCreditCard = account?.type === "TARJETA_CREDITO";
+  const totalDeuda = transactions.reduce((sum, tx) => tx.type === "EGRESO" ? sum + Number(tx.amount) : sum, 0);
+  
+  const closingDay = Number(account?.closingDay || 15);
+  const deudaPeriodoActual = transactions
+    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() <= closingDay)
+    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+  
+  const deudaPeriodoSiguiente = transactions
+    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() > closingDay)
+    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+  const cupoDisponible = isCreditCard
+    ? Number(account?.creditLimit || 0) - totalDeuda
+    : Number(account?.balance || 0);
+
   const handleTransactionEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -100,58 +116,102 @@ export default function AccountDetailPage() {
     >
 
       {/* Header & Back Button */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-zinc-500 hover:text-black transition-colors group"
-          >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-xs font-bold uppercase tracking-widest">Volver a Cuentas</span>
-          </button>
+      <motion.div variants={itemVariants} className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-stretch">
+        
+        {/* Left Section (xl:col-span-2) */}
+        <div className="xl:col-span-2 flex flex-col md:flex-row md:items-stretch justify-between gap-6 w-full">
+          <div className="space-y-4 flex flex-col justify-center">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 text-zinc-500 hover:text-black transition-colors group"
+            >
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-xs font-bold uppercase tracking-widest">Volver a Cuentas</span>
+            </button>
 
-          <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${getAccountColor(account.type)}`}>
-              {getAccountIcon(account.type)}
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-black tracking-tight">
-                {account.name}
-              </h1>
-              <p className="text-zinc-500 text-sm font-medium tracking-wide">
-                Detalle de Movimientos
-              </p>
+            <div className="flex items-center gap-4">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${getAccountColor(account.type)}`}>
+                {getAccountIcon(account.type)}
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-black tracking-tight">
+                  {account.name}
+                </h1>
+                <p className="text-zinc-500 text-sm font-medium tracking-wide">
+                  Detalle de Movimientos
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* New Deuda Actual Card - Placed in the highlighted section of the image */}
+          {isCreditCard && (
+            <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] md:min-w-[320px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] flex flex-col h-full"
+              style={{ backdropFilter: 'blur(5px)' }}>
+              <p className="text-xs font-semibold text-red-500 uppercase tracking-widest mb-1 relative z-10">Deuda Total Utilizada</p>
+
+              <div className="flex items-baseline gap-2 relative z-10">
+                <span className="text-red-400 text-2xl font-bold">$</span>
+                <span className="text-4xl font-bold text-black tracking-tight">
+                  {totalDeuda.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+
+              {/* Subscript Period breakdown as requested by user */}
+              <div className="mt-auto pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
+                <div className="flex justify-between items-center">
+                  <span>Facturado (Cierre el {closingDay}):</span>
+                  <span className="text-red-600 font-extrabold">
+                    ${deudaPeriodoActual.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Próximo Periodo (Post-{closingDay}):</span>
+                  <span className="text-zinc-600 font-extrabold">
+                    ${deudaPeriodoSiguiente.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+              </div>
+
+              <div className="absolute top-0 right-0 p-12 bg-red-100/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            </div>
+          )}
         </div>
 
-        {/* Account Balance Card (Redesigned StatCard Style - Light Mode) */}
-        <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl min-w-[280px] overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
-          style={{ backdropFilter: 'blur(5px)' }}>
-          <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-1 relative z-10">Balance Disponible</p>
+        {/* Right Section (xl:col-span-1) - stretches to match the sidebar form exactly! */}
+        <div className="xl:col-span-1 w-full h-full">
+          <div className="group relative bg-white/20 border border-white/30 p-6 lg:p-8 rounded-2xl w-full h-full flex flex-col overflow-hidden transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]"
+            style={{ backdropFilter: 'blur(5px)' }}>
+            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-1 relative z-10">
+              {isCreditCard ? "Cupo Disponible" : "Balance Disponible"}
+            </p>
 
-          <div className="flex items-baseline gap-2 relative z-10">
-            <span className="text-zinc-400 text-2xl font-bold">$</span>
-            <span className="text-4xl font-bold text-black tracking-tight">
-              {Number(account.balance).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
-            </span>
+            <div className="flex items-baseline gap-2 relative z-10">
+              <span className="text-zinc-400 text-2xl font-bold">$</span>
+              <span className="text-4xl font-bold text-black tracking-tight">
+                {cupoDisponible.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-auto pt-4 font-bold tracking-widest uppercase relative z-10">
+              <ArrowUpRight className="w-3 h-3" />
+              {isCreditCard 
+                ? `Cupo Total: $${Number(account.creditLimit || 0).toLocaleString('es-CL', { maximumFractionDigits: 0 })}`
+                : "Actualizado en tiempo real"
+              }
+            </div>
+
+            {/* Subtle shine effect instead of colored glow */}
+            <div className="absolute top-0 right-0 p-12 bg-white/40 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           </div>
-
-          <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] mt-4 font-bold tracking-widest uppercase relative z-10">
-            <ArrowUpRight className="w-3 h-3" />
-            Actualizado en tiempo real
-          </div>
-
-          {/* Subtle shine effect instead of colored glow */}
-          <div className="absolute top-0 right-0 p-12 bg-white/40 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
 
-        {/* Main Section (List & Filters) */}
+         {/* Main Section (List & Filters) */}
         <motion.div variants={itemVariants} className="xl:col-span-2 space-y-6">
-          <TransactionFilters onFilterChange={setFilterValues} />
+          <TransactionFilters onFilterChange={setFilterValues} isCreditCard={isCreditCard} />
 
           <div className="bg-white/20 border border-white/30 p-6 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
             <div className="flex items-center gap-3 mb-6">
@@ -186,6 +246,7 @@ export default function AccountDetailPage() {
 
             <TransactionForm
               accountId={accountId}
+              isCreditCard={isCreditCard}
               initialData={editingTransaction || undefined}
               isEditMode={!!editingTransaction}
               onCancel={() => setEditingTransaction(null)}

@@ -16,6 +16,9 @@ import {
   UpdateTransactionDto,
   CreateBudgetDto,
   UpdateBudgetDto,
+  Projection,
+  CreateProjectionDto,
+  UpdateProjectionDto,
 } from '../types/finance';
 
 // ========== Account Endpoints ==========
@@ -107,3 +110,27 @@ export const deleteBudget = (id: string): Promise<AxiosResponse<void>> => {
 export const getMonthlySummary = (year: number, month: number): Promise<AxiosResponse<MonthlySummary>> => {
   return apiClient.get<MonthlySummary>(`/finance/summary/${year}/${month}`);
 };
+
+// ========== Projection Endpoints ==========
+
+export const getProjections = (): Promise<AxiosResponse<Projection[]>> => {
+  return apiClient.get<Projection[]>('/finance/projection');
+};
+
+export const createProjection = (data: CreateProjectionDto): Promise<AxiosResponse<Projection>> => {
+  return apiClient.post<Projection>('/finance/projection', data);
+};
+
+export const updateProjection = (id: string, data: UpdateProjectionDto): Promise<AxiosResponse<Projection>> => {
+  return apiClient.patch<Projection>(`/finance/projection/${id}`, data);
+};
+
+export const deleteProjection = (id: string): Promise<AxiosResponse<void>> => {
+  return apiClient.delete(`/finance/projection/${id}`);
+};
+
+export const syncProjections = (): Promise<AxiosResponse<{ success: boolean; message: string; cleanedCount: number }>> => {
+  return apiClient.post('/finance/projection/sync');
+};
+
+

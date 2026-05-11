@@ -389,7 +389,8 @@ export const ModelName = {
   MonthlySummary: 'MonthlySummary',
   Category: 'Category',
   Transaction: 'Transaction',
-  Budget: 'Budget'
+  Budget: 'Budget',
+  Projection: 'Projection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget"
+    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "projection"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -853,6 +854,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Projection: {
+      payload: Prisma.$ProjectionPayload<ExtArgs>
+      fields: Prisma.ProjectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        findMany: {
+          args: Prisma.ProjectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
+        }
+        create: {
+          args: Prisma.ProjectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        createMany: {
+          args: Prisma.ProjectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        update: {
+          args: Prisma.ProjectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectionPayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjection>
+        }
+        groupBy: {
+          args: Prisma.ProjectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -915,7 +990,12 @@ export const AccountScalarFieldEnum = {
   balance: 'balance',
   userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  creditLimit: 'creditLimit',
+  closingDay: 'closingDay',
+  dueDay: 'dueDay',
+  lastDigits: 'lastDigits',
+  color: 'color'
 } as const
 
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
@@ -978,6 +1058,24 @@ export const BudgetScalarFieldEnum = {
 } as const
 
 export type BudgetScalarFieldEnum = (typeof BudgetScalarFieldEnum)[keyof typeof BudgetScalarFieldEnum]
+
+
+export const ProjectionScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  amount: 'amount',
+  installments: 'installments',
+  startMonth: 'startMonth',
+  startYear: 'startYear',
+  accountId: 'accountId',
+  categoryId: 'categoryId',
+  isSimulation: 'isSimulation',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectionScalarFieldEnum = (typeof ProjectionScalarFieldEnum)[keyof typeof ProjectionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1199,6 +1297,7 @@ export type GlobalOmitConfig = {
   category?: Prisma.CategoryOmit
   transaction?: Prisma.TransactionOmit
   budget?: Prisma.BudgetOmit
+  projection?: Prisma.ProjectionOmit
 }
 
 /* Types for Logging */

@@ -14,9 +14,10 @@ interface FilterValues {
 
 interface Props {
     onFilterChange: (filters: FilterValues) => void;
+    isCreditCard?: boolean;
 }
 
-const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
+const TransactionFilters: React.FC<Props> = ({ onFilterChange, isCreditCard = false }) => {
     const { data: categories = [] } = useCategories();
     const [filters, setFilters] = useState<FilterValues>({
         type: "",
@@ -52,23 +53,25 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                 <span className="text-xs font-bold uppercase tracking-widest">Filtros Avanzados</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`grid grid-cols-1 md:grid-cols-2 ${isCreditCard ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`}>
                 {/* Type Filter */}
-                <div className="space-y-1.5">
-                    <label className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-tighter ml-1">
-                        <Layers className="w-3 h-3" /> Tipo de Movimiento
-                    </label>
-                    <select
-                        name="type"
-                        value={filters.type}
-                        onChange={handleChange}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
-                    >
-                        <option value="" className="text-zinc-400">Todos los tipos</option>
-                        <option value="INGRESO">Ingresos</option>
-                        <option value="EGRESO">Egresos</option>
-                    </select>
-                </div>
+                {!isCreditCard && (
+                    <div className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-tighter ml-1">
+                            <Layers className="w-3 h-3" /> Tipo de Movimiento
+                        </label>
+                        <select
+                            name="type"
+                            value={filters.type}
+                            onChange={handleChange}
+                            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
+                        >
+                            <option value="" className="text-zinc-400">Todos los tipos</option>
+                            <option value="INGRESO">Ingresos</option>
+                            <option value="EGRESO">Egresos</option>
+                        </select>
+                    </div>
+                )}
 
                 {/* Category Filter */}
                 <div className="space-y-1.5">
@@ -82,9 +85,12 @@ const TransactionFilters: React.FC<Props> = ({ onFilterChange }) => {
                         className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-base md:text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-500/50 appearance-none cursor-pointer"
                     >
                         <option value="" className="text-zinc-400">Cualquier categoría</option>
-                        {categories.map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
+                        {categories
+                            .filter(cat => !isCreditCard || cat.type === "EGRESO")
+                            .map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))
+                        }
                     </select>
                 </div>
 

@@ -32,6 +32,7 @@ export const useCreateTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['monthly-summary'] });
             queryClient.invalidateQueries({ queryKey: ['accounts'] });
             queryClient.invalidateQueries({ queryKey: ['budgets'] });
+            queryClient.invalidateQueries({ queryKey: ['projections'] });
         },
     });
 };
@@ -46,6 +47,7 @@ export const useUpdateTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['monthly-summary'] });
             queryClient.invalidateQueries({ queryKey: ['accounts'] });
             queryClient.invalidateQueries({ queryKey: ['budgets'] });
+            queryClient.invalidateQueries({ queryKey: ['projections'] });
         },
     });
 };
@@ -60,6 +62,7 @@ export const useDeleteTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['monthly-summary'] });
             queryClient.invalidateQueries({ queryKey: ['accounts'] });
             queryClient.invalidateQueries({ queryKey: ['budgets'] });
+            queryClient.invalidateQueries({ queryKey: ['projections'] });
         },
     });
 };

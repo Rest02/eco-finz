@@ -5,7 +5,7 @@ import AccountList from "@/features/finance/components/AccountList";
 import AccountForm from "@/features/finance/components/AccountForm";
 import { useAccounts, useDeleteAccount } from "@/features/finance/hooks/useAccounts";
 import { Account } from "@/features/finance/types/finance";
-import { Wallet, Info, ArrowUpRight, TrendingUp, ShieldCheck } from "lucide-react";
+import { Wallet, Info, ArrowUpRight, TrendingUp, ShieldCheck, CreditCard } from "lucide-react";
 
 import { BackgroundAurora } from "@/features/ui/BackgroundAurora";
 import { motion } from "framer-motion";
@@ -37,7 +37,11 @@ export default function AccountsPage() {
         }
     };
 
-    const totalBalance = accounts.reduce((acc, account) => acc + Number(account.balance), 0);
+    const debitAccounts = accounts.filter(acc => acc.type !== "TARJETA_CREDITO");
+    const creditAccounts = accounts.filter(acc => acc.type === "TARJETA_CREDITO");
+
+    const totalDebit = debitAccounts.reduce((acc, account) => acc + Number(account.balance), 0);
+    const totalCreditDebt = creditAccounts.reduce((acc, account) => acc + Math.abs(Number(account.balance)), 0);
 
     return (
         <>
@@ -52,7 +56,7 @@ export default function AccountsPage() {
                 <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Header Title Section */}
-                    <div className="lg:col-span-2 flex flex-col justify-center gap-4 py-4">
+                    <div className="flex flex-col justify-center gap-4 py-4">
                         <div className="flex items-center gap-3 text-black mb-1">
                             <div className="p-2 rounded-xl bg-zinc-100 border border-zinc-200">
                                 <Wallet className="w-5 h-5 stroke-1" />
@@ -64,30 +68,51 @@ export default function AccountsPage() {
                             <h1 className="text-4xl md:text-5xl font-bold text-black tracking-tight mb-2">
                                 Mis Cuentas
                             </h1>
-                            <p className="text-zinc-500 text-lg max-w-lg leading-relaxed">
+                            <p className="text-zinc-500 text-sm leading-relaxed max-w-sm">
                                 Centraliza el control de tus activos. Monitorea saldos, edita detalles y mantén tu salud financiera al día.
                             </p>
                         </div>
                     </div>
 
-                    {/* Total Balance Card */}
+                    {/* Debit Total Card */}
                     <div className="clean-card p-6 lg:p-8 flex flex-col justify-between h-full bg-white/20 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-2xl hover:shadow-md transition-shadow" style={{ backdropFilter: 'blur(5px)' }}>
                         <div className="flex justify-between items-start">
-                            <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
-                                <TrendingUp className="w-6 h-6 text-black stroke-1" />
+                            <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600">
+                                <TrendingUp className="w-6 h-6 stroke-1" />
                             </div>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 text-xs font-medium text-zinc-600 border border-zinc-200">
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                                +2.4% este mes
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-[10px] font-bold uppercase tracking-wider text-emerald-600 border border-emerald-100">
+                                Disponible
                             </div>
                         </div>
 
-                        <div className="mt-8">
-                            <p className="text-zinc-400 font-medium text-sm tracking-widest uppercase mb-1">Balance Total</p>
+                        <div className="mt-6">
+                            <p className="text-zinc-400 font-medium text-xs tracking-widest uppercase mb-1">Total Débito</p>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-semibold text-zinc-400">$</span>
-                                <span className="text-5xl md:text-6xl font-black tracking-tighter text-black">
-                                    {totalBalance.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                                <span className="text-xl font-semibold text-zinc-400">$</span>
+                                <span className="text-4xl font-black tracking-tight text-black">
+                                    {totalDebit.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Credit Debt Card */}
+                    <div className="clean-card p-6 lg:p-8 flex flex-col justify-between h-full bg-white/20 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px] rounded-2xl hover:shadow-md transition-shadow" style={{ backdropFilter: 'blur(5px)' }}>
+                        <div className="flex justify-between items-start">
+                            <div className="p-3 rounded-2xl bg-red-50 border border-red-100 text-red-600">
+                                <CreditCard className="w-6 h-6 stroke-1" />
+                            </div>
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 text-[10px] font-bold uppercase tracking-wider text-red-600 border border-red-100">
+                                Por Pagar
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <p className="text-zinc-400 font-medium text-xs tracking-widest uppercase mb-1">Total Crédito (Deuda)</p>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-xl font-semibold text-zinc-400">$</span>
+                                <span className="text-4xl font-black tracking-tight text-black">
+                                    {totalCreditDebt.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                                 </span>
                             </div>
                         </div>
