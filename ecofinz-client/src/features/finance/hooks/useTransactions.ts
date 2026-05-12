@@ -10,6 +10,8 @@ export const useTransactions = (filters?: {
     type?: TransactionType;
     startDate?: string;
     endDate?: string;
+    limit?: number;
+    page?: number;
 }) => {
     return useQuery({
         queryKey: ['transactions', filters],
