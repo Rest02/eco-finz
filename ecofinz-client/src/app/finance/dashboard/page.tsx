@@ -249,10 +249,11 @@ export default function FinanceDashboardPage() {
         />
 
         <SavingsCard 
-          amount={stats.mesActualAhorro}
+          amountIn={netWorthData.patrimonioNeto > 0 ? 250000 : 0} // Valor dummy por ahora para frontend
+          amountOut={50000} // Valor dummy por ahora
           isPrivateMode={isPrivateMode}
-          percentage={stats.porcentajeAhorro}
-          chartData={SPARK_DATA_AHORRO}
+          chartDataIn={monthlyExpensesData.sparkDebit.map(d => ({ val: d.val * 0.5 }))} // Sparkline Dummy
+          chartDataOut={monthlyExpensesData.sparkDebit.map(d => ({ val: d.val * 0.1 }))}
         />
       </div>
 

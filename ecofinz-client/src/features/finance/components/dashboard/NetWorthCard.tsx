@@ -17,7 +17,7 @@ interface NetWorthCardProps {
 
 export function NetWorthCard({ amount, isPrivateMode, sources }: NetWorthCardProps) {
   return (
-    <div className="relative overflow-hidden bg-zinc-900 rounded-[32px] p-7 shadow-lg lg:col-span-2 flex flex-col justify-between">
+    <div className="relative overflow-hidden bg-zinc-900 rounded-[32px] p-7 shadow-lg lg:col-span-2 flex flex-col justify-between h-[340px]">
       <div className="relative z-10 flex items-start justify-between">
         <div>
           <span className="text-zinc-400 text-xs font-bold tracking-widest uppercase">Patrimonio Neto</span>

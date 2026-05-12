@@ -47,7 +47,7 @@ export function ExpenseCard({
   const sparkId = `gradSparkE-${view}`;
 
   return (
-    <div className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm flex flex-col overflow-hidden transition-all duration-300 relative">
+    <div className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm flex flex-col overflow-hidden transition-all duration-300 relative h-[340px]">
       
       <div className="p-6 pb-2 flex-1 flex flex-col h-full relative z-10">
         {/* Header & Context Toggle */}
