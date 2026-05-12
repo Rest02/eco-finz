@@ -69,10 +69,28 @@ export default function FinanceDashboardPage() {
   const [isPrivateMode, setIsPrivateMode] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(true);
 
+  // Definir mes y año actual en hora local para la carga inicial
+  const today = new Date();
+  const currentMonthNum = today.getMonth() + 1;
+  const currentYearNum = today.getFullYear();
+
+  const startOfMonth = new Date(currentYearNum, currentMonthNum - 1, 1).toISOString();
+  const endOfMonth = new Date(currentYearNum, currentMonthNum, 0, 23, 59, 59, 999).toISOString();
+
   // Fetch Real Data
   const { data: accounts = [] } = useAccounts();
+  // Se debe habilitar la consulta incluso si no es un filtro estricto. La hook valida startDate/endDate ahora.
   const { data: transactionResponse } = useTransactions({ type: "AHORRO", limit: 10000 });
   const savingsTransactions = transactionResponse?.data || [];
+
+  // Fetch Egresos del Mes Actual
+  const { data: expenseResponse } = useTransactions({ 
+    type: "EGRESO", 
+    startDate: startOfMonth, 
+    endDate: endOfMonth, 
+    limit: 10000 
+  });
+  const expenseTransactions = expenseResponse?.data || [];
 
   // Process Real Data for "Patrimonio Neto" and "Fuentes"
   const netWorthData = useMemo(() => {
@@ -132,6 +150,61 @@ export default function FinanceDashboardPage() {
     };
   }, [accounts, savingsTransactions]);
 
+  // --- LÓGICA FUNCIONAL DE EGRESOS (DÉBITO VS CRÉDITO) ---
+  const monthlyExpensesData = useMemo(() => {
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    // Contenedores para graficar por día del mes (31 días max)
+    const daysInMonth = new Date(currentYearNum, currentMonthNum, 0).getDate();
+    const dailyDebit = Array.from({ length: daysInMonth }, () => 0);
+    const dailyCredit = Array.from({ length: daysInMonth }, () => 0);
+
+    expenseTransactions.forEach(tx => {
+      const amount = Number(tx.amount);
+      const account = accounts.find(a => a.id === tx.accountId);
+      
+      // Extraer día seguro de la fecha evitando desfase horaria (YYYY-MM-DD...)
+      const dateStr = tx.date.split('T')[0];
+      const dayOfMonth = parseInt(dateStr.split('-')[2], 10); // 1-31
+      const dayIdx = dayOfMonth - 1;
+
+      const isCreditCard = account?.type === "TARJETA_CREDITO";
+
+      if (!isCreditCard) {
+        // Es Débito/Efectivo -> Contabiliza completo
+        totalDebit += amount;
+        if (dayIdx >= 0 && dayIdx < daysInMonth) {
+          dailyDebit[dayIdx] += amount;
+        }
+      } else {
+        // Es Crédito -> Aplicar validación de ciclo (día de cierre)
+        const closingDay = Number(account?.closingDay || 15); // Default 15 si no tiene
+
+        if (dayOfMonth <= closingDay) {
+          // Movimiento realizado el día de cierre o antes -> Entra en la facturación de este mes
+          totalCredit += amount;
+          if (dayIdx >= 0 && dayIdx < daysInMonth) {
+            dailyCredit[dayIdx] += amount;
+          }
+        }
+        // Si es posterior al día de cierre, se ignora ya que el usuario indicó que pasa al mes siguiente
+      }
+    });
+
+    // Convertir los arrays diarios acumulativos o directos para el Sparkline de Recharts
+    // Vamos a generar una curva suave (acumulada suave o por días)
+    const sparkDebit = dailyDebit.map(val => ({ val }));
+    const sparkCredit = dailyCredit.map(val => ({ val }));
+
+    return {
+      totalDebit,
+      totalCredit,
+      sparkDebit,
+      sparkCredit
+    };
+  }, [expenseTransactions, accounts, currentMonthNum, currentYearNum]);
+
   const stats = useMemo(() => {
     const currentMonthData = COMPARISON_DATA[COMPARISON_DATA.length - 1];
     const savings = currentMonthData.ingresos - currentMonthData.egresos;
@@ -143,6 +216,7 @@ export default function FinanceDashboardPage() {
       porcentajeAhorro: Math.round(savingsPercentage),
     };
   }, []);
+
 
   return (
     <motion.div 
@@ -167,10 +241,11 @@ export default function FinanceDashboardPage() {
         />
         
         <ExpenseCard 
-          amount={stats.mesActualEgresos}
+          amountDebit={monthlyExpensesData.totalDebit}
+          amountCredit={monthlyExpensesData.totalCredit}
           isPrivateMode={isPrivateMode}
-          changeText="-4.2%"
-          chartData={SPARK_DATA_EGRESOS}
+          chartDataDebit={monthlyExpensesData.sparkDebit}
+          chartDataCredit={monthlyExpensesData.sparkCredit}
         />
 
         <SavingsCard 

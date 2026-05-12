@@ -19,8 +19,8 @@ export const useTransactions = (filters?: {
             const response = await getTransactions(filters);
             return response.data;
         },
-        // Enabled if no filters are provided (fetch all) or if specific filters are provided
-        enabled: !filters || !!filters.accountId || (!!filters.month && !!filters.year) || (!!filters.startDate && !!filters.endDate),
+        // Enabled by default unless specifically disabled. Allows fetching by type alone.
+        enabled: true,
     });
 };
 
