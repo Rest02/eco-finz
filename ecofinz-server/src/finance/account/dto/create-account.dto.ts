@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsNumber, IsOptional, Min, Max } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional, Min, Max, IsBoolean } from 'class-validator';
 import { AccountType } from '../../../generated/prisma/enums';
 
 export class CreateAccountDto {
@@ -37,4 +37,8 @@ export class CreateAccountDto {
   @IsString()
   @IsOptional()
   color?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isSavingsAccount?: boolean;
 }

@@ -43,6 +43,7 @@ model Account {
   dueDay       Int?
   lastDigits   String?
   color        String?
+  isSavingsAccount Boolean   @default(false)
 }
 
 model MonthlySummary {

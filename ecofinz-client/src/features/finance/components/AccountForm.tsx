@@ -35,6 +35,7 @@ const AccountForm: React.FC<Props> = ({
   const [dueDay, setDueDay] = useState(5);
   const [lastDigits, setLastDigits] = useState("");
   const [color, setColor] = useState("from-emerald-500 to-teal-800");
+  const [isSavingsAccount, setIsSavingsAccount] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const createAccountMutation = useCreateAccount();
@@ -52,6 +53,7 @@ const AccountForm: React.FC<Props> = ({
       setDueDay(initialData.dueDay || 5);
       setLastDigits(initialData.lastDigits || "");
       setColor(initialData.color || "from-emerald-500 to-teal-800");
+      setIsSavingsAccount(initialData.isSavingsAccount || false);
     } else {
       setName("");
       setType("BANCO");
@@ -61,6 +63,7 @@ const AccountForm: React.FC<Props> = ({
       setDueDay(5);
       setLastDigits("");
       setColor("from-emerald-500 to-teal-800");
+      setIsSavingsAccount(false);
     }
   }, [isEditMode, initialData]);
 
@@ -73,6 +76,7 @@ const AccountForm: React.FC<Props> = ({
         const updateData: UpdateAccountDto = { 
           name, 
           type,
+          isSavingsAccount: type === "TARJETA_CREDITO" ? false : isSavingsAccount,
           ...(type === "TARJETA_CREDITO" ? {
             creditLimit,
             closingDay,
@@ -94,6 +98,7 @@ const AccountForm: React.FC<Props> = ({
           name, 
           type, 
           balance: type === "TARJETA_CREDITO" ? 0 : balance,
+          isSavingsAccount: type === "TARJETA_CREDITO" ? false : isSavingsAccount,
           ...(type === "TARJETA_CREDITO" ? {
             creditLimit,
             closingDay,
@@ -112,6 +117,7 @@ const AccountForm: React.FC<Props> = ({
         setDueDay(5);
         setLastDigits("");
         setColor("from-emerald-500 to-teal-800");
+        setIsSavingsAccount(false);
       }
     } catch (err) {
       console.error("Failed to save account:", err);
@@ -172,6 +178,27 @@ const AccountForm: React.FC<Props> = ({
             </select>
           </div>
         </div>
+
+        {type !== "TARJETA_CREDITO" && (
+          <div className="space-y-2 animate-in fade-in duration-200">
+            <label className="flex items-center gap-3 p-3.5 bg-zinc-50 hover:bg-zinc-100/70 border border-zinc-200 rounded-xl cursor-pointer transition-all group">
+              <input
+                type="checkbox"
+                checked={isSavingsAccount}
+                onChange={(e) => setIsSavingsAccount(e.target.checked)}
+                className="w-5 h-5 rounded border-zinc-300 text-black focus:ring-black accent-black transition-all cursor-pointer"
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-zinc-900 group-hover:text-black transition-colors">
+                  ¿Es Cuenta de Ahorro Personal?
+                </span>
+                <span className="text-xs text-zinc-500 font-medium">
+                  Todo el saldo de esta cuenta computará como ahorros automáticamente.
+                </span>
+              </div>
+            </label>
+          </div>
+        )}
 
         {type === "TARJETA_CREDITO" && (
           <div className="space-y-4 p-4 bg-zinc-50 border border-zinc-200/60 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-300">

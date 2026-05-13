@@ -16,6 +16,7 @@ export interface Account {
   dueDay?: number;
   lastDigits?: string;
   color?: string;
+  isSavingsAccount?: boolean;
 }
 
 export interface Category {

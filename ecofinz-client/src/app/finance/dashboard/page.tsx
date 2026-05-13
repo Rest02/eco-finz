@@ -74,63 +74,42 @@ export default function FinanceDashboardPage() {
   const currentMonthNum = today.getMonth() + 1;
   const currentYearNum = today.getFullYear();
 
-  const startOfMonth = new Date(currentYearNum, currentMonthNum - 1, 1).toISOString();
-  const endOfMonth = new Date(currentYearNum, currentMonthNum, 0, 23, 59, 59, 999).toISOString();
+  const lastDayOfMonth = new Date(currentYearNum, currentMonthNum, 0).getDate();
+  const mm = String(currentMonthNum).padStart(2, '0');
+  const startOfMonth = `${currentYearNum}-${mm}-01T00:00:00.000Z`;
+  const endOfMonth = `${currentYearNum}-${mm}-${String(lastDayOfMonth).padStart(2, '0')}T23:59:59.999Z`;
 
   // Fetch Real Data
   const { data: accounts = [] } = useAccounts();
-  // Se debe habilitar la consulta incluso si no es un filtro estricto. La hook valida startDate/endDate ahora.
+  // Fetch Real Data (Todos los ahorros históricos para Patrimonio Neto y cálculo acumulado)
   const { data: transactionResponse } = useTransactions({ type: "AHORRO", limit: 10000 });
   const savingsTransactions = transactionResponse?.data || [];
-
-  // Fetch Egresos del Mes Actual
-  const { data: expenseResponse } = useTransactions({ 
-    type: "EGRESO", 
+  
+  // Fetch TODAS las transacciones del mes actual para unificar cálculos del dashboard
+  const { data: monthlyTransactionsResponse } = useTransactions({ 
     startDate: startOfMonth, 
     endDate: endOfMonth, 
     limit: 10000 
   });
-  const expenseTransactions = expenseResponse?.data || [];
+  const currentMonthTransactions = monthlyTransactionsResponse?.data || [];
+
+  // Filtrar egresos para mantener compatibilidad con la lógica de tarjetas de crédito/débito
+  const expenseTransactions = useMemo(() => 
+    currentMonthTransactions.filter(tx => tx.type === "EGRESO"), 
+    [currentMonthTransactions]
+  );
 
   // Process Real Data for "Patrimonio Neto" and "Fuentes"
   const netWorthData = useMemo(() => {
-    // Suma de balances de cuentas de débito (no crédito)
+    // Suma de balances de cuentas de débito (no crédito), que ya reflejan todo su dinero actual históricamente
     const debitAccounts = accounts.filter(a => a.type !== "TARJETA_CREDITO");
-    const totalDebit = debitAccounts.reduce((sum, acc) => sum + Number(acc.balance), 0);
+    const totalNetWorth = debitAccounts.reduce((sum, acc) => sum + Number(acc.balance), 0);
 
-    // Suma acumulada de movimientos de ahorro históricos (restando egresos de ahorro automáticamente por el campo isInflow)
-    const totalSavings = savingsTransactions.reduce((sum, tx) => {
-      const amount = Number(tx.amount);
-      return sum + (tx.isInflow ? amount : -amount);
-    }, 0);
-
-    const totalNetWorth = totalDebit + totalSavings;
-
-    // Desglose por cuenta para mostrar las tarjetas/fuentes
+    // Desglose por cuenta para mostrar las fuentes reales (Tarjetas de Débito/Efectivo)
     const contributionMap: Record<string, { name: string, total: number }> = {};
 
-    // Cuentas con saldo a favor (débito)
     debitAccounts.forEach(a => {
       contributionMap[a.id] = { name: a.name, total: Number(a.balance) };
-    });
-
-    // Agregar ahorros registrados en cada cuenta
-    savingsTransactions.forEach(tx => {
-      if (!tx.accountId) return;
-      const amount = Number(tx.amount);
-      const delta = tx.isInflow ? amount : -amount;
-      
-      if (contributionMap[tx.accountId]) {
-        contributionMap[tx.accountId].total += delta;
-      } else {
-        // En caso de ser una cuenta que no estaba en debitAccounts (ej. Ahorro en Cuenta Corriente vacía)
-        // Buscamos el nombre de la cuenta en la lista original
-        const accountRef = accounts.find(a => a.id === tx.accountId);
-        contributionMap[tx.accountId] = { 
-          name: accountRef?.name || "Otra Fuente", 
-          total: delta 
-        };
-      }
     });
 
     const COLORS = ["bg-indigo-400", "bg-emerald-400", "bg-amber-400", "bg-violet-400", "bg-sky-400", "bg-rose-400"];
@@ -148,7 +127,7 @@ export default function FinanceDashboardPage() {
       patrimonioNeto: totalNetWorth,
       sources: sources.length > 0 ? sources : [{ name: "Sin Activos", pct: 100, color: "bg-zinc-400" }]
     };
-  }, [accounts, savingsTransactions]);
+  }, [accounts]);
 
   // --- LÓGICA FUNCIONAL DE EGRESOS (DÉBITO VS CRÉDITO) ---
   const monthlyExpensesData = useMemo(() => {
@@ -205,6 +184,67 @@ export default function FinanceDashboardPage() {
     };
   }, [expenseTransactions, accounts, currentMonthNum, currentYearNum]);
 
+  // --- LÓGICA FUNCIONAL DE AHORRO (ENTRADAS VS SALIDAS DEL MES) ---
+  const monthlySavingsData = useMemo(() => {
+    let totalIn = 0;
+    let totalOut = 0;
+
+    const daysInMonth = new Date(currentYearNum, currentMonthNum, 0).getDate();
+    const dailyIn = Array.from({ length: daysInMonth }, () => 0);
+    const dailyOut = Array.from({ length: daysInMonth }, () => 0);
+    
+    currentMonthTransactions.forEach(tx => {
+      const amount = Number(tx.amount);
+      const dateStr = tx.date.split('T')[0]; // YYYY-MM-DD
+      const dayOfMonth = parseInt(dateStr.split('-')[2], 10);
+      const dayIdx = dayOfMonth - 1;
+      
+      const account = accounts.find(a => a.id === tx.accountId);
+
+      if (tx.type === "AHORRO") {
+        // Ignorar patas secundarias (+) de transferencias para procesar solo el ahorro raíz (-)
+        if (tx.isInflow) return;
+
+        // Validar si el ahorro se originó de una cuenta que ya es de ahorro
+        // Si el origen es una cuenta de ahorro, representa una salida del fondo de ahorro
+        if (account?.isSavingsAccount) {
+          totalOut += amount;
+          if (dayIdx >= 0 && dayIdx < daysInMonth) {
+            dailyOut[dayIdx] += amount;
+          }
+        } else {
+          // Si se originó de una cuenta normal o manual, es una entrada a los ahorros
+          totalIn += amount;
+          if (dayIdx >= 0 && dayIdx < daysInMonth) {
+            dailyIn[dayIdx] += amount;
+          }
+        }
+      } else if (tx.type === "INGRESO" && account?.isSavingsAccount) {
+        // Ingreso directo a cuenta de ahorro = Incremento de ahorro
+        totalIn += amount;
+        if (dayIdx >= 0 && dayIdx < daysInMonth) {
+          dailyIn[dayIdx] += amount;
+        }
+      } else if (tx.type === "EGRESO" && account?.isSavingsAccount) {
+        // Egreso directo de cuenta de ahorro = Salida de ahorro
+        totalOut += amount;
+        if (dayIdx >= 0 && dayIdx < daysInMonth) {
+          dailyOut[dayIdx] += amount;
+        }
+      }
+    });
+
+    const sparkIn = dailyIn.map(val => ({ val }));
+    const sparkOut = dailyOut.map(val => ({ val }));
+
+    return {
+      totalIn,
+      totalOut,
+      sparkIn,
+      sparkOut
+    };
+  }, [currentMonthTransactions, accounts, currentMonthNum, currentYearNum]);
+
   const stats = useMemo(() => {
     const currentMonthData = COMPARISON_DATA[COMPARISON_DATA.length - 1];
     const savings = currentMonthData.ingresos - currentMonthData.egresos;
@@ -216,6 +256,40 @@ export default function FinanceDashboardPage() {
       porcentajeAhorro: Math.round(savingsPercentage),
     };
   }, []);
+
+  // --- CÁLCULO DE AHORRO TOTAL HISTÓRICO (Balances de cuentas + movimientos manuales) ---
+  const allTimeSavingsTotal = useMemo(() => {
+    // 1. Suma de balances de cuentas marcadas como cuenta de ahorro personal
+    const savingsAccountsBalance = accounts
+      .filter(a => a.isSavingsAccount)
+      .reduce((sum, acc) => sum + Number(acc.balance), 0);
+
+    // 2. Suma acumulada de movimientos de ahorro históricos que NO están en una cuenta de ahorro (para evitar duplicar)
+    const otherSavingsTransactionsTotal = savingsTransactions.reduce((sum, tx) => {
+      // Ignorar patas de entrada (+) para trabajar solo con los registros raíz de ahorro (-)
+      if (tx.isInflow) return sum;
+
+      const amount = Number(tx.amount);
+
+      if (tx.relatedTransactionId) {
+        // Si es una transferencia, buscamos la transacción vinculada (destino) en el historial de ahorros
+        const linkedTx = savingsTransactions.find(t => t.id === tx.relatedTransactionId);
+        if (linkedTx) {
+          const destAccount = accounts.find(a => a.id === linkedTx.accountId);
+          // Si la cuenta de destino ya es una cuenta de ahorro, la omitimos ya que ya se sumó en su balance
+          if (destAccount?.isSavingsAccount) return sum;
+        }
+      } else {
+        // Caso manual sin transferencia (origen directo)
+        const originAccount = accounts.find(a => a.id === tx.accountId);
+        if (originAccount?.isSavingsAccount) return sum; // Ya contemplado en el balance
+      }
+
+      return sum + amount;
+    }, 0);
+
+    return savingsAccountsBalance + otherSavingsTransactionsTotal;
+  }, [accounts, savingsTransactions]);
 
 
   return (
@@ -249,11 +323,12 @@ export default function FinanceDashboardPage() {
         />
 
         <SavingsCard 
-          amountIn={netWorthData.patrimonioNeto > 0 ? 250000 : 0} // Valor dummy por ahora para frontend
-          amountOut={50000} // Valor dummy por ahora
+          totalSavings={allTimeSavingsTotal}
+          amountIn={monthlySavingsData.totalIn}
+          amountOut={monthlySavingsData.totalOut}
           isPrivateMode={isPrivateMode}
-          chartDataIn={monthlyExpensesData.sparkDebit.map(d => ({ val: d.val * 0.5 }))} // Sparkline Dummy
-          chartDataOut={monthlyExpensesData.sparkDebit.map(d => ({ val: d.val * 0.1 }))}
+          chartDataIn={monthlySavingsData.sparkIn}
+          chartDataOut={monthlySavingsData.sparkOut}
         />
       </div>
 

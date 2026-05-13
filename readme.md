@@ -224,3 +224,12 @@ Este proyecto está bajo la licencia UNLICENSED.
 ---
 
 **Última actualización**: 2 de enero de 2026
+
+
+
+Vale ya me he dado cuenta del problema , lo que ocurre es que en una cuenta por ejemplo , el usuario puede tener sus ahorros. entonces , cuando en una cuenta el usuario realiza un movimiento de ingreso , no esta contabilizando como ahorro entonces por eso no se esta contabilizando en el componente , para esto hay que realizar un cambio , este cambio es que en las tarjetas de debito que ingrese el usuario tengan opción de ponerlas como cuenta de ahorro personal. 
+
+---
+
+- realicemos este cambio para la base de datos 
+- realicemos este cambio en el componente y ajustemoslo 
