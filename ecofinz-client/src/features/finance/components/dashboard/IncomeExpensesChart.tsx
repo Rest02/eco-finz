@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 import { FormattedValue } from "./FormattedValue";
+import { cn } from "@/lib/utils";
 
 interface ChartDataItem {
   month: string;
   ingresos: number;
-  egresos: number;
+  egresosDebito: number;
+  egresosCredito: number;
 }
 
 interface IncomeExpensesChartProps {
@@ -14,6 +16,8 @@ interface IncomeExpensesChartProps {
 }
 
 export function IncomeExpensesChart({ data, isPrivateMode }: IncomeExpensesChartProps) {
+  const [filterType, setFilterType] = useState<"ALL" | "DEBIT" | "CREDIT">("ALL");
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("es-CL", {
       style: "currency",
@@ -22,13 +26,62 @@ export function IncomeExpensesChart({ data, isPrivateMode }: IncomeExpensesChart
     }).format(val);
   };
 
+  // Mapear y computar los datos finales según el filtro local
+  const processedData = data.map(item => ({
+    month: item.month,
+    ingresos: item.ingresos,
+    egresos: filterType === "ALL"
+      ? item.egresosDebito + item.egresosCredito
+      : filterType === "DEBIT"
+        ? item.egresosDebito
+        : item.egresosCredito
+  }));
+
   return (
     <div className="lg:col-span-2 bg-white rounded-[32px] p-8 border border-zinc-200/60 shadow-sm flex flex-col">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h3 className="text-lg font-bold text-zinc-900">Ingresos vs Egresos</h3>
           <p className="text-zinc-500 text-xs font-medium">Histórico mensual</p>
         </div>
+
+        {/* Segmented Control Selector */}
+        <div className="flex bg-zinc-100/80 p-1 rounded-xl self-start sm:self-center border border-zinc-200/40">
+          <button
+            onClick={() => setFilterType("ALL")}
+            className={cn(
+              "px-3.5 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-200",
+              filterType === "ALL"
+                ? "bg-white text-zinc-900 shadow-sm border border-zinc-200/20"
+                : "text-zinc-500 hover:text-zinc-800"
+            )}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setFilterType("DEBIT")}
+            className={cn(
+              "px-3.5 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-200",
+              filterType === "DEBIT"
+                ? "bg-white text-zinc-900 shadow-sm border border-zinc-200/20"
+                : "text-zinc-500 hover:text-zinc-800"
+            )}
+          >
+            Débito
+          </button>
+          <button
+            onClick={() => setFilterType("CREDIT")}
+            className={cn(
+              "px-3.5 py-1.5 text-[11px] font-bold rounded-lg transition-all duration-200",
+              filterType === "CREDIT"
+                ? "bg-white text-zinc-900 shadow-sm border border-zinc-200/20"
+                : "text-zinc-500 hover:text-zinc-800"
+            )}
+          >
+            Crédito
+          </button>
+        </div>
+
         <div className="flex items-center gap-3 text-[10px] font-bold">
           <div className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 bg-indigo-500 rounded-sm" /> Ingresos
@@ -41,7 +94,7 @@ export function IncomeExpensesChart({ data, isPrivateMode }: IncomeExpensesChart
 
       <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+          <BarChart data={processedData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="month"

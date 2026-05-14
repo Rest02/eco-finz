@@ -284,7 +284,15 @@ export default function FinanceDashboardPage() {
 
   // --- LÓGICA DINÁMICA DE GRÁFICO DE COMPARACIÓN (Últimos 6 meses) ---
   const comparisonData = useMemo(() => {
-    const monthsList: { key: string; label: string; year: number; monthNum: number; ingresos: number; egresos: number }[] = [];
+    const monthsList: { 
+      key: string; 
+      label: string; 
+      year: number; 
+      monthNum: number; 
+      ingresos: number; 
+      egresosDebito: number; 
+      egresosCredito: number; 
+    }[] = [];
     const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
     // Construir el esqueleto de los últimos 6 meses (incluyendo el actual)
@@ -299,7 +307,8 @@ export default function FinanceDashboardPage() {
         year: yNum,
         monthNum: mNum,
         ingresos: 0,
-        egresos: 0,
+        egresosDebito: 0,
+        egresosCredito: 0,
       });
     }
 
@@ -313,6 +322,7 @@ export default function FinanceDashboardPage() {
       const txDay = parseInt(dStr, 10);
 
       const account = accounts.find(a => a.id === tx.accountId);
+      const isCreditCard = account?.type === "TARJETA_CREDITO";
 
       if (tx.type === "INGRESO") {
         // Regla: Omitir ingresos dirigidos a una Cuenta de Ahorro Personal
@@ -325,7 +335,7 @@ export default function FinanceDashboardPage() {
         }
       } else if (tx.type === "EGRESO") {
         // CRITICAL FIX: Omitir compras matrices de cuotas, se procesarán vía Proyecciones
-        if (account?.type === "TARJETA_CREDITO" && tx.description.includes(" | cuotas: ")) {
+        if (isCreditCard && tx.description.includes(" | cuotas: ")) {
           return;
         }
 
@@ -333,7 +343,7 @@ export default function FinanceDashboardPage() {
         let billingMonth = txMonth;
 
         // Regla: Tarjetas de Crédito -> Validar Cierre
-        if (account?.type === "TARJETA_CREDITO") {
+        if (isCreditCard) {
           const closingDay = Number(account?.closingDay || 15);
           if (txDay > closingDay) {
             billingMonth += 1;
@@ -347,12 +357,17 @@ export default function FinanceDashboardPage() {
         const targetKey = `${billingYear}-${String(billingMonth).padStart(2, '0')}`;
         const bucket = monthsList.find(m => m.key === targetKey);
         if (bucket) {
-          bucket.egresos += amount;
+          if (isCreditCard) {
+            bucket.egresosCredito += amount;
+          } else {
+            bucket.egresosDebito += amount;
+          }
         }
       }
     });
 
     // Integrar Proyecciones Reales (Parcelar las cuotas en los últimos 6 meses del gráfico)
+    // Las proyecciones reales siempre provienen de tarjetas de crédito
     const realProjections = projectionsData?.filter(p => !p.isSimulation) || [];
     realProjections.forEach(proj => {
       const monthlyAmount = Number(proj.amount) / Number(proj.installments);
@@ -369,7 +384,7 @@ export default function FinanceDashboardPage() {
         const targetKey = `${currentProjYear}-${String(currentProjMonth).padStart(2, '0')}`;
         const bucket = monthsList.find(m => m.key === targetKey);
         if (bucket) {
-          bucket.egresos += monthlyAmount;
+          bucket.egresosCredito += monthlyAmount;
         }
       }
     });
@@ -377,17 +392,20 @@ export default function FinanceDashboardPage() {
     return monthsList.map(m => ({
       month: m.label,
       ingresos: m.ingresos,
-      egresos: m.egresos,
+      egresosDebito: m.egresosDebito,
+      egresosCredito: m.egresosCredito,
     }));
   }, [historicalTransactions, accounts, currentYearNum, currentMonthNum, projectionsData]);
 
   const stats = useMemo(() => {
-    const currentMonthData = comparisonData[comparisonData.length - 1] || { ingresos: 0, egresos: 0 };
-    const savings = currentMonthData.ingresos - currentMonthData.egresos;
+    const currentMonthData = comparisonData[comparisonData.length - 1] || { ingresos: 0, egresosDebito: 0, egresosCredito: 0 };
+    const totalEgresos = currentMonthData.egresosDebito + currentMonthData.egresosCredito;
+    const savings = currentMonthData.ingresos - totalEgresos;
     const savingsPercentage = currentMonthData.ingresos > 0 ? (savings / currentMonthData.ingresos) * 100 : 0;
+    
     return {
       mesActualIngresos: currentMonthData.ingresos,
-      mesActualEgresos: currentMonthData.egresos,
+      mesActualEgresos: totalEgresos,
       mesActualAhorro: savings,
       porcentajeAhorro: Math.round(savingsPercentage),
     };
