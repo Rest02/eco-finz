@@ -70,7 +70,9 @@ export const getTransactions = (filters?: {
   categoryId?: string,
   type?: TransactionType,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  limit?: number,
+  page?: number
 }): Promise<AxiosResponse<PaginatedResponse<Transaction>>> => {
   return apiClient.get<PaginatedResponse<Transaction>>('/finance/transaction', { params: filters });
 };

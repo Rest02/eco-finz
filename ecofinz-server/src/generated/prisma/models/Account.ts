@@ -53,6 +53,7 @@ export type AccountMinAggregateOutputType = {
   dueDay: number | null
   lastDigits: string | null
   color: string | null
+  isSavingsAccount: boolean | null
 }
 
 export type AccountMaxAggregateOutputType = {
@@ -68,6 +69,7 @@ export type AccountMaxAggregateOutputType = {
   dueDay: number | null
   lastDigits: string | null
   color: string | null
+  isSavingsAccount: boolean | null
 }
 
 export type AccountCountAggregateOutputType = {
@@ -83,6 +85,7 @@ export type AccountCountAggregateOutputType = {
   dueDay: number
   lastDigits: number
   color: number
+  isSavingsAccount: number
   _all: number
 }
 
@@ -114,6 +117,7 @@ export type AccountMinAggregateInputType = {
   dueDay?: true
   lastDigits?: true
   color?: true
+  isSavingsAccount?: true
 }
 
 export type AccountMaxAggregateInputType = {
@@ -129,6 +133,7 @@ export type AccountMaxAggregateInputType = {
   dueDay?: true
   lastDigits?: true
   color?: true
+  isSavingsAccount?: true
 }
 
 export type AccountCountAggregateInputType = {
@@ -144,6 +149,7 @@ export type AccountCountAggregateInputType = {
   dueDay?: true
   lastDigits?: true
   color?: true
+  isSavingsAccount?: true
   _all?: true
 }
 
@@ -246,6 +252,7 @@ export type AccountGroupByOutputType = {
   dueDay: number | null
   lastDigits: string | null
   color: string | null
+  isSavingsAccount: boolean
   _count: AccountCountAggregateOutputType | null
   _avg: AccountAvgAggregateOutputType | null
   _sum: AccountSumAggregateOutputType | null
@@ -284,6 +291,7 @@ export type AccountWhereInput = {
   dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
   lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
   color?: Prisma.StringNullableFilter<"Account"> | string | null
+  isSavingsAccount?: Prisma.BoolFilter<"Account"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
   projections?: Prisma.ProjectionListRelationFilter
@@ -302,6 +310,7 @@ export type AccountOrderByWithRelationInput = {
   dueDay?: Prisma.SortOrderInput | Prisma.SortOrder
   lastDigits?: Prisma.SortOrderInput | Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSavingsAccount?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
   projections?: Prisma.ProjectionOrderByRelationAggregateInput
@@ -323,6 +332,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
   lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
   color?: Prisma.StringNullableFilter<"Account"> | string | null
+  isSavingsAccount?: Prisma.BoolFilter<"Account"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
   projections?: Prisma.ProjectionListRelationFilter
@@ -341,6 +351,7 @@ export type AccountOrderByWithAggregationInput = {
   dueDay?: Prisma.SortOrderInput | Prisma.SortOrder
   lastDigits?: Prisma.SortOrderInput | Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSavingsAccount?: Prisma.SortOrder
   _count?: Prisma.AccountCountOrderByAggregateInput
   _avg?: Prisma.AccountAvgOrderByAggregateInput
   _max?: Prisma.AccountMaxOrderByAggregateInput
@@ -364,6 +375,7 @@ export type AccountScalarWhereWithAggregatesInput = {
   dueDay?: Prisma.IntNullableWithAggregatesFilter<"Account"> | number | null
   lastDigits?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
   color?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
+  isSavingsAccount?: Prisma.BoolWithAggregatesFilter<"Account"> | boolean
 }
 
 export type AccountCreateInput = {
@@ -378,6 +390,7 @@ export type AccountCreateInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutAccountInput
@@ -396,6 +409,7 @@ export type AccountUncheckedCreateInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutAccountInput
 }
@@ -412,6 +426,7 @@ export type AccountUpdateInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutAccountNestedInput
@@ -430,6 +445,7 @@ export type AccountUncheckedUpdateInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutAccountNestedInput
 }
@@ -447,6 +463,7 @@ export type AccountCreateManyInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
 }
 
 export type AccountUpdateManyMutationInput = {
@@ -461,6 +478,7 @@ export type AccountUpdateManyMutationInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type AccountUncheckedUpdateManyInput = {
@@ -476,6 +494,7 @@ export type AccountUncheckedUpdateManyInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type AccountListRelationFilter = {
@@ -501,6 +520,7 @@ export type AccountCountOrderByAggregateInput = {
   dueDay?: Prisma.SortOrder
   lastDigits?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  isSavingsAccount?: Prisma.SortOrder
 }
 
 export type AccountAvgOrderByAggregateInput = {
@@ -523,6 +543,7 @@ export type AccountMaxOrderByAggregateInput = {
   dueDay?: Prisma.SortOrder
   lastDigits?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  isSavingsAccount?: Prisma.SortOrder
 }
 
 export type AccountMinOrderByAggregateInput = {
@@ -538,6 +559,7 @@ export type AccountMinOrderByAggregateInput = {
   dueDay?: Prisma.SortOrder
   lastDigits?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  isSavingsAccount?: Prisma.SortOrder
 }
 
 export type AccountSumOrderByAggregateInput = {
@@ -662,6 +684,7 @@ export type AccountCreateWithoutUserInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutAccountInput
 }
@@ -678,6 +701,7 @@ export type AccountUncheckedCreateWithoutUserInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutAccountInput
 }
@@ -724,6 +748,7 @@ export type AccountScalarWhereInput = {
   dueDay?: Prisma.IntNullableFilter<"Account"> | number | null
   lastDigits?: Prisma.StringNullableFilter<"Account"> | string | null
   color?: Prisma.StringNullableFilter<"Account"> | string | null
+  isSavingsAccount?: Prisma.BoolFilter<"Account"> | boolean
 }
 
 export type AccountCreateWithoutTransactionsInput = {
@@ -738,6 +763,7 @@ export type AccountCreateWithoutTransactionsInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutAccountInput
 }
@@ -755,6 +781,7 @@ export type AccountUncheckedCreateWithoutTransactionsInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -786,6 +813,7 @@ export type AccountUpdateWithoutTransactionsInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutAccountNestedInput
 }
@@ -803,6 +831,7 @@ export type AccountUncheckedUpdateWithoutTransactionsInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -818,6 +847,7 @@ export type AccountCreateWithoutProjectionsInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
 }
@@ -835,6 +865,7 @@ export type AccountUncheckedCreateWithoutProjectionsInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -866,6 +897,7 @@ export type AccountUpdateWithoutProjectionsInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
 }
@@ -883,6 +915,7 @@ export type AccountUncheckedUpdateWithoutProjectionsInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -898,6 +931,7 @@ export type AccountCreateManyUserInput = {
   dueDay?: number | null
   lastDigits?: string | null
   color?: string | null
+  isSavingsAccount?: boolean
 }
 
 export type AccountUpdateWithoutUserInput = {
@@ -912,6 +946,7 @@ export type AccountUpdateWithoutUserInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutAccountNestedInput
 }
@@ -928,6 +963,7 @@ export type AccountUncheckedUpdateWithoutUserInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutAccountNestedInput
 }
@@ -944,6 +980,7 @@ export type AccountUncheckedUpdateManyWithoutUserInput = {
   dueDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSavingsAccount?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -999,6 +1036,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   dueDay?: boolean
   lastDigits?: boolean
   color?: boolean
+  isSavingsAccount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
   projections?: boolean | Prisma.Account$projectionsArgs<ExtArgs>
@@ -1018,6 +1056,7 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   dueDay?: boolean
   lastDigits?: boolean
   color?: boolean
+  isSavingsAccount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -1034,6 +1073,7 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   dueDay?: boolean
   lastDigits?: boolean
   color?: boolean
+  isSavingsAccount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -1050,9 +1090,10 @@ export type AccountSelectScalar = {
   dueDay?: boolean
   lastDigits?: boolean
   color?: boolean
+  isSavingsAccount?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "balance" | "userId" | "createdAt" | "updatedAt" | "creditLimit" | "closingDay" | "dueDay" | "lastDigits" | "color", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "balance" | "userId" | "createdAt" | "updatedAt" | "creditLimit" | "closingDay" | "dueDay" | "lastDigits" | "color" | "isSavingsAccount", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
@@ -1086,6 +1127,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     dueDay: number | null
     lastDigits: string | null
     color: string | null
+    isSavingsAccount: boolean
   }, ExtArgs["result"]["account"]>
   composites: {}
 }
@@ -1524,6 +1566,7 @@ export interface AccountFieldRefs {
   readonly dueDay: Prisma.FieldRef<"Account", 'Int'>
   readonly lastDigits: Prisma.FieldRef<"Account", 'String'>
   readonly color: Prisma.FieldRef<"Account", 'String'>
+  readonly isSavingsAccount: Prisma.FieldRef<"Account", 'Boolean'>
 }
     
 

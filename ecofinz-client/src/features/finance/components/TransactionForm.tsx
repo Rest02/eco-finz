@@ -141,12 +141,7 @@ const TransactionForm: React.FC<Props> = ({
       return;
     }
 
-    if (type === "AHORRO" && !destinationAccountId) {
-      setError("Por favor, selecciona una cuenta destino para el ahorro.");
-      return;
-    }
-
-    if (type === "AHORRO" && destinationAccountId === accountIdToUse) {
+    if (type === "AHORRO" && destinationAccountId && destinationAccountId === accountIdToUse) {
       setError("La cuenta destino no puede ser la misma que la origen.");
       return;
     }
@@ -359,12 +354,11 @@ const TransactionForm: React.FC<Props> = ({
           {type === 'AHORRO' && (
             <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
               <label className="text-sm font-medium text-blue-500 ml-1 flex items-center gap-1.5">
-                <ArrowRightLeft className="w-3.5 h-3.5" /> Cuenta Destino
+                <ArrowRightLeft className="w-3.5 h-3.5" /> Cuenta Destino <span className="text-[10px] text-blue-300 font-normal">(Opcional)</span>
               </label>
               <select
                 value={destinationAccountId}
                 onChange={(e) => setDestinationAccountId(e.target.value)}
-                required={type === 'AHORRO'}
                 className="w-full bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
               >
                 <option value="" className="text-zinc-400">Seleccionar destino</option>

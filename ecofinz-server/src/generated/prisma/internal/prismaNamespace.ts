@@ -995,7 +995,8 @@ export const AccountScalarFieldEnum = {
   closingDay: 'closingDay',
   dueDay: 'dueDay',
   lastDigits: 'lastDigits',
-  color: 'color'
+  color: 'color',
+  isSavingsAccount: 'isSavingsAccount'
 } as const
 
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
