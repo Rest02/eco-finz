@@ -23,19 +23,11 @@ import {
 
 import { useAccounts } from "@/features/finance/hooks/useAccounts";
 import { useTransactions } from "@/features/finance/hooks/useTransactions";
+import { useProjections } from "@/features/finance/hooks/useProjections";
 
 // ----------------------------------------------------------------------
 // MOCK DATA
 // ----------------------------------------------------------------------
-
-const COMPARISON_DATA = [
-  { month: "Ene", ingresos: 1200000, egresos: 850000 },
-  { month: "Feb", ingresos: 1350000, egresos: 920000 },
-  { month: "Mar", ingresos: 1150000, egresos: 880000 },
-  { month: "Abr", ingresos: 1400000, egresos: 950000 },
-  { month: "May", ingresos: 1250000, egresos: 780000 },
-  { month: "Jun", ingresos: 1600000, egresos: 1050000 },
-];
 
 const SAVINGS_GOALS = [
   { id: 1, name: "✈️ Viaje a Japón", target: 3000000, current: 1800000, color: "bg-rose-500" },
@@ -79,19 +71,32 @@ export default function FinanceDashboardPage() {
   const startOfMonth = `${currentYearNum}-${mm}-01T00:00:00.000Z`;
   const endOfMonth = `${currentYearNum}-${mm}-${String(lastDayOfMonth).padStart(2, '0')}T23:59:59.999Z`;
 
+  // Rango Histórico para el Gráfico (7 meses atrás para cubrir colas de facturación)
+  const startHistoryDate = new Date(currentYearNum, currentMonthNum - 1 - 7, 1);
+  const startOfHistory = `${startHistoryDate.getFullYear()}-${String(startHistoryDate.getMonth() + 1).padStart(2, '0')}-01T00:00:00.000Z`;
+
   // Fetch Real Data
   const { data: accounts = [] } = useAccounts();
   // Fetch Real Data (Todos los ahorros históricos para Patrimonio Neto y cálculo acumulado)
   const { data: transactionResponse } = useTransactions({ type: "AHORRO", limit: 10000 });
   const savingsTransactions = transactionResponse?.data || [];
   
-  // Fetch TODAS las transacciones del mes actual para unificar cálculos del dashboard
+  // Fetch Transacciones en Rango Histórico (unifica el gráfico y las tarjetas actuales)
   const { data: monthlyTransactionsResponse } = useTransactions({ 
-    startDate: startOfMonth, 
+    startDate: startOfHistory, 
     endDate: endOfMonth, 
     limit: 10000 
   });
-  const currentMonthTransactions = monthlyTransactionsResponse?.data || [];
+  
+  const historicalTransactions = monthlyTransactionsResponse?.data || [];
+
+  // Fetch Proyecciones para distribuir cuotas
+  const { data: projectionsData = [] } = useProjections();
+
+  // Filtrar en memoria las transacciones que caen estrictamente en el mes calendario actual para tarjetas existentes
+  const currentMonthTransactions = useMemo(() => {
+    return historicalTransactions.filter(tx => tx.date >= startOfMonth && tx.date <= endOfMonth);
+  }, [historicalTransactions, startOfMonth, endOfMonth]);
 
   // Filtrar egresos para mantener compatibilidad con la lógica de tarjetas de crédito/débito
   const expenseTransactions = useMemo(() => 
@@ -157,6 +162,9 @@ export default function FinanceDashboardPage() {
           dailyDebit[dayIdx] += amount;
         }
       } else {
+        // CRITICAL FIX: Omitir compras matrices de cuotas, se procesarán vía Proyecciones
+        if (tx.description.includes(" | cuotas: ")) return;
+
         // Es Crédito -> Aplicar validación de ciclo (día de cierre)
         const closingDay = Number(account?.closingDay || 15); // Default 15 si no tiene
 
@@ -167,12 +175,41 @@ export default function FinanceDashboardPage() {
             dailyCredit[dayIdx] += amount;
           }
         }
-        // Si es posterior al día de cierre, se ignora ya que el usuario indicó que pasa al mes siguiente
+      }
+    });
+
+    // Integrar Proyecciones Reales (Cuotas de tarjetas de crédito que impactan ESTE MES)
+    const realProjections = projectionsData?.filter(p => !p.isSimulation) || [];
+    realProjections.forEach(proj => {
+      const monthlyAmount = Number(proj.amount) / Number(proj.installments);
+      
+      // Identificar si esta proyección impacta el mes actual
+      for (let i = 0; i < proj.installments; i++) {
+        let currentProjMonth = proj.startMonth + i;
+        let currentProjYear = proj.startYear;
+
+        while (currentProjMonth > 12) {
+          currentProjMonth -= 12;
+          currentProjYear += 1;
+        }
+
+        if (currentProjMonth === currentMonthNum && currentProjYear === currentYearNum) {
+          totalCredit += monthlyAmount;
+          
+          // Obtener día de cierre de la cuenta asociada para graficar en Sparkline
+          const account = accounts.find(a => a.id === proj.accountId);
+          const closingDay = Number(account?.closingDay || 15);
+          const dayIdx = Math.min(closingDay, daysInMonth) - 1;
+          
+          if (dayIdx >= 0 && dayIdx < daysInMonth) {
+            dailyCredit[dayIdx] += monthlyAmount;
+          }
+          break;
+        }
       }
     });
 
     // Convertir los arrays diarios acumulativos o directos para el Sparkline de Recharts
-    // Vamos a generar una curva suave (acumulada suave o por días)
     const sparkDebit = dailyDebit.map(val => ({ val }));
     const sparkCredit = dailyCredit.map(val => ({ val }));
 
@@ -182,7 +219,7 @@ export default function FinanceDashboardPage() {
       sparkDebit,
       sparkCredit
     };
-  }, [expenseTransactions, accounts, currentMonthNum, currentYearNum]);
+  }, [expenseTransactions, accounts, currentMonthNum, currentYearNum, projectionsData]);
 
   // --- LÓGICA FUNCIONAL DE AHORRO (ENTRADAS VS SALIDAS DEL MES) ---
   const monthlySavingsData = useMemo(() => {
@@ -245,17 +282,116 @@ export default function FinanceDashboardPage() {
     };
   }, [currentMonthTransactions, accounts, currentMonthNum, currentYearNum]);
 
+  // --- LÓGICA DINÁMICA DE GRÁFICO DE COMPARACIÓN (Últimos 6 meses) ---
+  const comparisonData = useMemo(() => {
+    const monthsList: { key: string; label: string; year: number; monthNum: number; ingresos: number; egresos: number }[] = [];
+    const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+    // Construir el esqueleto de los últimos 6 meses (incluyendo el actual)
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(currentYearNum, currentMonthNum - 1 - i, 1);
+      const mNum = d.getMonth() + 1; 
+      const yNum = d.getFullYear();
+      const key = `${yNum}-${String(mNum).padStart(2, '0')}`;
+      monthsList.push({
+        key,
+        label: monthNames[d.getMonth()],
+        year: yNum,
+        monthNum: mNum,
+        ingresos: 0,
+        egresos: 0,
+      });
+    }
+
+    // Distribuir montos aplicando reglas de negocio (Cierre Crédito y Exclusión Ahorro)
+    historicalTransactions.forEach(tx => {
+      const amount = Number(tx.amount);
+      const datePart = tx.date.split('T')[0]; 
+      const [yStr, mStr, dStr] = datePart.split('-');
+      const txYear = parseInt(yStr, 10);
+      const txMonth = parseInt(mStr, 10);
+      const txDay = parseInt(dStr, 10);
+
+      const account = accounts.find(a => a.id === tx.accountId);
+
+      if (tx.type === "INGRESO") {
+        // Regla: Omitir ingresos dirigidos a una Cuenta de Ahorro Personal
+        if (account?.isSavingsAccount) return;
+
+        const targetKey = `${txYear}-${String(txMonth).padStart(2, '0')}`;
+        const bucket = monthsList.find(m => m.key === targetKey);
+        if (bucket) {
+          bucket.ingresos += amount;
+        }
+      } else if (tx.type === "EGRESO") {
+        // CRITICAL FIX: Omitir compras matrices de cuotas, se procesarán vía Proyecciones
+        if (account?.type === "TARJETA_CREDITO" && tx.description.includes(" | cuotas: ")) {
+          return;
+        }
+
+        let billingYear = txYear;
+        let billingMonth = txMonth;
+
+        // Regla: Tarjetas de Crédito -> Validar Cierre
+        if (account?.type === "TARJETA_CREDITO") {
+          const closingDay = Number(account?.closingDay || 15);
+          if (txDay > closingDay) {
+            billingMonth += 1;
+            if (billingMonth > 12) {
+              billingMonth = 1;
+              billingYear += 1;
+            }
+          }
+        }
+
+        const targetKey = `${billingYear}-${String(billingMonth).padStart(2, '0')}`;
+        const bucket = monthsList.find(m => m.key === targetKey);
+        if (bucket) {
+          bucket.egresos += amount;
+        }
+      }
+    });
+
+    // Integrar Proyecciones Reales (Parcelar las cuotas en los últimos 6 meses del gráfico)
+    const realProjections = projectionsData?.filter(p => !p.isSimulation) || [];
+    realProjections.forEach(proj => {
+      const monthlyAmount = Number(proj.amount) / Number(proj.installments);
+
+      for (let i = 0; i < proj.installments; i++) {
+        let currentProjMonth = proj.startMonth + i;
+        let currentProjYear = proj.startYear;
+
+        while (currentProjMonth > 12) {
+          currentProjMonth -= 12;
+          currentProjYear += 1;
+        }
+
+        const targetKey = `${currentProjYear}-${String(currentProjMonth).padStart(2, '0')}`;
+        const bucket = monthsList.find(m => m.key === targetKey);
+        if (bucket) {
+          bucket.egresos += monthlyAmount;
+        }
+      }
+    });
+
+    return monthsList.map(m => ({
+      month: m.label,
+      ingresos: m.ingresos,
+      egresos: m.egresos,
+    }));
+  }, [historicalTransactions, accounts, currentYearNum, currentMonthNum, projectionsData]);
+
   const stats = useMemo(() => {
-    const currentMonthData = COMPARISON_DATA[COMPARISON_DATA.length - 1];
+    const currentMonthData = comparisonData[comparisonData.length - 1] || { ingresos: 0, egresos: 0 };
     const savings = currentMonthData.ingresos - currentMonthData.egresos;
-    const savingsPercentage = (savings / currentMonthData.ingresos) * 100;
+    const savingsPercentage = currentMonthData.ingresos > 0 ? (savings / currentMonthData.ingresos) * 100 : 0;
     return {
       mesActualIngresos: currentMonthData.ingresos,
       mesActualEgresos: currentMonthData.egresos,
       mesActualAhorro: savings,
       porcentajeAhorro: Math.round(savingsPercentage),
     };
-  }, []);
+  }, [comparisonData]);
 
   // --- CÁLCULO DE AHORRO TOTAL HISTÓRICO (Balances de cuentas + movimientos manuales) ---
   const allTimeSavingsTotal = useMemo(() => {
@@ -334,7 +470,7 @@ export default function FinanceDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <IncomeExpensesChart 
-          data={COMPARISON_DATA}
+          data={comparisonData}
           isPrivateMode={isPrivateMode}
         />
 
