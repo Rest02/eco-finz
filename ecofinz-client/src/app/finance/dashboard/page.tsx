@@ -42,14 +42,6 @@ const SPARK_DATA_AHORRO = [
   { val: 10 }, { val: 15 }, { val: 12 }, { val: 20 }, { val: 25 }, { val: 32 }, { val: 34 }
 ];
 
-const EXPENSE_CATEGORIES = [
-  { name: "Alimentación", value: 320000, color: "#6366F1", change: 5 },
-  { name: "Transporte", value: 85000, color: "#F59E0B", change: -2 },
-  { name: "Entretenimiento", value: 120000, color: "#EC4899", change: 15 },
-  { name: "Compras", value: 250000, color: "#10B981", change: -8 },
-  { name: "Servicios", value: 145000, color: "#3B82F6", change: 0 },
-];
-
 const RECENT_TRANSACTIONS = [
   { id: "tx1", desc: "Supermercado Jumbo", amount: -85200, date: "Hoy", icon: ShoppingBag, color: "text-indigo-600 bg-indigo-50", category: "Alimentación" },
   { id: "tx2", desc: "Transferencia Sueldo", amount: 1600000, date: "Ayer", icon: DollarSign, color: "text-emerald-600 bg-emerald-50", category: "Ingresos" },
@@ -411,6 +403,93 @@ export default function FinanceDashboardPage() {
     };
   }, [comparisonData]);
 
+  // --- CÁLCULO DE GASTOS POR CATEGORÍA (Inteligencia de Gastos) ---
+  const categorizationData = useMemo(() => {
+    const categoryMap: { [key: string]: number } = {};
+
+    // 1. Transacciones regulares de Egreso
+    expenseTransactions.forEach(tx => {
+      const amount = Number(tx.amount);
+      const account = accounts.find(a => a.id === tx.accountId);
+      const isCreditCard = account?.type === "TARJETA_CREDITO";
+      const categoryName = tx.category?.name || "Otros";
+
+      if (!isCreditCard) {
+        categoryMap[categoryName] = (categoryMap[categoryName] || 0) + amount;
+      } else {
+        if (tx.description.includes(" | cuotas: ")) return;
+
+        const dateStr = tx.date.split('T')[0];
+        const dayOfMonth = parseInt(dateStr.split('-')[2], 10);
+        const closingDay = Number(account?.closingDay || 15);
+
+        if (dayOfMonth <= closingDay) {
+          categoryMap[categoryName] = (categoryMap[categoryName] || 0) + amount;
+        }
+      }
+    });
+
+    // 2. Proyecciones/Cuotas vigentes este mes
+    const realProjections = projectionsData?.filter(p => !p.isSimulation) || [];
+    realProjections.forEach(proj => {
+      const monthlyAmount = Number(proj.amount) / Number(proj.installments);
+      const categoryName = proj.category?.name || "Otros";
+
+      for (let i = 0; i < proj.installments; i++) {
+        let currentProjMonth = proj.startMonth + i;
+        let currentProjYear = proj.startYear;
+
+        while (currentProjMonth > 12) {
+          currentProjMonth -= 12;
+          currentProjYear += 1;
+        }
+
+        if (currentProjMonth === currentMonthNum && currentProjYear === currentYearNum) {
+          categoryMap[categoryName] = (categoryMap[categoryName] || 0) + monthlyAmount;
+          break;
+        }
+      }
+    });
+
+    const totalExpenses = Object.values(categoryMap).reduce((sum, a) => sum + a, 0);
+
+    const colorPalette = [
+      "#6366f1", // Indigo
+      "#f59e0b", // Amber
+      "#ec4899", // Pink
+      "#10b981", // Emerald
+      "#3b82f6", // Blue
+      "#8b5cf6", // Purple
+      "#f43f5e", // Rose
+      "#06b6d4", // Cyan
+      "#f97316", // Orange
+      "#84cc16", // Lime
+    ];
+
+    const knownColors: { [key: string]: string } = {
+      "Alimentación": "#6366f1",
+      "Transporte": "#f59e0b",
+      "Entretenimiento": "#ec4899",
+      "Compras": "#10b981",
+      "Servicios": "#3b82f6",
+      "Otros": "#94a3b8",
+    };
+
+    return Object.entries(categoryMap)
+      .map(([name, value], index) => {
+        const percentage = totalExpenses > 0 ? (value / totalExpenses) * 100 : 0;
+        const color = knownColors[name] || colorPalette[index % colorPalette.length];
+        return {
+          name,
+          value: Math.round(value),
+          color,
+          percentage: parseFloat(percentage.toFixed(1)),
+        };
+      })
+      .sort((a, b) => b.value - a.value);
+
+  }, [expenseTransactions, accounts, projectionsData, currentMonthNum, currentYearNum]);
+
   // --- CÁLCULO DE AHORRO TOTAL HISTÓRICO (Balances de cuentas + movimientos manuales) ---
   const allTimeSavingsTotal = useMemo(() => {
     // 1. Suma de balances de cuentas marcadas como cuenta de ahorro personal
@@ -493,7 +572,7 @@ export default function FinanceDashboardPage() {
         />
 
         <SpendingIntelligence 
-          categories={EXPENSE_CATEGORIES}
+          categories={categorizationData}
           total={stats.mesActualEgresos}
           isPrivateMode={isPrivateMode}
         />

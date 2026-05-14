@@ -7,7 +7,7 @@ interface ExpenseCategory {
   name: string;
   value: number;
   color: string;
-  change: number;
+  percentage: number;
 }
 
 interface SpendingIntelligenceProps {
@@ -17,6 +17,13 @@ interface SpendingIntelligenceProps {
 }
 
 export function SpendingIntelligence({ categories, total, isPrivateMode }: SpendingIntelligenceProps) {
+  const hasData = categories.length > 0 && total > 0;
+
+  // Si no hay datos, pasamos un array falso con color gris para mostrar una dona vacía y elegante
+  const chartData = hasData 
+    ? categories 
+    : [{ name: "Sin gastos", value: 1, color: "#f1f5f9", percentage: 0 }];
+
   return (
     <div className="bg-white rounded-[32px] p-8 border border-zinc-200/60 shadow-sm flex flex-col h-full">
       <h3 className="text-lg font-bold text-zinc-900 mb-1">Inteligencia de Gastos</h3>
@@ -25,8 +32,16 @@ export function SpendingIntelligence({ categories, total, isPrivateMode }: Spend
       <div className="relative h-[150px] flex items-center justify-center mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={categories} innerRadius={45} outerRadius={60} paddingAngle={6} dataKey="value">
-              {categories.map((entry, index) => <Cell key={`c-${index}`} fill={entry.color} stroke="none" />)}
+            <Pie 
+              data={chartData} 
+              innerRadius={45} 
+              outerRadius={60} 
+              paddingAngle={hasData ? 6 : 0} 
+              dataKey="value"
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`c-${index}`} fill={entry.color} stroke="none" />
+              ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
@@ -38,23 +53,38 @@ export function SpendingIntelligence({ categories, total, isPrivateMode }: Spend
         </div>
       </div>
       
-      <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-1">
-        {categories.map(cat => (
-          <div key={cat.name} className="flex items-center justify-between p-2 rounded-xl hover:bg-zinc-50 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full" style={{backgroundColor: cat.color}}/>
-              <span className="text-xs font-semibold text-zinc-600">{cat.name}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-zinc-900">
-                <FormattedValue value={cat.value} isPrivateMode={isPrivateMode} />
-              </span>
-              <span className={cn("text-[9px] font-bold px-1.5 rounded-md", cat.change > 0 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600")}>
-                {cat.change > 0 ? '+' : ''}{cat.change}%
-              </span>
-            </div>
+      <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar pr-1 min-h-[120px]">
+        {!hasData ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+            <p className="text-zinc-400 text-xs font-medium leading-relaxed">
+              Sin movimientos registrados este mes
+            </p>
           </div>
-        ))}
+        ) : (
+          <div className="space-y-2">
+            {categories.map(cat => (
+              <div key={cat.name} className="flex items-center justify-between p-2 rounded-xl hover:bg-zinc-50 transition-colors">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <div 
+                    className="w-1.5 h-1.5 rounded-full shrink-0" 
+                    style={{ backgroundColor: cat.color }}
+                  />
+                  <span className="text-xs font-semibold text-zinc-600 truncate">
+                    {cat.name}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-xs font-bold text-zinc-900">
+                    <FormattedValue value={cat.value} isPrivateMode={isPrivateMode} />
+                  </span>
+                  <span className="text-[10px] font-extrabold text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-md">
+                    {cat.percentage}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
