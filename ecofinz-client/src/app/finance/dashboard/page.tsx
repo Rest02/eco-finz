@@ -42,12 +42,7 @@ const SPARK_DATA_AHORRO = [
   { val: 10 }, { val: 15 }, { val: 12 }, { val: 20 }, { val: 25 }, { val: 32 }, { val: 34 }
 ];
 
-const RECENT_TRANSACTIONS = [
-  { id: "tx1", desc: "Supermercado Jumbo", amount: -85200, date: "Hoy", icon: ShoppingBag, color: "text-indigo-600 bg-indigo-50", category: "Alimentación" },
-  { id: "tx2", desc: "Transferencia Sueldo", amount: 1600000, date: "Ayer", icon: DollarSign, color: "text-emerald-600 bg-emerald-50", category: "Ingresos" },
-  { id: "tx3", desc: "Carga Bip", amount: -10000, date: "Ayer", icon: Car, color: "text-amber-600 bg-amber-50", category: "Transporte" },
-  { id: "tx4", desc: "Netflix", amount: -9900, date: "08 May", icon: ShoppingBag, color: "text-rose-600 bg-rose-50", category: "Servicios" },
-];
+
 
 export default function FinanceDashboardPage() {
   const [isPrivateMode, setIsPrivateMode] = useState(false);
@@ -490,6 +485,75 @@ export default function FinanceDashboardPage() {
 
   }, [expenseTransactions, accounts, projectionsData, currentMonthNum, currentYearNum]);
 
+  // --- CÁLCULO DE ÚLTIMOS MOVIMIENTOS (Últimos 30 días, máx 5) ---
+  const recentTransactionsData = useMemo(() => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+    const filtered = historicalTransactions.filter(tx => {
+      const txDate = new Date(tx.date);
+      const isWithinLast30Days = txDate >= thirtyDaysAgo && txDate <= now;
+      const isRelevantType = tx.type === "INGRESO" || tx.type === "EGRESO";
+      return isWithinLast30Days && isRelevantType;
+    });
+
+    const sorted = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const top5 = sorted.slice(0, 5);
+
+    return top5.map(tx => {
+      const isIncome = tx.type === "INGRESO";
+      const d = new Date(tx.date);
+      
+      const isToday = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      
+      const yesterday = new Date();
+      yesterday.setDate(now.getDate() - 1);
+      const isYesterday = d.getDate() === yesterday.getDate() && d.getMonth() === yesterday.getMonth() && d.getFullYear() === yesterday.getFullYear();
+
+      let formattedDate = "";
+      if (isToday) {
+        formattedDate = "Hoy";
+      } else if (isYesterday) {
+        formattedDate = "Ayer";
+      } else {
+        formattedDate = d.toLocaleDateString("es-CL", { day: "2-digit", month: "short" }).replace(".", "");
+      }
+
+      // 1. Parseo avanzado de Cuotas/Crédito del título
+      let displayDesc = tx.description;
+      let installmentInfo: { count: number; monthlyAmount: number } | undefined = undefined;
+
+      if (tx.description.includes(" | cuotas: ")) {
+        const parts = tx.description.split(" | cuotas: ");
+        displayDesc = parts[0];
+        const count = parseInt(parts[1], 10);
+        if (!isNaN(count) && count > 0) {
+          installmentInfo = {
+            count,
+            monthlyAmount: Math.round(Number(tx.amount) / count)
+          };
+        }
+      }
+
+      // 2. Localización de Cuenta Bancaria Asociada
+      const account = accounts.find(a => a.id === tx.accountId);
+
+      return {
+        id: tx.id,
+        desc: displayDesc,
+        amount: isIncome ? Number(tx.amount) : -Number(tx.amount),
+        date: formattedDate,
+        icon: isIncome ? DollarSign : ShoppingBag,
+        color: isIncome ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50",
+        category: tx.category?.name || (isIncome ? "Ingresos" : "Gastos"),
+        accountName: account?.name || "",
+        installmentInfo,
+      };
+    });
+  }, [historicalTransactions, accounts]);
+
   // --- CÁLCULO DE AHORRO TOTAL HISTÓRICO (Balances de cuentas + movimientos manuales) ---
   const allTimeSavingsTotal = useMemo(() => {
     // 1. Suma de balances de cuentas marcadas como cuenta de ahorro personal
@@ -584,7 +648,7 @@ export default function FinanceDashboardPage() {
       />
 
       <RecentTransactions 
-        transactions={RECENT_TRANSACTIONS}
+        transactions={recentTransactionsData}
         isPrivateMode={isPrivateMode}
       />
 
