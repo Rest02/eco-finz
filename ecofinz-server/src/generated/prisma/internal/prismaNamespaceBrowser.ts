@@ -57,6 +57,7 @@ export const ModelName = {
   Category: 'Category',
   Transaction: 'Transaction',
   Budget: 'Budget',
+  SavingsGoal: 'SavingsGoal',
   Projection: 'Projection'
 } as const
 
@@ -168,6 +169,22 @@ export const BudgetScalarFieldEnum = {
 } as const
 
 export type BudgetScalarFieldEnum = (typeof BudgetScalarFieldEnum)[keyof typeof BudgetScalarFieldEnum]
+
+
+export const SavingsGoalScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  targetAmount: 'targetAmount',
+  allocatedPercentage: 'allocatedPercentage',
+  status: 'status',
+  deadline: 'deadline',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SavingsGoalScalarFieldEnum = (typeof SavingsGoalScalarFieldEnum)[keyof typeof SavingsGoalScalarFieldEnum]
 
 
 export const ProjectionScalarFieldEnum = {
