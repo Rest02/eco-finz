@@ -68,6 +68,11 @@ export type Transaction = Prisma.TransactionModel
  */
 export type Budget = Prisma.BudgetModel
 /**
+ * Model SavingsGoal
+ * 
+ */
+export type SavingsGoal = Prisma.SavingsGoalModel
+/**
  * Model Projection
  * 
  */

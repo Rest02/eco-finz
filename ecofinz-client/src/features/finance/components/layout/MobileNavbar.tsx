@@ -10,11 +10,13 @@ import {
     LayoutGrid,
     Calendar,
     CreditCard,
+    PiggyBank,
 } from "lucide-react";
 
 const navItems = [
     { icon: Home, href: "/finance/dashboard", label: "Dashboard" },
     { icon: Wallet, href: "/finance/accounts", label: "Cuentas" },
+    { icon: PiggyBank, href: "/finance/savings", label: "Ahorros" },
     { icon: Calendar, href: "/finance/calendar", label: "Calendario" },
     { icon: Target, href: "/finance/budgets", label: "Presupuestos" },
     { icon: LayoutGrid, href: "/finance/categories", label: "Categorías" },

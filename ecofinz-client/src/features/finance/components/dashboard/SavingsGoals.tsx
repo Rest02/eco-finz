@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { FormattedValue } from "./FormattedValue";
 
 interface Goal {
-  id: number;
+  id: string | number;
   name: string;
   target: number;
   current: number;

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { 
   DollarSign, 
   ShoppingBag,
-  Car,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,24 +23,7 @@ import {
 import { useAccounts } from "@/features/finance/hooks/useAccounts";
 import { useTransactions } from "@/features/finance/hooks/useTransactions";
 import { useProjections } from "@/features/finance/hooks/useProjections";
-
-// ----------------------------------------------------------------------
-// MOCK DATA
-// ----------------------------------------------------------------------
-
-const SAVINGS_GOALS = [
-  { id: 1, name: "✈️ Viaje a Japón", target: 3000000, current: 1800000, color: "bg-rose-500" },
-  { id: 2, name: "🚗 Nuevo Auto", target: 8000000, current: 2400000, color: "bg-indigo-500" },
-  { id: 3, name: "🛡️ Fondo Emergencia", target: 4000000, current: 3200000, color: "bg-emerald-500" },
-];
-
-const SPARK_DATA_EGRESOS = [
-  { val: 20000 }, { val: 15000 }, { val: 45000 }, { val: 10000 }, { val: 35000 }, { val: 12000 }, { val: 8000 }
-];
-const SPARK_DATA_AHORRO = [
-  { val: 10 }, { val: 15 }, { val: 12 }, { val: 20 }, { val: 25 }, { val: 32 }, { val: 34 }
-];
-
+import { useSavingsGoals } from "@/features/finance/hooks/useSavingsGoals";
 
 
 export default function FinanceDashboardPage() {
@@ -79,6 +61,9 @@ export default function FinanceDashboardPage() {
 
   // Fetch Proyecciones para distribuir cuotas
   const { data: projectionsData = [] } = useProjections();
+
+  // Fetch Savings Goals Reales
+  const { data: savingsGoalsData } = useSavingsGoals();
 
   // Filtrar en memoria las transacciones que caen estrictamente en el mes calendario actual para tarjetas existentes
   const currentMonthTransactions = useMemo(() => {
@@ -643,7 +628,13 @@ export default function FinanceDashboardPage() {
       </div>
 
       <SavingsGoals 
-        goals={SAVINGS_GOALS}
+        goals={(savingsGoalsData?.goals ?? []).map(g => ({
+          id: g.id,
+          name: g.name,
+          target: g.targetAmount,
+          current: g.currentAmount,
+          color: g.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-indigo-500',
+        }))}
         isPrivateMode={isPrivateMode}
       />
 

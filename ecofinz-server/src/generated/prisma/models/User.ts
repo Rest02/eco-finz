@@ -228,6 +228,7 @@ export type UserWhereInput = {
   monthlySummaries?: Prisma.MonthlySummaryListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
   projections?: Prisma.ProjectionListRelationFilter
+  savingsGoals?: Prisma.SavingsGoalListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -247,6 +248,7 @@ export type UserOrderByWithRelationInput = {
   monthlySummaries?: Prisma.MonthlySummaryOrderByRelationAggregateInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
   projections?: Prisma.ProjectionOrderByRelationAggregateInput
+  savingsGoals?: Prisma.SavingsGoalOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -269,6 +271,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   monthlySummaries?: Prisma.MonthlySummaryListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
   projections?: Prisma.ProjectionListRelationFilter
+  savingsGoals?: Prisma.SavingsGoalListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -320,6 +323,7 @@ export type UserCreateInput = {
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -339,6 +343,7 @@ export type UserUncheckedCreateInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -358,6 +363,7 @@ export type UserUpdateInput = {
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -377,6 +383,7 @@ export type UserUncheckedUpdateInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -552,6 +559,20 @@ export type UserUpdateOneRequiredWithoutBudgetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBudgetsInput, Prisma.UserUpdateWithoutBudgetsInput>, Prisma.UserUncheckedUpdateWithoutBudgetsInput>
 }
 
+export type UserCreateNestedOneWithoutSavingsGoalsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSavingsGoalsInput, Prisma.UserUncheckedCreateWithoutSavingsGoalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSavingsGoalsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSavingsGoalsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSavingsGoalsInput, Prisma.UserUncheckedCreateWithoutSavingsGoalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSavingsGoalsInput
+  upsert?: Prisma.UserUpsertWithoutSavingsGoalsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSavingsGoalsInput, Prisma.UserUpdateWithoutSavingsGoalsInput>, Prisma.UserUncheckedUpdateWithoutSavingsGoalsInput>
+}
+
 export type UserCreateNestedOneWithoutProjectionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutProjectionsInput, Prisma.UserUncheckedCreateWithoutProjectionsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectionsInput
@@ -582,6 +603,7 @@ export type UserCreateWithoutAccountsInput = {
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -600,6 +622,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -634,6 +657,7 @@ export type UserUpdateWithoutAccountsInput = {
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -652,6 +676,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMonthlySummariesInput = {
@@ -670,6 +695,7 @@ export type UserCreateWithoutMonthlySummariesInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMonthlySummariesInput = {
@@ -688,6 +714,7 @@ export type UserUncheckedCreateWithoutMonthlySummariesInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMonthlySummariesInput = {
@@ -722,6 +749,7 @@ export type UserUpdateWithoutMonthlySummariesInput = {
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMonthlySummariesInput = {
@@ -740,6 +768,7 @@ export type UserUncheckedUpdateWithoutMonthlySummariesInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCategoriesInput = {
@@ -758,6 +787,7 @@ export type UserCreateWithoutCategoriesInput = {
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCategoriesInput = {
@@ -776,6 +806,7 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCategoriesInput = {
@@ -810,6 +841,7 @@ export type UserUpdateWithoutCategoriesInput = {
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCategoriesInput = {
@@ -828,6 +860,7 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTransactionsInput = {
@@ -846,6 +879,7 @@ export type UserCreateWithoutTransactionsInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -864,6 +898,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -898,6 +933,7 @@ export type UserUpdateWithoutTransactionsInput = {
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -916,6 +952,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBudgetsInput = {
@@ -934,6 +971,7 @@ export type UserCreateWithoutBudgetsInput = {
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBudgetsInput = {
@@ -952,6 +990,7 @@ export type UserUncheckedCreateWithoutBudgetsInput = {
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
   projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBudgetsInput = {
@@ -986,6 +1025,7 @@ export type UserUpdateWithoutBudgetsInput = {
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
   projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBudgetsInput = {
@@ -1000,6 +1040,99 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
+  monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  projections?: Prisma.ProjectionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSavingsGoalsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  password: string
+  verified?: boolean
+  verifyPin?: string | null
+  resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
+  monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  projections?: Prisma.ProjectionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSavingsGoalsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  password: string
+  verified?: boolean
+  verifyPin?: string | null
+  resetPasswordExpires?: Date | string | null
+  resetPasswordToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
+  monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  projections?: Prisma.ProjectionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSavingsGoalsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSavingsGoalsInput, Prisma.UserUncheckedCreateWithoutSavingsGoalsInput>
+}
+
+export type UserUpsertWithoutSavingsGoalsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSavingsGoalsInput, Prisma.UserUncheckedUpdateWithoutSavingsGoalsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSavingsGoalsInput, Prisma.UserUncheckedCreateWithoutSavingsGoalsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSavingsGoalsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSavingsGoalsInput, Prisma.UserUncheckedUpdateWithoutSavingsGoalsInput>
+}
+
+export type UserUpdateWithoutSavingsGoalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
+  monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  projections?: Prisma.ProjectionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSavingsGoalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -1022,6 +1155,7 @@ export type UserCreateWithoutProjectionsInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectionsInput = {
@@ -1040,6 +1174,7 @@ export type UserUncheckedCreateWithoutProjectionsInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectionsInput = {
@@ -1074,6 +1209,7 @@ export type UserUpdateWithoutProjectionsInput = {
   categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectionsInput = {
@@ -1092,6 +1228,7 @@ export type UserUncheckedUpdateWithoutProjectionsInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   monthlySummaries?: Prisma.MonthlySummaryUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1106,6 +1243,7 @@ export type UserCountOutputType = {
   monthlySummaries: number
   transactions: number
   projections: number
+  savingsGoals: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1115,6 +1253,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   monthlySummaries?: boolean | UserCountOutputTypeCountMonthlySummariesArgs
   transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
   projections?: boolean | UserCountOutputTypeCountProjectionsArgs
+  savingsGoals?: boolean | UserCountOutputTypeCountSavingsGoalsArgs
 }
 
 /**
@@ -1169,6 +1308,13 @@ export type UserCountOutputTypeCountProjectionsArgs<ExtArgs extends runtime.Type
   where?: Prisma.ProjectionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSavingsGoalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavingsGoalWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1187,6 +1333,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   monthlySummaries?: boolean | Prisma.User$monthlySummariesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   projections?: boolean | Prisma.User$projectionsArgs<ExtArgs>
+  savingsGoals?: boolean | Prisma.User$savingsGoalsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1237,6 +1384,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   monthlySummaries?: boolean | Prisma.User$monthlySummariesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   projections?: boolean | Prisma.User$projectionsArgs<ExtArgs>
+  savingsGoals?: boolean | Prisma.User$savingsGoalsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1251,6 +1399,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     monthlySummaries: Prisma.$MonthlySummaryPayload<ExtArgs>[]
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
     projections: Prisma.$ProjectionPayload<ExtArgs>[]
+    savingsGoals: Prisma.$SavingsGoalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1663,6 +1812,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   monthlySummaries<T extends Prisma.User$monthlySummariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$monthlySummariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlySummaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   transactions<T extends Prisma.User$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projections<T extends Prisma.User$projectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  savingsGoals<T extends Prisma.User$savingsGoalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$savingsGoalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavingsGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2231,6 +2381,30 @@ export type User$projectionsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.ProjectionScalarFieldEnum | Prisma.ProjectionScalarFieldEnum[]
+}
+
+/**
+ * User.savingsGoals
+ */
+export type User$savingsGoalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SavingsGoal
+   */
+  select?: Prisma.SavingsGoalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SavingsGoal
+   */
+  omit?: Prisma.SavingsGoalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SavingsGoalInclude<ExtArgs> | null
+  where?: Prisma.SavingsGoalWhereInput
+  orderBy?: Prisma.SavingsGoalOrderByWithRelationInput | Prisma.SavingsGoalOrderByWithRelationInput[]
+  cursor?: Prisma.SavingsGoalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SavingsGoalScalarFieldEnum | Prisma.SavingsGoalScalarFieldEnum[]
 }
 
 /**
