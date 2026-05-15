@@ -88,7 +88,7 @@ export function SavingsMonthlyChart({ data }: SavingsMonthlyChartProps) {
                 boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]}
+              formatter={(value: number | undefined) => [`$${(value ?? 0).toLocaleString()}`, undefined]}
             />
             <Legend
               wrapperStyle={{ fontSize: '11px', fontWeight: 600, paddingTop: '12px' }}
