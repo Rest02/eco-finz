@@ -25,6 +25,7 @@ model User {
   transactions         Transaction[]
   projections          Projection[]
   savingsGoals         SavingsGoal[]
+  fixedExpenses        FixedExpense[]
 }
 
 model Account {
@@ -151,6 +152,20 @@ model SavingsGoal {
   user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("savings_goals")
+}
+
+model FixedExpense {
+  id        String   @id @default(cuid())
+  name      String
+  amount    Decimal  @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("fixed_expenses")
 }
 
 model Projection {

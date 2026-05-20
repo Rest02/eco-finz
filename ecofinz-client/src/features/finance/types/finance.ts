@@ -127,3 +127,14 @@ export interface Projection {
 export type CreateProjectionDto = Omit<Projection, "id" | "userId" | "account" | "category" | "createdAt" | "updatedAt">;
 export type UpdateProjectionDto = Partial<CreateProjectionDto>;
 
+// ========== Income Projection ==========
+
+export interface IncomeProjection {
+  averageIncome: number;
+  totalIncome: number;
+  periodMonths: number;
+  transactionCount: number;
+  accountCount: number;
+  periodLabel: string;
+}
+

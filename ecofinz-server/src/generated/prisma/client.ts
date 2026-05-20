@@ -73,6 +73,11 @@ export type Budget = Prisma.BudgetModel
  */
 export type SavingsGoal = Prisma.SavingsGoalModel
 /**
+ * Model FixedExpense
+ * 
+ */
+export type FixedExpense = Prisma.FixedExpenseModel
+/**
  * Model Projection
  * 
  */

@@ -19,6 +19,7 @@ import {
   Projection,
   CreateProjectionDto,
   UpdateProjectionDto,
+  IncomeProjection,
 } from '../types/finance';
 
 // ========== Account Endpoints ==========
@@ -133,6 +134,12 @@ export const deleteProjection = (id: string): Promise<AxiosResponse<void>> => {
 
 export const syncProjections = (): Promise<AxiosResponse<{ success: boolean; message: string; cleanedCount: number }>> => {
   return apiClient.post('/finance/projection/sync');
+};
+
+// ========== Income Projection Endpoint ==========
+
+export const getIncomeProjection = (period: 'current' | '3m' | '6m'): Promise<AxiosResponse<IncomeProjection>> => {
+  return apiClient.get<IncomeProjection>('/finance/income-projection', { params: { period } });
 };
 
 
