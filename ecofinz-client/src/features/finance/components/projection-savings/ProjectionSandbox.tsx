@@ -17,6 +17,8 @@ import { DistributionPanel } from "./DistributionPanel";
 import { ScenarioSimulator } from "./ScenarioSimulator";
 import { GoalForm } from "../savings/GoalForm";
 import { Target, PiggyBank, Loader2 } from "lucide-react";
+import { ProjectionChart } from "./ProjectionChart";
+import { ProjectionBreakdownTable } from "./ProjectionBreakdownTable";
 
 type ScenarioMode = "A" | "B" | "C";
 
@@ -46,6 +48,86 @@ export function ProjectionSandbox() {
   const availableIncome = Math.max(0, averageIncome - totalFixedExpenses);
   const monthlySavings = availableIncome * (savingsPercentage / 100);
   const variableExpenses = availableIncome - monthlySavings;
+
+  const projectionData = useMemo(() => {
+    if (availableIncome <= 0) return [];
+
+    let activeSavings = monthlySavings;
+    let monthsCount = 12;
+
+    if (scenarioMode === "A" && targetDate && targetAmount > 0) {
+      const m = monthsBetween(new Date(), new Date(targetDate));
+      if (m > 0) {
+        monthsCount = m;
+        activeSavings = targetAmount / m;
+      }
+    } else if (scenarioMode === "C" && targetDate) {
+      const m = monthsBetween(new Date(), new Date(targetDate));
+      if (m > 0) {
+        monthsCount = m;
+      }
+    } else if (scenarioMode === "B" && targetAmount > 0 && monthlySavings > 0) {
+      monthsCount = Math.ceil(targetAmount / monthlySavings);
+    }
+
+    monthsCount = Math.max(1, Math.min(36, monthsCount));
+
+    if (activeSavings <= 0) return [];
+
+    const list = [];
+    const today = new Date();
+    for (let i = 1; i <= monthsCount; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+      const label = d.toLocaleDateString("es-CL", { month: "short", year: "2-digit" });
+      list.push({
+        name: label.charAt(0).toUpperCase() + label.slice(1),
+        acumulado: activeSavings * i,
+      });
+    }
+    return list;
+  }, [availableIncome, monthlySavings, scenarioMode, targetDate, targetAmount]);
+
+  const tableData = useMemo(() => {
+    if (availableIncome <= 0) return [];
+
+    let activeSavings = monthlySavings;
+    let monthsCount = 12;
+
+    if (scenarioMode === "A" && targetDate && targetAmount > 0) {
+      const m = monthsBetween(new Date(), new Date(targetDate));
+      if (m > 0) {
+        monthsCount = m;
+        activeSavings = targetAmount / m;
+      }
+    } else if (scenarioMode === "C" && targetDate) {
+      const m = monthsBetween(new Date(), new Date(targetDate));
+      if (m > 0) {
+        monthsCount = m;
+      }
+    } else if (scenarioMode === "B" && targetAmount > 0 && monthlySavings > 0) {
+      monthsCount = Math.ceil(targetAmount / monthlySavings);
+    }
+
+    monthsCount = Math.max(1, Math.min(36, monthsCount));
+
+    if (activeSavings <= 0) return [];
+
+    const list = [];
+    const today = new Date();
+    for (let i = 1; i <= monthsCount; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+      const label = d.toLocaleDateString("es-CL", { month: "long", year: "numeric" });
+      const accumulated = activeSavings * i;
+      const progress = targetAmount > 0 ? (accumulated / targetAmount) * 100 : 0;
+      list.push({
+        month: label.charAt(0).toUpperCase() + label.slice(1),
+        savings: activeSavings,
+        accumulated,
+        progress,
+      });
+    }
+    return list;
+  }, [availableIncome, monthlySavings, scenarioMode, targetDate, targetAmount]);
 
   const handleAddFixedExpense = (name: string, amount: number) => {
     createExpense.mutate({ name, amount });
@@ -174,23 +256,41 @@ export function ProjectionSandbox() {
         </div>
       </motion.div>
 
-      {/* Simulador de Escenarios */}
+      {/* Simulador de Escenarios & Gráfico */}
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
+        <div className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm p-6 flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-zinc-700 mb-4">Simulador de Ahorro</h3>
+            <ScenarioSimulator
+              scenarioMode={scenarioMode}
+              onScenarioChange={setScenarioMode}
+              targetAmount={targetAmount}
+              onTargetAmountChange={setTargetAmount}
+              targetDate={targetDate}
+              onTargetDateChange={setTargetDate}
+              savingsPercentage={savingsPercentage}
+              onSavingsPercentageChange={setSavingsPercentage}
+              availableIncome={availableIncome}
+            />
+          </div>
+        </div>
+        <ProjectionChart
+          data={projectionData}
+          targetAmount={targetAmount}
+          formatCurrency={formatCurrency}
+        />
+      </motion.div>
+
+      {/* Tabla de Desglose de Progresión */}
       <motion.div
         variants={itemVariants}
         className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm p-6"
       >
-        <h3 className="text-sm font-bold text-zinc-700 mb-4">Simulador de Ahorro</h3>
-        <ScenarioSimulator
-          scenarioMode={scenarioMode}
-          onScenarioChange={setScenarioMode}
-          targetAmount={targetAmount}
-          onTargetAmountChange={setTargetAmount}
-          targetDate={targetDate}
-          onTargetDateChange={setTargetDate}
-          savingsPercentage={savingsPercentage}
-          onSavingsPercentageChange={setSavingsPercentage}
-          availableIncome={availableIncome}
-        />
+        <h3 className="text-sm font-bold text-zinc-700 mb-4">Cronograma de Ahorro Proyectado</h3>
+        <ProjectionBreakdownTable data={tableData} formatCurrency={formatCurrency} />
       </motion.div>
 
       {/* Botón Convertir en Meta */}
@@ -222,4 +322,11 @@ export function ProjectionSandbox() {
       />
     </motion.div>
   );
+}
+
+function monthsBetween(d1: Date, d2: Date): number {
+  let months = (d2.getFullYear() - d1.getFullYear()) * 12;
+  months += d2.getMonth() - d1.getMonth();
+  if (d2.getDate() < d1.getDate()) months--;
+  return Math.max(0, months);
 }
