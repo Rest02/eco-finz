@@ -59,7 +59,7 @@ export function DistributionPanel({
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number | string) => formatCurrency(Number(value))}
+              formatter={(value: string | number | undefined) => formatCurrency(Number(value ?? 0))}
               contentStyle={{
                 borderRadius: "16px",
                 border: "1px solid #e4e4e7",
