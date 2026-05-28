@@ -391,6 +391,7 @@ export const ModelName = {
   Transaction: 'Transaction',
   Budget: 'Budget',
   SavingsGoal: 'SavingsGoal',
+  FixedExpense: 'FixedExpense',
   Projection: 'Projection'
 } as const
 
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "projection"
+    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "fixedExpense" | "projection"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -929,6 +930,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FixedExpense: {
+      payload: Prisma.$FixedExpensePayload<ExtArgs>
+      fields: Prisma.FixedExpenseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FixedExpenseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FixedExpenseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        findFirst: {
+          args: Prisma.FixedExpenseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FixedExpenseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        findMany: {
+          args: Prisma.FixedExpenseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>[]
+        }
+        create: {
+          args: Prisma.FixedExpenseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        createMany: {
+          args: Prisma.FixedExpenseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FixedExpenseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>[]
+        }
+        delete: {
+          args: Prisma.FixedExpenseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        update: {
+          args: Prisma.FixedExpenseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        deleteMany: {
+          args: Prisma.FixedExpenseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FixedExpenseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FixedExpenseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>[]
+        }
+        upsert: {
+          args: Prisma.FixedExpenseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FixedExpensePayload>
+        }
+        aggregate: {
+          args: Prisma.FixedExpenseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFixedExpense>
+        }
+        groupBy: {
+          args: Prisma.FixedExpenseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FixedExpenseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FixedExpenseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FixedExpenseCountAggregateOutputType> | number
+        }
+      }
+    }
     Projection: {
       payload: Prisma.$ProjectionPayload<ExtArgs>
       fields: Prisma.ProjectionFieldRefs
@@ -1150,6 +1225,19 @@ export const SavingsGoalScalarFieldEnum = {
 } as const
 
 export type SavingsGoalScalarFieldEnum = (typeof SavingsGoalScalarFieldEnum)[keyof typeof SavingsGoalScalarFieldEnum]
+
+
+export const FixedExpenseScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  isActive: 'isActive',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FixedExpenseScalarFieldEnum = (typeof FixedExpenseScalarFieldEnum)[keyof typeof FixedExpenseScalarFieldEnum]
 
 
 export const ProjectionScalarFieldEnum = {
@@ -1404,6 +1492,7 @@ export type GlobalOmitConfig = {
   transaction?: Prisma.TransactionOmit
   budget?: Prisma.BudgetOmit
   savingsGoal?: Prisma.SavingsGoalOmit
+  fixedExpense?: Prisma.FixedExpenseOmit
   projection?: Prisma.ProjectionOmit
 }
 

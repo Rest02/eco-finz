@@ -9,9 +9,10 @@ import { TransactionModule } from './transaction/transaction.module';
 import { BudgetModule } from './budget/budget.module';
 import { ProjectionModule } from './projection/projection.module';
 import { SavingsGoalModule } from './savings-goal/savings-goal.module';
+import { FixedExpenseModule } from './fixed-expense/fixed-expense.module';
 
 @Module({
-  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule, ProjectionModule, SavingsGoalModule],
+  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule, ProjectionModule, SavingsGoalModule, FixedExpenseModule],
   controllers: [FinanceController, CategoryController],
   providers: [FinanceService, CategoryService],
 })

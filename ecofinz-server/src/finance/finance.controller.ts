@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { FinanceService } from './finance.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -15,5 +15,14 @@ export class FinanceController {
   ) {
     const userId = req.user.id;
     return this.financeService.getSummary(userId, +year, +month);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('income-projection')
+  getIncomeProjection(
+    @Query('period') period: string,
+    @Request() req,
+  ) {
+    return this.financeService.getIncomeProjection(req.user.id, period || 'current');
   }
 }

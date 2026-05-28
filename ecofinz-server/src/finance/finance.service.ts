@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TransactionType } from 'src/generated/prisma/client';
+import { TransactionType, AccountType } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class FinanceService {
@@ -87,6 +87,67 @@ export class FinanceService {
       totalInvestments,
       balance,
       categorySummaries,
+    };
+  }
+
+  async getIncomeProjection(userId: string, period: string) {
+    const now = new Date();
+    let startDate: Date;
+    let periodMonths: number;
+
+    switch (period) {
+      case 'current':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        periodMonths = 1;
+        break;
+      case '3m':
+        startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+        periodMonths = 3;
+        break;
+      case '6m':
+        startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        periodMonths = 6;
+        break;
+      default:
+        throw new BadRequestException('Invalid period. Use: current, 3m, or 6m');
+    }
+
+    const allowedAccountTypes = [AccountType.BANCO, AccountType.BILLETERA_DIGITAL];
+
+    const accounts = await this.prisma.account.findMany({
+      where: { userId, type: { in: allowedAccountTypes } },
+    });
+
+    if (accounts.length === 0) {
+      return { averageIncome: 0, periodMonths, transactionCount: 0, accountCount: 0 };
+    }
+
+    const accountIds = accounts.map((a) => a.id);
+
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        userId,
+        type: TransactionType.INGRESO,
+        accountId: { in: accountIds },
+        date: { gte: startDate },
+      },
+    });
+
+    const totalIncome = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const averageIncome = periodMonths > 0 ? totalIncome / periodMonths : 0;
+
+    return {
+      averageIncome: Math.round(averageIncome * 100) / 100,
+      totalIncome: Math.round(totalIncome * 100) / 100,
+      periodMonths,
+      transactionCount: transactions.length,
+      accountCount: accounts.length,
+      periodLabel:
+        period === 'current'
+          ? 'Mes Actual'
+          : period === '3m'
+            ? 'Promedio 3 Meses'
+            : 'Promedio 6 Meses',
     };
   }
 }
