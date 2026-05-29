@@ -18,6 +18,7 @@ export default function SimulationForm({
     const [desc, setDesc] = useState("");
     const [amount, setAmount] = useState("");
     const [installments, setInstallments] = useState("6");
+    const [isCustomInstallments, setIsCustomInstallments] = useState(false);
     const [startMonth, setStartMonth] = useState("0");
     const [category, setCategory] = useState("Tecnología");
 
@@ -36,6 +37,8 @@ export default function SimulationForm({
         setDesc("");
         setAmount("");
         setCategory("Tecnología");
+        setInstallments("6");
+        setIsCustomInstallments(false);
     };
 
     return (
@@ -88,18 +91,45 @@ export default function SimulationForm({
 
                     <div className="space-y-1">
                         <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Cuotas</label>
-                        <select
-                            value={installments}
-                            onChange={e => setInstallments(e.target.value)}
-                            className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
-                        >
-                            <option value="1">1 Pago / Sin cuotas</option>
-                            <option value="3">3 Cuotas</option>
-                            <option value="6">6 Cuotas</option>
-                            <option value="12">12 Cuotas</option>
-                            <option value="18">18 Cuotas</option>
-                            <option value="24">24 Cuotas</option>
-                        </select>
+                        {isCustomInstallments ? (
+                            <div className="space-y-1">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    value={installments}
+                                    onChange={e => setInstallments(e.target.value)}
+                                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => { setIsCustomInstallments(false); setInstallments("6"); }}
+                                    className="text-[10px] text-zinc-400 hover:text-zinc-600 transition-colors"
+                                >
+                                    ← Volver a valores fijos
+                                </button>
+                            </div>
+                        ) : (
+                            <select
+                                value={installments}
+                                onChange={e => {
+                                    if (e.target.value === "other") {
+                                        setIsCustomInstallments(true);
+                                    } else {
+                                        setInstallments(e.target.value);
+                                    }
+                                }}
+                                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+                            >
+                                <option value="1">1 Pago / Sin cuotas</option>
+                                <option value="3">3 Cuotas</option>
+                                <option value="6">6 Cuotas</option>
+                                <option value="12">12 Cuotas</option>
+                                <option value="18">18 Cuotas</option>
+                                <option value="24">24 Cuotas</option>
+                                <option value="other" className="border-t border-zinc-200">Otra cantidad...</option>
+                            </select>
+                        )}
                     </div>
                 </div>
 
