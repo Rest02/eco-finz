@@ -90,6 +90,17 @@ export const deleteTransaction = (id: string): Promise<AxiosResponse<void>> => {
   return apiClient.delete(`/finance/transaction/${id}`);
 };
 
+export interface PayCreditCardData {
+  creditCardAccountId: string;
+  sourceAccountId: string;
+  amount: number;
+  date?: string;
+}
+
+export const payCreditCard = (data: PayCreditCardData): Promise<AxiosResponse<Transaction>> => {
+  return apiClient.post<Transaction>('/finance/transaction/pay-credit-card', data);
+};
+
 // ========== Budget Endpoints ==========
 
 export const getBudgets = (filters: { month: number, year: number }): Promise<AxiosResponse<Budget[]>> => {

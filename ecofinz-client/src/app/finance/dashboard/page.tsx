@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { 
   DollarSign, 
   ShoppingBag,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -299,6 +300,8 @@ export default function FinanceDashboardPage() {
       if (tx.type === "INGRESO") {
         // Regla: Omitir ingresos dirigidos a una Cuenta de Ahorro Personal
         if (account?.isSavingsAccount) return;
+        // Regla: INGRESO en Tarjeta de Crédito = Pago de deuda, no es ingreso
+        if (isCreditCard) return;
 
         const targetKey = `${txYear}-${String(txMonth).padStart(2, '0')}`;
         const bucket = monthsList.find(m => m.key === targetKey);
@@ -488,7 +491,9 @@ export default function FinanceDashboardPage() {
     const top5 = sorted.slice(0, 5);
 
     return top5.map(tx => {
-      const isIncome = tx.type === "INGRESO";
+      const account = accounts.find(a => a.id === tx.accountId);
+      const isCreditCardPayment = tx.type === "INGRESO" && account?.type === "TARJETA_CREDITO";
+      const isIncome = tx.type === "INGRESO" && !isCreditCardPayment;
       const d = new Date(tx.date);
       
       const isToday = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
@@ -522,17 +527,22 @@ export default function FinanceDashboardPage() {
         }
       }
 
-      // 2. Localización de Cuenta Bancaria Asociada
-      const account = accounts.find(a => a.id === tx.accountId);
-
       return {
         id: tx.id,
-        desc: displayDesc,
-        amount: isIncome ? Number(tx.amount) : -Number(tx.amount),
+        desc: isCreditCardPayment ? "Pago de Tarjeta" : displayDesc,
+        amount: isCreditCardPayment
+          ? Number(tx.amount)
+          : isIncome
+            ? Number(tx.amount)
+            : -Number(tx.amount),
         date: formattedDate,
-        icon: isIncome ? DollarSign : ShoppingBag,
-        color: isIncome ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50",
-        category: tx.category?.name || (isIncome ? "Ingresos" : "Gastos"),
+        icon: isCreditCardPayment ? CreditCard : isIncome ? DollarSign : ShoppingBag,
+        color: isCreditCardPayment
+          ? "text-emerald-600 bg-emerald-50"
+          : isIncome
+            ? "text-emerald-600 bg-emerald-50"
+            : "text-rose-600 bg-rose-50",
+        category: isCreditCardPayment ? "Pago Tarjeta" : tx.category?.name || (isIncome ? "Ingresos" : "Gastos"),
         accountName: account?.name || "",
         installmentInfo,
       };

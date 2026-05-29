@@ -13,6 +13,7 @@ import {
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { PayCreditCardDto } from './dto/pay-credit-card.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FindAllTransactionsDto } from './dto/find-all-transactions.dto';
 
@@ -25,6 +26,12 @@ export class TransactionController {
   create(@Body() createTransactionDto: CreateTransactionDto, @Request() req) {
     const userId = req.user.id;
     return this.transactionService.create(createTransactionDto, userId);
+  }
+
+  @Post('pay-credit-card')
+  payCreditCard(@Body() dto: PayCreditCardDto, @Request() req) {
+    const userId = req.user.id;
+    return this.transactionService.payCreditCard(dto, userId);
   }
 
   @Get()

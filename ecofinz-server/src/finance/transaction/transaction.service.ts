@@ -3,9 +3,11 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { PayCreditCardDto } from './dto/pay-credit-card.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TransactionType, AccountType } from 'src/generated/prisma/enums';
 
@@ -178,6 +180,103 @@ export class TransactionService {
       });
 
       return transaction;
+    });
+  }
+
+  async payCreditCard(dto: PayCreditCardDto, userId: string) {
+    const { creditCardAccountId, sourceAccountId, amount, date, categoryId } = dto;
+
+    const paymentDate = date ? new Date(date) : new Date();
+    const month = paymentDate.getMonth() + 1;
+    const year = paymentDate.getFullYear();
+
+    const creditCardAccount = await this.prisma.account.findUnique({
+      where: { id: creditCardAccountId },
+    });
+    const sourceAccount = await this.prisma.account.findUnique({
+      where: { id: sourceAccountId },
+    });
+
+    if (!creditCardAccount || !sourceAccount) {
+      throw new NotFoundException('Account not found.');
+    }
+    if (creditCardAccount.userId !== userId || sourceAccount.userId !== userId) {
+      throw new UnauthorizedException('Account does not belong to the user.');
+    }
+    if (creditCardAccount.type !== AccountType.TARJETA_CREDITO) {
+      throw new BadRequestException('creditCardAccountId must be a credit card account.');
+    }
+    if (sourceAccount.type === AccountType.TARJETA_CREDITO) {
+      throw new BadRequestException('sourceAccountId cannot be a credit card account.');
+    }
+
+    let resolvedCategoryId = categoryId;
+    if (!resolvedCategoryId) {
+      const existingCategory = await this.prisma.category.findFirst({
+        where: { userId, name: 'Pago Tarjeta', type: TransactionType.EGRESO },
+      });
+      if (existingCategory) {
+        resolvedCategoryId = existingCategory.id;
+      } else {
+        const newCategory = await this.prisma.category.create({
+          data: { name: 'Pago Tarjeta', type: TransactionType.EGRESO, userId },
+        });
+        resolvedCategoryId = newCategory.id;
+      }
+    }
+
+    const monthlySummary = await this.prisma.monthlySummary.upsert({
+      where: { userId_month_year: { userId, month, year } },
+      update: {},
+      create: { userId, month, year },
+    });
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.account.update({
+        where: { id: sourceAccountId },
+        data: { balance: { decrement: amount } },
+      });
+
+      await tx.account.update({
+        where: { id: creditCardAccountId },
+        data: { balance: { increment: amount } },
+      });
+
+      const egresoTransaction = await tx.transaction.create({
+        data: {
+          amount,
+          type: TransactionType.EGRESO,
+          isInflow: false,
+          description: `Pago Tarjeta ${creditCardAccount.name}`,
+          date: paymentDate,
+          userId,
+          accountId: sourceAccountId,
+          categoryId: resolvedCategoryId,
+          monthlySummaryId: monthlySummary.id,
+        },
+      });
+
+      const ingresoTransaction = await tx.transaction.create({
+        data: {
+          amount,
+          type: TransactionType.INGRESO,
+          isInflow: true,
+          description: `Pago de Tarjeta - ${sourceAccount.name}`,
+          date: paymentDate,
+          userId,
+          accountId: creditCardAccountId,
+          categoryId: resolvedCategoryId,
+          monthlySummaryId: monthlySummary.id,
+          relatedTransactionId: egresoTransaction.id,
+        },
+      });
+
+      await tx.transaction.update({
+        where: { id: egresoTransaction.id },
+        data: { relatedTransactionId: ingresoTransaction.id },
+      });
+
+      return egresoTransaction;
     });
   }
 
