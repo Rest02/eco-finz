@@ -40,7 +40,7 @@ export default function ProjectionPage() {
     // Real Data Hooks
     const { data: accountsData, isLoading: isLoadingAccounts, isError: isErrorAccounts } = useAccounts();
     const { data: projectionsData, isLoading: isLoadingProjections, isError: isErrorProjections } = useProjections();
-    const { data: transactionsResponse, isLoading: isLoadingTransactions, isError: isErrorTransactions } = useTransactions();
+    const { data: transactionsResponse, isLoading: isLoadingTransactions, isError: isErrorTransactions } = useTransactions({ limit: 999 });
     
     const createProjectionMutation = useCreateProjection();
     const deleteProjectionMutation = useDeleteProjection();
