@@ -56,7 +56,9 @@ const TransactionForm: React.FC<Props> = ({
   const [selectedAccountId, setSelectedAccountId] = useState(propAccountId || "");
   const [destinationAccountId, setDestinationAccountId] = useState("");
   const [budgetId, setBudgetId] = useState("");
+  const PRESET_INSTALLMENTS = [1, 3, 6, 12, 18, 24] as const;
   const [installments, setInstallments] = useState<number>(1);
+  const [isCustomInstallments, setIsCustomInstallments] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Derive month/year from date for budget fetching
@@ -93,6 +95,9 @@ const TransactionForm: React.FC<Props> = ({
         const count = parseInt(parts[1]);
         if (!isNaN(count)) {
           setInstallments(count);
+          if (!(PRESET_INSTALLMENTS as readonly number[]).includes(count)) {
+            setIsCustomInstallments(true);
+          }
         }
       } else {
         setDescription(initialData.description);
@@ -143,6 +148,11 @@ const TransactionForm: React.FC<Props> = ({
 
     if (type === "AHORRO" && destinationAccountId && destinationAccountId === accountIdToUse) {
       setError("La cuenta destino no puede ser la misma que la origen.");
+      return;
+    }
+
+    if (isCreditCard && installments < 1) {
+      setError("El número de cuotas debe ser al menos 1.");
       return;
     }
 
@@ -439,18 +449,45 @@ const TransactionForm: React.FC<Props> = ({
             <label className="text-sm font-medium text-zinc-500 ml-1 flex items-center gap-1.5">
               Plan de Cuotas
             </label>
-            <select
-              value={installments}
-              onChange={(e) => setInstallments(parseInt(e.target.value))}
-              className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="1">1 pago / Sin cuotas</option>
-              <option value="3">3 cuotas</option>
-              <option value="6">6 cuotas</option>
-              <option value="12">12 cuotas</option>
-              <option value="18">18 cuotas</option>
-              <option value="24">24 cuotas</option>
-            </select>
+            {isCustomInstallments ? (
+              <div className="space-y-2">
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={installments}
+                  onChange={(e) => setInstallments(parseInt(e.target.value) || 1)}
+                  className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => { setIsCustomInstallments(false); setInstallments(1); }}
+                  className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                  ← Volver a valores fijos
+                </button>
+              </div>
+            ) : (
+              <select
+                value={installments}
+                onChange={(e) => {
+                  if (e.target.value === "other") {
+                    setIsCustomInstallments(true);
+                  } else {
+                    setInstallments(parseInt(e.target.value));
+                  }
+                }}
+                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-base md:text-sm text-black focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer shadow-sm"
+              >
+                <option value="1">1 pago / Sin cuotas</option>
+                <option value="3">3 cuotas</option>
+                <option value="6">6 cuotas</option>
+                <option value="12">12 cuotas</option>
+                <option value="18">18 cuotas</option>
+                <option value="24">24 cuotas</option>
+                <option value="other" className="border-t border-zinc-200">Otra cantidad...</option>
+              </select>
+            )}
           </div>
         )}
 
