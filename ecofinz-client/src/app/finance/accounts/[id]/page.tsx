@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import TransactionList from "@/features/finance/components/TransactionList";
+import Pagination from "@/features/finance/components/Pagination";
 import TransactionForm from "@/features/finance/components/TransactionForm";
 import TransactionFilters from "@/features/finance/components/TransactionFilters";
 import PayCreditCardForm from "@/features/finance/components/PayCreditCardForm";
@@ -53,6 +54,7 @@ export default function AccountDetailPage() {
 
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [filterValues, setFilterValues] = useState<FilterValues>({});
+  const [page, setPage] = useState(1);
   const [showPayForm, setShowPayForm] = useState(false);
 
   const { data: account, isLoading: isLoadingAccount } = useAccount(accountId);
@@ -61,7 +63,9 @@ export default function AccountDetailPage() {
     type: filterValues.type || undefined,
     categoryId: filterValues.categoryId || undefined,
     startDate: filterValues.startDate || undefined,
-    endDate: filterValues.endDate || undefined
+    endDate: filterValues.endDate || undefined,
+    page,
+    limit: 10,
   });
 
   const deleteTransactionMutation = useDeleteTransaction();
@@ -221,7 +225,7 @@ export default function AccountDetailPage() {
 
          {/* Main Section (List & Filters) */}
         <motion.div variants={itemVariants} className="xl:col-span-2 space-y-6">
-          <TransactionFilters onFilterChange={setFilterValues} isCreditCard={isCreditCard} />
+          <TransactionFilters onFilterChange={(f) => { setFilterValues(f); setPage(1); }} isCreditCard={isCreditCard} />
 
           <div className="bg-white/20 border border-white/30 p-6 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
             <div className="flex items-center gap-3 mb-6">
@@ -237,11 +241,20 @@ export default function AccountDetailPage() {
                 <p className="text-zinc-600 text-sm animate-pulse">Obteniendo transacciones...</p>
               </div>
             ) : (
-              <TransactionList
-                transactions={transactions}
-                onEdit={handleTransactionEdit}
-                onDelete={handleDeleteTransaction}
-              />
+              <>
+                <TransactionList
+                  transactions={transactions}
+                  onEdit={handleTransactionEdit}
+                  onDelete={handleDeleteTransaction}
+                />
+                {transactionResponse?.meta && (
+                  <Pagination
+                    page={transactionResponse.meta.page}
+                    lastPage={transactionResponse.meta.lastPage}
+                    onPageChange={setPage}
+                  />
+                )}
+              </>
             )}
           </div>
         </motion.div>
