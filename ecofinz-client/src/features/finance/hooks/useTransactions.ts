@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../services/financeService';
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction, payCreditCard, PayCreditCardData } from '../services/financeService';
 import { CreateTransactionDto, UpdateTransactionDto, TransactionType } from '../types/finance';
 
 export const useTransactions = (filters?: {
@@ -50,6 +50,19 @@ export const useUpdateTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['accounts'] });
             queryClient.invalidateQueries({ queryKey: ['budgets'] });
             queryClient.invalidateQueries({ queryKey: ['projections'] });
+        },
+    });
+};
+
+export const usePayCreditCard = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: PayCreditCardData) => payCreditCard(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['transactions'] });
+            queryClient.invalidateQueries({ queryKey: ['accounts'] });
+            queryClient.invalidateQueries({ queryKey: ['monthly-summary'] });
         },
     });
 };

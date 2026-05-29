@@ -5,8 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import TransactionList from "@/features/finance/components/TransactionList";
 import TransactionForm from "@/features/finance/components/TransactionForm";
 import TransactionFilters from "@/features/finance/components/TransactionFilters";
+import PayCreditCardForm from "@/features/finance/components/PayCreditCardForm";
 import { useTransactions, useDeleteTransaction } from "@/features/finance/hooks/useTransactions";
 import { useAccount } from "@/features/finance/hooks/useAccounts";
+import { getBillingPeriod, getNextBillingPeriod, getBilledAmount, getUnbilledAmount } from "@/features/finance/utils/creditCardUtils";
 import { Transaction, TransactionType, AccountType } from "@/features/finance/types/finance";
 import Link from "next/link";
 import {
@@ -51,6 +53,7 @@ export default function AccountDetailPage() {
 
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [filterValues, setFilterValues] = useState<FilterValues>({});
+  const [showPayForm, setShowPayForm] = useState(false);
 
   const { data: account, isLoading: isLoadingAccount } = useAccount(accountId);
   const { data: transactionResponse, isLoading: isLoadingTransactions } = useTransactions({
@@ -65,16 +68,17 @@ export default function AccountDetailPage() {
   const transactions = transactionResponse?.data || [];
 
   const isCreditCard = account?.type === "TARJETA_CREDITO";
-  const totalDeuda = transactions.reduce((sum, tx) => tx.type === "EGRESO" ? sum + Number(tx.amount) : sum, 0);
+  const totalDeuda = Math.abs(Number(account?.balance || 0));
   
   const closingDay = Number(account?.closingDay || 15);
-  const deudaPeriodoActual = transactions
-    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() <= closingDay)
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-  
-  const deudaPeriodoSiguiente = transactions
-    .filter((tx) => tx.type === "EGRESO" && new Date(tx.date).getUTCDate() > closingDay)
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+  const deudaPeriodoActual = getBilledAmount(transactions, closingDay);
+  const deudaPeriodoSiguiente = getUnbilledAmount(transactions, closingDay);
+  const { start: periodStart } = getBillingPeriod(closingDay);
+  const { start: nextPeriodStart } = getNextBillingPeriod(closingDay);
+
+  const totalPagos = transactions.reduce(
+    (sum, tx) => tx.type === "INGRESO" ? sum + Number(tx.amount) : sum, 0
+  );
 
   const cupoDisponible = isCreditCard
     ? Number(account?.creditLimit || 0) - totalDeuda
@@ -160,15 +164,21 @@ export default function AccountDetailPage() {
               {/* Subscript Period breakdown as requested by user */}
               <div className="mt-auto pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
                 <div className="flex justify-between items-center">
-                  <span>Facturado (Cierre el {closingDay}):</span>
+                  <span>Facturado ({periodStart.toLocaleDateString('es-ES', { month: 'short' })} - {new Date(periodStart.getFullYear(), periodStart.getMonth() + 1, 0).toLocaleDateString('es-ES', { day: 'numeric' })} {closingDay}):</span>
                   <span className="text-red-600 font-extrabold">
                     ${deudaPeriodoActual.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Próximo Periodo (Post-{closingDay}):</span>
+                  <span>Próximo ({nextPeriodStart.toLocaleDateString('es-ES', { month: 'short' })} en adelante):</span>
                   <span className="text-zinc-600 font-extrabold">
                     ${deudaPeriodoSiguiente.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center border-t border-zinc-200/40 pt-1.5 mt-1.5">
+                  <span className="text-emerald-600">Pagos realizados:</span>
+                  <span className="text-emerald-600 font-extrabold">
+                    -${totalPagos.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               </div>
@@ -253,6 +263,33 @@ export default function AccountDetailPage() {
               onTransactionUpdated={() => setEditingTransaction(null)}
             />
           </div>
+
+          {/* Pay Credit Card Section */}
+          {isCreditCard && (
+            <div className="mt-4 bg-white/20 border border-white/30 p-8 rounded-[2rem] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[5px]" style={{ backdropFilter: 'blur(5px)' }}>
+              {showPayForm ? (
+                <PayCreditCardForm
+                  creditCardAccountId={accountId}
+                  creditCardName={account.name}
+                  debtAmount={totalDeuda}
+                  billedAmount={deudaPeriodoActual}
+                />
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-zinc-500">
+                    <CreditCard className="w-5 h-5" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Pago de Tarjeta</span>
+                  </div>
+                  <button
+                    onClick={() => setShowPayForm(true)}
+                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all duration-300 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl hover:scale-[1.01]"
+                  >
+                    Pagar Tarjeta
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Hint Card */}
           <div className="mt-4 p-5 rounded-2xl bg-zinc-50 border border-zinc-200">
