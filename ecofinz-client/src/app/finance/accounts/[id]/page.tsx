@@ -69,21 +69,24 @@ export default function AccountDetailPage() {
     limit: 10,
   });
 
+  const { data: calcResponse } = useTransactions({ accountId, limit: 10000 });
+
   const { data: allProjections = [] } = useProjections();
   const deleteTransactionMutation = useDeleteTransaction();
   const transactions = transactionResponse?.data || [];
+  const allAccountTransactions = calcResponse?.data || [];
 
   const isCreditCard = account?.type === "TARJETA_CREDITO";
   const totalDeuda = Math.abs(Number(account?.balance || 0));
   
   const closingDay = Number(account?.closingDay || 15);
   const accountProjections = allProjections.filter(p => p.accountId === accountId);
-  const deudaPeriodoActual = getBilledAmountWithProjections(transactions, accountProjections, closingDay, accountId);
-  const deudaPeriodoSiguiente = getUnbilledAmountWithProjections(transactions, accountProjections, closingDay, accountId);
+  const deudaPeriodoActual = getBilledAmountWithProjections(allAccountTransactions, accountProjections, closingDay, accountId);
+  const deudaPeriodoSiguiente = getUnbilledAmountWithProjections(allAccountTransactions, accountProjections, closingDay, accountId);
   const { start: periodStart, end: periodEnd } = getBillingPeriod(closingDay);
   const { start: nextPeriodStart } = getNextBillingPeriod(closingDay);
 
-  const totalPagos = transactions.reduce(
+  const totalPagos = allAccountTransactions.reduce(
     (sum, tx) => tx.type === "INGRESO" ? sum + Number(tx.amount) : sum, 0
   );
 
