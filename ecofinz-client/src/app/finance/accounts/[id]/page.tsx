@@ -8,7 +8,8 @@ import TransactionFilters from "@/features/finance/components/TransactionFilters
 import PayCreditCardForm from "@/features/finance/components/PayCreditCardForm";
 import { useTransactions, useDeleteTransaction } from "@/features/finance/hooks/useTransactions";
 import { useAccount } from "@/features/finance/hooks/useAccounts";
-import { getBillingPeriod, getNextBillingPeriod, getBilledAmount, getUnbilledAmount } from "@/features/finance/utils/creditCardUtils";
+import { useProjections } from "@/features/finance/hooks/useProjections";
+import { getBillingPeriod, getNextBillingPeriod, getBilledAmountWithProjections, getUnbilledAmountWithProjections } from "@/features/finance/utils/creditCardUtils";
 import { Transaction, TransactionType, AccountType } from "@/features/finance/types/finance";
 import Link from "next/link";
 import {
@@ -64,6 +65,7 @@ export default function AccountDetailPage() {
     endDate: filterValues.endDate || undefined
   });
 
+  const { data: allProjections = [] } = useProjections();
   const deleteTransactionMutation = useDeleteTransaction();
   const transactions = transactionResponse?.data || [];
 
@@ -71,9 +73,10 @@ export default function AccountDetailPage() {
   const totalDeuda = Math.abs(Number(account?.balance || 0));
   
   const closingDay = Number(account?.closingDay || 15);
-  const deudaPeriodoActual = getBilledAmount(transactions, closingDay);
-  const deudaPeriodoSiguiente = getUnbilledAmount(transactions, closingDay);
-  const { start: periodStart } = getBillingPeriod(closingDay);
+  const accountProjections = allProjections.filter(p => p.accountId === accountId);
+  const deudaPeriodoActual = getBilledAmountWithProjections(transactions, accountProjections, closingDay, accountId);
+  const deudaPeriodoSiguiente = getUnbilledAmountWithProjections(transactions, accountProjections, closingDay, accountId);
+  const { start: periodStart, end: periodEnd } = getBillingPeriod(closingDay);
   const { start: nextPeriodStart } = getNextBillingPeriod(closingDay);
 
   const totalPagos = transactions.reduce(
@@ -161,16 +164,20 @@ export default function AccountDetailPage() {
                 </span>
               </div>
 
-              {/* Subscript Period breakdown as requested by user */}
               <div className="mt-auto pt-4 border-t border-zinc-200/40 space-y-1.5 relative z-10 text-[10px] uppercase font-bold tracking-wider text-zinc-500">
                 <div className="flex justify-between items-center">
-                  <span>Facturado ({periodStart.toLocaleDateString('es-ES', { month: 'short' })} - {new Date(periodStart.getFullYear(), periodStart.getMonth() + 1, 0).toLocaleDateString('es-ES', { day: 'numeric' })} {closingDay}):</span>
+                  <span>Facturado ({periodStart.getDate()} {periodStart.toLocaleDateString('es-ES', { month: 'short' })} → {periodEnd.getDate()} {periodEnd.toLocaleDateString('es-ES', { month: 'short' })}):</span>
                   <span className="text-red-600 font-extrabold">
                     ${deudaPeriodoActual.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
+                {account?.dueDay && (
+                  <div className="flex justify-between items-center text-[9px] text-zinc-400 -mt-0.5">
+                    <span>Vence el {account.dueDay} de {periodEnd.toLocaleDateString('es-ES', { month: 'long' })}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
-                  <span>Próximo ({nextPeriodStart.toLocaleDateString('es-ES', { month: 'short' })} en adelante):</span>
+                  <span>Próximo ({nextPeriodStart.getDate()} {nextPeriodStart.toLocaleDateString('es-ES', { month: 'short' })} en adelante):</span>
                   <span className="text-zinc-600 font-extrabold">
                     ${deudaPeriodoSiguiente.toLocaleString('es-CL', { maximumFractionDigits: 0 })}
                   </span>

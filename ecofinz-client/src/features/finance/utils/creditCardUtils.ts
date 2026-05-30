@@ -1,4 +1,4 @@
-import { Transaction } from "../types/finance";
+import { Transaction, Projection } from "../types/finance";
 
 export interface BillingPeriod {
   start: Date;
@@ -59,6 +59,110 @@ export function getNextBillingPeriod(closingDay: number): BillingPeriod {
   const nextEnd = new Date(endYear, endMonth, closingDay, 23, 59, 59, 999);
 
   return { start: nextStart, end: nextEnd };
+}
+
+function getInstallmentMonth(projection: Projection, index: number): { month: number; year: number } {
+  let month = projection.startMonth + index;
+  let year = projection.startYear;
+  while (month > 12) {
+    month -= 12;
+    year += 1;
+  }
+  return { month, year };
+}
+
+function findProjection(
+  projections: Projection[],
+  accountId: string,
+  tx: Transaction
+): Projection | undefined {
+  const cuotasMatch = tx.description.match(/ \| cuotas: (\d+)$/);
+  if (!cuotasMatch) return undefined;
+
+  const numCuotas = parseInt(cuotasMatch[1]);
+  const cleanDesc = tx.description.replace(/ \| cuotas: \d+$/, '');
+
+  return projections.find(p =>
+    p.accountId === accountId &&
+    p.description === cleanDesc &&
+    Math.abs(Number(p.amount) - Number(tx.amount)) < 0.01 &&
+    p.installments === numCuotas
+  );
+}
+
+export function getBilledAmountWithProjections(
+  transactions: Transaction[],
+  projections: Projection[],
+  closingDay: number,
+  accountId: string
+): number {
+  const { start, end } = getBillingPeriod(closingDay);
+  const statementMonth = end.getMonth() + 1;
+  const statementYear = end.getFullYear();
+
+  let total = 0;
+
+  for (const tx of transactions) {
+    if (tx.type !== "EGRESO") continue;
+
+    const projection = findProjection(projections, accountId, tx);
+
+    if (projection) {
+      const quotaAmount = Number(projection.amount) / projection.installments;
+      for (let i = 0; i < projection.installments; i++) {
+        const { month, year } = getInstallmentMonth(projection, i);
+        if (month === statementMonth && year === statementYear) {
+          total += quotaAmount;
+          break;
+        }
+      }
+    } else {
+      const txDate = new Date(tx.date);
+      if (txDate >= start && txDate <= end) {
+        total += Number(tx.amount);
+      }
+    }
+  }
+
+  return total;
+}
+
+export function getUnbilledAmountWithProjections(
+  transactions: Transaction[],
+  projections: Projection[],
+  closingDay: number,
+  accountId: string
+): number {
+  const { end: currentEnd } = getBillingPeriod(closingDay);
+  const nextPeriod = getNextBillingPeriod(closingDay);
+  const nextStatementMonth = nextPeriod.end.getMonth() + 1;
+  const nextStatementYear = nextPeriod.end.getFullYear();
+
+  let total = 0;
+
+  for (const tx of transactions) {
+    if (tx.type !== "EGRESO") continue;
+
+    const projection = findProjection(projections, accountId, tx);
+
+    if (projection) {
+      const quotaAmount = Number(projection.amount) / projection.installments;
+      for (let i = 0; i < projection.installments; i++) {
+        const { month, year } = getInstallmentMonth(projection, i);
+        if (month === nextStatementMonth && year === nextStatementYear) {
+          total += quotaAmount;
+          break;
+        }
+      }
+    } else {
+      const txDate = new Date(tx.date);
+      if (txDate > currentEnd) {
+        total += Number(tx.amount);
+      }
+    }
+  }
+
+  return total;
 }
 
 export function getBilledAmount(
