@@ -36,3 +36,12 @@ export const GoalStatus = {
 } as const
 
 export type GoalStatus = (typeof GoalStatus)[keyof typeof GoalStatus]
+
+
+export const ProjectionStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED',
+  DELETED: 'DELETED'
+} as const
+
+export type ProjectionStatus = (typeof ProjectionStatus)[keyof typeof ProjectionStatus]

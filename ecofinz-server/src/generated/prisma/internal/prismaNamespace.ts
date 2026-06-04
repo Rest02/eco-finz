@@ -392,7 +392,11 @@ export const ModelName = {
   Budget: 'Budget',
   SavingsGoal: 'SavingsGoal',
   FixedExpense: 'FixedExpense',
-  Projection: 'Projection'
+  Projection: 'Projection',
+  MonthlyProjection: 'MonthlyProjection',
+  MonthlyProjectionIncome: 'MonthlyProjectionIncome',
+  MonthlyProjectionFixedExpense: 'MonthlyProjectionFixedExpense',
+  MonthlyProjectionCardPayment: 'MonthlyProjectionCardPayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "fixedExpense" | "projection"
+    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "fixedExpense" | "projection" | "monthlyProjection" | "monthlyProjectionIncome" | "monthlyProjectionFixedExpense" | "monthlyProjectionCardPayment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1078,6 +1082,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MonthlyProjection: {
+      payload: Prisma.$MonthlyProjectionPayload<ExtArgs>
+      fields: Prisma.MonthlyProjectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MonthlyProjectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MonthlyProjectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        findFirst: {
+          args: Prisma.MonthlyProjectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MonthlyProjectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        findMany: {
+          args: Prisma.MonthlyProjectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>[]
+        }
+        create: {
+          args: Prisma.MonthlyProjectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        createMany: {
+          args: Prisma.MonthlyProjectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MonthlyProjectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>[]
+        }
+        delete: {
+          args: Prisma.MonthlyProjectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        update: {
+          args: Prisma.MonthlyProjectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MonthlyProjectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MonthlyProjectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MonthlyProjectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.MonthlyProjectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionPayload>
+        }
+        aggregate: {
+          args: Prisma.MonthlyProjectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonthlyProjection>
+        }
+        groupBy: {
+          args: Prisma.MonthlyProjectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MonthlyProjectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionCountAggregateOutputType> | number
+        }
+      }
+    }
+    MonthlyProjectionIncome: {
+      payload: Prisma.$MonthlyProjectionIncomePayload<ExtArgs>
+      fields: Prisma.MonthlyProjectionIncomeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MonthlyProjectionIncomeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MonthlyProjectionIncomeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        findFirst: {
+          args: Prisma.MonthlyProjectionIncomeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MonthlyProjectionIncomeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        findMany: {
+          args: Prisma.MonthlyProjectionIncomeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>[]
+        }
+        create: {
+          args: Prisma.MonthlyProjectionIncomeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        createMany: {
+          args: Prisma.MonthlyProjectionIncomeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MonthlyProjectionIncomeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>[]
+        }
+        delete: {
+          args: Prisma.MonthlyProjectionIncomeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        update: {
+          args: Prisma.MonthlyProjectionIncomeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        deleteMany: {
+          args: Prisma.MonthlyProjectionIncomeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MonthlyProjectionIncomeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MonthlyProjectionIncomeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>[]
+        }
+        upsert: {
+          args: Prisma.MonthlyProjectionIncomeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionIncomePayload>
+        }
+        aggregate: {
+          args: Prisma.MonthlyProjectionIncomeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonthlyProjectionIncome>
+        }
+        groupBy: {
+          args: Prisma.MonthlyProjectionIncomeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionIncomeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MonthlyProjectionIncomeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionIncomeCountAggregateOutputType> | number
+        }
+      }
+    }
+    MonthlyProjectionFixedExpense: {
+      payload: Prisma.$MonthlyProjectionFixedExpensePayload<ExtArgs>
+      fields: Prisma.MonthlyProjectionFixedExpenseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MonthlyProjectionFixedExpenseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MonthlyProjectionFixedExpenseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        findFirst: {
+          args: Prisma.MonthlyProjectionFixedExpenseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MonthlyProjectionFixedExpenseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        findMany: {
+          args: Prisma.MonthlyProjectionFixedExpenseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>[]
+        }
+        create: {
+          args: Prisma.MonthlyProjectionFixedExpenseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        createMany: {
+          args: Prisma.MonthlyProjectionFixedExpenseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MonthlyProjectionFixedExpenseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>[]
+        }
+        delete: {
+          args: Prisma.MonthlyProjectionFixedExpenseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        update: {
+          args: Prisma.MonthlyProjectionFixedExpenseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        deleteMany: {
+          args: Prisma.MonthlyProjectionFixedExpenseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MonthlyProjectionFixedExpenseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MonthlyProjectionFixedExpenseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>[]
+        }
+        upsert: {
+          args: Prisma.MonthlyProjectionFixedExpenseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionFixedExpensePayload>
+        }
+        aggregate: {
+          args: Prisma.MonthlyProjectionFixedExpenseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonthlyProjectionFixedExpense>
+        }
+        groupBy: {
+          args: Prisma.MonthlyProjectionFixedExpenseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionFixedExpenseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MonthlyProjectionFixedExpenseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionFixedExpenseCountAggregateOutputType> | number
+        }
+      }
+    }
+    MonthlyProjectionCardPayment: {
+      payload: Prisma.$MonthlyProjectionCardPaymentPayload<ExtArgs>
+      fields: Prisma.MonthlyProjectionCardPaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MonthlyProjectionCardPaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MonthlyProjectionCardPaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.MonthlyProjectionCardPaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MonthlyProjectionCardPaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        findMany: {
+          args: Prisma.MonthlyProjectionCardPaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>[]
+        }
+        create: {
+          args: Prisma.MonthlyProjectionCardPaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        createMany: {
+          args: Prisma.MonthlyProjectionCardPaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MonthlyProjectionCardPaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.MonthlyProjectionCardPaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        update: {
+          args: Prisma.MonthlyProjectionCardPaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.MonthlyProjectionCardPaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MonthlyProjectionCardPaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MonthlyProjectionCardPaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.MonthlyProjectionCardPaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionCardPaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.MonthlyProjectionCardPaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonthlyProjectionCardPayment>
+        }
+        groupBy: {
+          args: Prisma.MonthlyProjectionCardPaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionCardPaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MonthlyProjectionCardPaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionCardPaymentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1258,6 +1558,58 @@ export const ProjectionScalarFieldEnum = {
 export type ProjectionScalarFieldEnum = (typeof ProjectionScalarFieldEnum)[keyof typeof ProjectionScalarFieldEnum]
 
 
+export const MonthlyProjectionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  period: 'period',
+  status: 'status',
+  payDay: 'payDay',
+  totalSelectedIncome: 'totalSelectedIncome',
+  totalFixedExpenses: 'totalFixedExpenses',
+  totalCardPayments: 'totalCardPayments',
+  realAvailableMoney: 'realAvailableMoney',
+  savingsPercentage: 'savingsPercentage',
+  variableExpensesPercentage: 'variableExpensesPercentage',
+  projectedSavings: 'projectedSavings',
+  projectedVariableExpenses: 'projectedVariableExpenses',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MonthlyProjectionScalarFieldEnum = (typeof MonthlyProjectionScalarFieldEnum)[keyof typeof MonthlyProjectionScalarFieldEnum]
+
+
+export const MonthlyProjectionIncomeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionIncomeScalarFieldEnum = (typeof MonthlyProjectionIncomeScalarFieldEnum)[keyof typeof MonthlyProjectionIncomeScalarFieldEnum]
+
+
+export const MonthlyProjectionFixedExpenseScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionFixedExpenseScalarFieldEnum = (typeof MonthlyProjectionFixedExpenseScalarFieldEnum)[keyof typeof MonthlyProjectionFixedExpenseScalarFieldEnum]
+
+
+export const MonthlyProjectionCardPaymentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionCardPaymentScalarFieldEnum = (typeof MonthlyProjectionCardPaymentScalarFieldEnum)[keyof typeof MonthlyProjectionCardPaymentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1394,6 +1746,20 @@ export type ListEnumGoalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'ProjectionStatus'
+ */
+export type EnumProjectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ProjectionStatus[]'
+ */
+export type ListEnumProjectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectionStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1494,6 +1860,10 @@ export type GlobalOmitConfig = {
   savingsGoal?: Prisma.SavingsGoalOmit
   fixedExpense?: Prisma.FixedExpenseOmit
   projection?: Prisma.ProjectionOmit
+  monthlyProjection?: Prisma.MonthlyProjectionOmit
+  monthlyProjectionIncome?: Prisma.MonthlyProjectionIncomeOmit
+  monthlyProjectionFixedExpense?: Prisma.MonthlyProjectionFixedExpenseOmit
+  monthlyProjectionCardPayment?: Prisma.MonthlyProjectionCardPaymentOmit
 }
 
 /* Types for Logging */

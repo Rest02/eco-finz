@@ -11,6 +11,7 @@ import {
     Calendar,
     CreditCard,
     PiggyBank,
+    CalendarRange,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
 const projectionSubItems = [
     { icon: CreditCard, href: "/finance/projection", label: "Por Pagar" },
     { icon: PiggyBank, href: "/finance/projection/savings", label: "Ahorros" },
+    { icon: CalendarRange, href: "/finance/projection/monthly", label: "Mensual" },
 ];
 
 export const MobileNavbar = () => {
@@ -50,7 +52,8 @@ export const MobileNavbar = () => {
 
     const isProjectionActive =
         pathname === "/finance/projection" ||
-        pathname === "/finance/projection/savings";
+        pathname === "/finance/projection/savings" ||
+        pathname.startsWith("/finance/projection/monthly");
 
     return (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-2 rounded-[28px] bg-white/60 backdrop-blur-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.1)] lg:hidden transition-all duration-300 animate-slide-up">

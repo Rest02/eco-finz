@@ -307,6 +307,23 @@ export type EnumGoalStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumGoalStatusFilter<$PrismaModel>
 }
 
+export type EnumProjectionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProjectionStatus | Prisma.EnumProjectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel> | $Enums.ProjectionStatus
+}
+
+export type EnumProjectionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProjectionStatus | Prisma.EnumProjectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProjectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProjectionStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -611,6 +628,23 @@ export type NestedEnumGoalStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGoalStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGoalStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumProjectionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProjectionStatus | Prisma.EnumProjectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel> | $Enums.ProjectionStatus
+}
+
+export type NestedEnumProjectionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProjectionStatus | Prisma.EnumProjectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProjectionStatus[] | Prisma.ListEnumProjectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProjectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProjectionStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProjectionStatusFilter<$PrismaModel>
 }
 
 

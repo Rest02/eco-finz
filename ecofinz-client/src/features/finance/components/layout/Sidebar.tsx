@@ -14,6 +14,7 @@ import {
     Calendar,
     CreditCard,
     PiggyBank,
+    CalendarRange,
     ChevronRight,
 } from "lucide-react";
 
@@ -29,6 +30,7 @@ const navItems = [
 const projectionSubItems = [
     { icon: CreditCard, href: "/finance/projection", label: "Por Pagar" },
     { icon: PiggyBank, href: "/finance/projection/savings", label: "Ahorros" },
+    { icon: CalendarRange, href: "/finance/projection/monthly", label: "Mensual" },
 ];
 
 export const Sidebar = () => {
@@ -54,7 +56,8 @@ export const Sidebar = () => {
 
     const isProjectionActive =
         pathname === "/finance/projection" ||
-        pathname === "/finance/projection/savings";
+        pathname === "/finance/projection/savings" ||
+        pathname.startsWith("/finance/projection/monthly");
 
     return (
         <aside className="hidden lg:flex flex-col items-center py-8 z-50 flex-shrink-0 h-[calc(100vh-2rem)] sticky top-4 ml-4 my-4 w-24 rounded-[32px] bg-white/60 backdrop-blur-2xl border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
