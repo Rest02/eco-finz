@@ -50,8 +50,10 @@ export function getDynamicMonths(count = 6): string[] {
 }
 
 /**
- * Calculates the relative month index (0 to N-1) for a projection based on its start month and year.
- * Returns -1 if the projection starts before the current month or after the dynamic months window.
+ * Returns the month offset relative to the current month.
+ * A negative value means the start date is in the past but its installments
+ * may still extend into the visible window. The caller is responsible for
+ * range-checking via startMonth + installments - 1.
  */
 export function getRelativeMonthIndex(
   startMonth: number, // 1-12
@@ -62,12 +64,5 @@ export function getRelativeMonthIndex(
   const currentMonthIndex = currentDate.getMonth(); // 0-11
   const currentYear = currentDate.getFullYear();
 
-  // Difference in months
-  const diffMonths = (startYear - currentYear) * 12 + (startMonth - 1 - currentMonthIndex);
-
-  if (diffMonths >= 0 && diffMonths < monthsList.length) {
-    return diffMonths;
-  }
-  
-  return -1;
+  return (startYear - currentYear) * 12 + (startMonth - 1 - currentMonthIndex);
 }

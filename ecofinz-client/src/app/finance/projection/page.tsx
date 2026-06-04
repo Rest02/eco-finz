@@ -164,13 +164,15 @@ export default function ProjectionPage() {
             const monthlyProjections = MONTHS_NAMES.map((_: string, monthIdx: number) => {
                 const activeSims = simulations.filter((sim: Simulation) => {
                     if (sim.cardId !== card.id) return false;
-                    if (sim.startMonth === -1) return false; // out of scope
+                    const lastSimMonth = sim.startMonth + sim.installments - 1;
+                    if (sim.startMonth >= MONTHS_NAMES.length) return false;
+                    if (lastSimMonth < 0) return false;
                     if (filterType === "real" && sim.isSimulation !== false) return false;
                     if (filterType === "simulated" && sim.isSimulation === false) return false;
                     if (filterCategory !== "all" && sim.category !== filterCategory) return false;
 
-                    const start = sim.startMonth;
-                    const end = start + sim.installments - 1;
+                    const start = Math.max(0, sim.startMonth);
+                    const end = sim.startMonth + sim.installments - 1;
                     return monthIdx >= start && monthIdx <= end;
                 });
 
@@ -194,26 +196,28 @@ export default function ProjectionPage() {
 
     // Calculate Month Grand Totals (Sum of all cards for each month)
     const monthGrandTotals = useMemo(() => {
-        return MONTHS_NAMES.map((_: string, monthIdx: number) => {
-            return simulations.reduce((sum: number, sim: Simulation) => {
-                const associatedCard = cards.find((c: Card) => c.id === sim.cardId);
-                if (!associatedCard || associatedCard.type !== activeTab) return sum;
-                if (sim.startMonth === -1) return sum; // out of scope
+    return MONTHS_NAMES.map((_: string, monthIdx: number) => {
+        return simulations.reduce((sum: number, sim: Simulation) => {
+            const associatedCard = cards.find((c: Card) => c.id === sim.cardId);
+            if (!associatedCard || associatedCard.type !== activeTab) return sum;
+            const lastSimMonth = sim.startMonth + sim.installments - 1;
+            if (sim.startMonth >= MONTHS_NAMES.length) return sum;
+            if (lastSimMonth < 0) return sum;
 
-                if (filterCard !== "all" && sim.cardId !== filterCard) return sum;
-                if (filterType === "real" && sim.isSimulation !== false) return sum;
-                if (filterType === "simulated" && sim.isSimulation === false) return sum;
-                if (filterCategory !== "all" && sim.category !== filterCategory) return sum;
+            if (filterCard !== "all" && sim.cardId !== filterCard) return sum;
+            if (filterType === "real" && sim.isSimulation !== false) return sum;
+            if (filterType === "simulated" && sim.isSimulation === false) return sum;
+            if (filterCategory !== "all" && sim.category !== filterCategory) return sum;
 
-                const start = sim.startMonth;
-                const end = start + sim.installments - 1;
-                if (monthIdx >= start && monthIdx <= end) {
-                    return sum + (sim.amount / sim.installments);
-                }
-                return sum;
-            }, 0);
-        });
-    }, [simulations, cards, filterType, filterCard, filterCategory, activeTab]);
+            const start = Math.max(0, sim.startMonth);
+            const end = sim.startMonth + sim.installments - 1;
+            if (monthIdx >= start && monthIdx <= end) {
+                return sum + (sim.amount / sim.installments);
+            }
+            return sum;
+        }, 0);
+    });
+}, [simulations, cards, filterType, filterCard, filterCategory, activeTab]);
 
     // Add Simulation (DB Persistence)
     const handleAddSimulation = (
