@@ -3,10 +3,12 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { itemVariants } from "@/lib/animations";
-import { CreditCard, CalendarDays, TrendingUp, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { CreditCard, CalendarDays, TrendingUp, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag } from "lucide-react";
 import { MonthlyProjection, Account } from "../../types/finance";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useUpdateSpendingPlan } from "../../hooks/useMonthlyProjections";
+import { useCategories } from "../../hooks/useCategories";
+import type { Transaction } from "../../types/finance";
 import toast from "react-hot-toast";
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -163,6 +165,9 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   );
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [showProgress, setShowProgress] = useState(true);
+  const [expandedWeekIdx, setExpandedWeekIdx] = useState<number | null>(null);
+  const [deselectedTxIds, setDeselectedTxIds] = useState<Set<string>>(new Set());
+  const [weekCategoryFilter, setWeekCategoryFilter] = useState<Record<number, string | null>>({});
 
   // --- Derived data ---
 
@@ -237,14 +242,38 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   const totalSpent = Array.from(spendingByDate.values()).reduce((s, v) => s + v, 0);
   const spentPct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
 
+  const { data: categories = [] } = useCategories();
+
+  // Transactions grouped by week index
+  const transactionsByWeek = useMemo(() => {
+    const map: Record<number, Transaction[]> = {};
+    for (const tx of txsData?.data || []) {
+      if (tx.isInflow) continue;
+      const iso = tx.date.slice(0, 10);
+      for (let i = 0; i < weeks.length; i++) {
+        if (weeks[i].dateStrings.includes(iso)) {
+          if (!map[i]) map[i] = [];
+          map[i].push(tx);
+          break;
+        }
+      }
+    }
+    return map;
+  }, [txsData, weeks]);
+
   // Per-week progress
   const weekProgress = useMemo(() => {
-    return weeks.map(w => {
+    return weeks.map((w, idx) => {
       let spent = 0;
-      for (const iso of w.dateStrings) spent += spendingByDate.get(iso) || 0;
+      const txs = (transactionsByWeek[idx] || []).filter(tx => !deselectedTxIds.has(tx.id));
+      if (txs.length > 0) {
+        spent = txs.reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
+      } else {
+        for (const iso of w.dateStrings) spent += spendingByDate.get(iso) || 0;
+      }
       return { ...w, weekSpent: spent, weekPct: w.totalBudget > 0 ? (spent / w.totalBudget) * 100 : 0 };
     });
-  }, [weeks, spendingByDate]);
+  }, [weeks, transactionsByWeek, deselectedTxIds, spendingByDate]);
 
   // Spending by day-of-month (for calendar display)
   const spendingByDOM = useMemo(() => {
@@ -259,6 +288,12 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     }
     return map;
   }, [txsData, currMonth, currYear]);
+
+  const getFilteredTxs = useCallback((weekIdx: number) => {
+    const txs = transactionsByWeek[weekIdx] || [];
+    const catId = weekCategoryFilter[weekIdx];
+    return catId ? txs.filter(tx => tx.categoryId === catId) : txs;
+  }, [transactionsByWeek, weekCategoryFilter]);
 
   // --- Persistence ---
 
@@ -350,6 +385,27 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       { onError: () => toast.error("Error al guardar configuración de semanas") }
     );
   }, [projection.id, updateSpendingPlan]);
+
+  const handleToggleTx = useCallback((txId: string) => {
+    setDeselectedTxIds(prev => {
+      const next = new Set(prev);
+      if (next.has(txId)) next.delete(txId);
+      else next.add(txId);
+      return next;
+    });
+  }, []);
+
+  const handleSelectAll = useCallback((weekIdx: number, select: boolean) => {
+    const txs = transactionsByWeek[weekIdx] || [];
+    setDeselectedTxIds(prev => {
+      const next = new Set(prev);
+      for (const tx of txs) {
+        if (select) next.delete(tx.id);
+        else next.add(tx.id);
+      }
+      return next;
+    });
+  }, [transactionsByWeek]);
 
   const patterns = [
     { key: "business_days", label: "Días hábiles" },
@@ -454,26 +510,111 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
             </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-            {weekProgress.map(w => (
-              <div key={w.weekLabel}
-                className="relative p-3 rounded-xl bg-zinc-50 border border-zinc-200/60 overflow-hidden"
-              >
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{w.weekLabel}</p>
-                <p className="text-base font-black text-zinc-900">{formatCurrency(w.totalBudget)}</p>
-                <p className="text-[10px] text-zinc-400 mt-0.5">
-                  {w.dayCount} día{w.dayCount !== 1 ? "s" : ""}
-                </p>
-                {linkedAccount && w.weekSpent > 0 && (
-                  <div className="mt-2">
-                    <div className="w-full h-1.5 rounded-full bg-zinc-200 overflow-hidden">
-                      <div className={`h-full rounded-full transition-all duration-300 ${w.weekPct > 100 ? "bg-red-500" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"}`}
-                        style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+            {weekProgress.map((w, idx) => {
+              const isExpanded = expandedWeekIdx === idx;
+              const filteredTxs = getFilteredTxs(idx);
+              const weekTxs = transactionsByWeek[idx] || [];
+              const allSelected = weekTxs.length > 0 && weekTxs.every(tx => !deselectedTxIds.has(tx.id));
+              const selectedSum = weekTxs
+                .filter(tx => !deselectedTxIds.has(tx.id))
+                .reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
+              return (
+                <div key={w.weekLabel}
+                  className={`relative p-3 rounded-xl bg-zinc-50 border border-zinc-200/60 overflow-hidden transition-all ${
+                    isExpanded ? 'col-span-2 lg:col-span-5' : ''
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{w.weekLabel}</p>
+                      <p className="text-base font-black text-zinc-900">{formatCurrency(w.totalBudget)}</p>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">
+                        {w.dayCount} día{w.dayCount !== 1 ? "s" : ""}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-zinc-400 mt-0.5">{formatCurrency(w.weekSpent)} gastado</p>
+                    {linkedAccount && weekTxs.length > 0 && (
+                      <button onClick={() => setExpandedWeekIdx(isExpanded ? null : idx)}
+                        className="shrink-0 p-1 rounded-lg hover:bg-zinc-200/60 transition-colors text-zinc-400 hover:text-zinc-700"
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                  {linkedAccount && w.weekSpent > 0 && (
+                    <div className="mt-2">
+                      <div className="w-full h-1.5 rounded-full bg-zinc-200 overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-300 ${w.weekPct > 100 ? "bg-red-500" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"}`}
+                          style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+                      </div>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">{formatCurrency(w.weekSpent)} gastado</p>
+                    </div>
+                  )}
+                  {isExpanded && linkedAccount && weekTxs.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-zinc-200 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-3 h-3 text-zinc-400" />
+                        <select
+                          value={weekCategoryFilter[idx] || ''}
+                          onChange={e => setWeekCategoryFilter(prev => ({ ...prev, [idx]: e.target.value || null }))}
+                          className="text-[11px] px-2 py-1 rounded-lg border border-zinc-200 bg-white text-zinc-700 outline-none focus:ring-2 focus:ring-amber-200"
+                        >
+                          <option value="">Todas las categorías</option>
+                          {categories.filter(c => c.type === 'EGRESO').map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => handleSelectAll(idx, !allSelected)}
+                          className="ml-auto text-[10px] font-bold text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1"
+                        >
+                          {allSelected ? (
+                            <><Square className="w-3 h-3" /> Deseleccionar todo</>
+                          ) : (
+                            <><CheckSquare className="w-3 h-3" /> Seleccionar todo</>
+                          )}
+                        </button>
+                      </div>
+                      <div className="max-h-48 overflow-y-auto space-y-0.5 custom-scrollbar">
+                        {filteredTxs.length === 0 ? (
+                          <p className="text-xs text-zinc-400 text-center py-4">No hay egresos en esta semana</p>
+                        ) : filteredTxs.map(tx => (
+                          <label key={tx.id}
+                            className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white cursor-pointer transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={!deselectedTxIds.has(tx.id)}
+                              onChange={() => handleToggleTx(tx.id)}
+                              className="accent-amber-500 w-3.5 h-3.5 shrink-0"
+                            />
+                            <span className="flex-1 text-xs text-zinc-700 truncate min-w-0">{tx.description}</span>
+                            {tx.category && (
+                              <span className="text-[9px] text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-full shrink-0 uppercase tracking-tighter">
+                                {tx.category.name}
+                              </span>
+                            )}
+                            <span className="text-xs font-bold text-zinc-700 shrink-0 tabular-nums">
+                              {formatCurrency(Math.abs(Number(tx.amount)))}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      <div className={`flex justify-between pt-2 border-t border-zinc-200 text-xs font-bold ${
+                        selectedSum > w.totalBudget ? 'text-red-500' : 'text-zinc-700'
+                      }`}>
+                        <span>Total seleccionado</span>
+                        <span>{formatCurrency(selectedSum)} de {formatCurrency(w.totalBudget)}</span>
+                      </div>
+                    </div>
+                  )}
+                  {isExpanded && linkedAccount && weekTxs.length === 0 && (
+                    <div className="mt-3 pt-3 border-t border-zinc-200">
+                      <p className="text-xs text-zinc-400 text-center py-4">No hay egresos en esta semana</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

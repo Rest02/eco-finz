@@ -34,7 +34,8 @@ const TransactionList: React.FC<Props> = ({ transactions, onDelete, onEdit }) =>
     return new Date(dateString).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'UTC',
     });
   };
 

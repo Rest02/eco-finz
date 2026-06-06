@@ -1,5 +1,11 @@
 import { Transaction, Projection } from "../types/finance";
 
+/** Parse a transaction's ISO date string as local midnight for consistent comparisons */
+function parseTxDate(tx: Transaction): Date {
+  const [y, m, d] = tx.date.slice(0, 10).split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 export interface BillingPeriod {
   start: Date;
   end: Date;
@@ -117,7 +123,7 @@ export function getBilledAmountWithProjections(
         }
       }
     } else {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       if (txDate >= start && txDate <= end) {
         total += Number(tx.amount);
       }
@@ -155,7 +161,7 @@ export function getUnbilledAmountWithProjections(
         }
       }
     } else {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       if (txDate > currentEnd) {
         total += Number(tx.amount);
       }
@@ -172,7 +178,7 @@ export function getBilledAmount(
   const { start, end } = getBillingPeriod(closingDay);
   return transactions
     .filter((tx) => {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       return tx.type === "EGRESO" && txDate >= start && txDate <= end;
     })
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -185,7 +191,7 @@ export function getUnbilledAmount(
   const { end } = getBillingPeriod(closingDay);
   return transactions
     .filter((tx) => {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       return tx.type === "EGRESO" && txDate > end;
     })
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -250,7 +256,7 @@ export function getBilledAmountForPeriod(
         }
       }
     } else {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       if (txDate >= period.start && txDate <= period.end) {
         total += Number(tx.amount);
       }

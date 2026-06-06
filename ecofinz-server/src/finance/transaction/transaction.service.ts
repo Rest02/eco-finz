@@ -27,9 +27,10 @@ export class TransactionService {
       destinationAccountId,
     } = createTransactionDto;
 
-    const transactionDate = new Date(date);
-    const month = transactionDate.getMonth() + 1;
-    const year = transactionDate.getFullYear();
+    const [yRaw, mRaw, dRaw] = date.split('-').map(Number);
+    const transactionDate = new Date(Date.UTC(yRaw, mRaw - 1, dRaw));
+    const month = transactionDate.getUTCMonth() + 1;
+    const year = transactionDate.getUTCFullYear();
 
     // 1. Initial Validations
     const promises: any[] = [
@@ -186,9 +187,11 @@ export class TransactionService {
   async payCreditCard(dto: PayCreditCardDto, userId: string) {
     const { creditCardAccountId, sourceAccountId, amount, date, categoryId } = dto;
 
-    const paymentDate = date ? new Date(date) : new Date();
-    const month = paymentDate.getMonth() + 1;
-    const year = paymentDate.getFullYear();
+    const paymentDate = date
+      ? (() => { const [y, m, d] = date.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); })()
+      : new Date();
+    const month = paymentDate.getUTCMonth() + 1;
+    const year = paymentDate.getUTCFullYear();
 
     const creditCardAccount = await this.prisma.account.findUnique({
       where: { id: creditCardAccountId },
@@ -295,10 +298,12 @@ export class TransactionService {
     const where: any = { userId };
 
     if (startDate) {
-      where.date = { ...where.date, gte: new Date(startDate) };
+      const [y, m, d] = startDate.split('-').map(Number);
+      where.date = { ...where.date, gte: new Date(Date.UTC(y, m - 1, d)) };
     }
     if (endDate) {
-      where.date = { ...where.date, lte: new Date(endDate) };
+      const [y, m, d] = endDate.split('-').map(Number);
+      where.date = { ...where.date, lte: new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999)) };
     }
     if (accountId) {
       where.accountId = accountId;
