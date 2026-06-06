@@ -13,13 +13,18 @@ import {
   MonthlyProjectionFilters,
 } from '../types/finance';
 
-export const useMonthlyProjections = (filters?: MonthlyProjectionFilters) => {
+export const useMonthlyProjections = (
+  filters?: MonthlyProjectionFilters,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ['monthly-projections', filters],
     queryFn: async () => {
       const response = await getMonthlyProjections(filters);
       return response.data;
     },
+    enabled: options?.enabled,
+    refetchOnMount: 'always',
   });
 };
 

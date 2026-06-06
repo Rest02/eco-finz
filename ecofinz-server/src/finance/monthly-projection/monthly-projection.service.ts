@@ -14,8 +14,8 @@ export class MonthlyProjectionService {
     const totalFixedExpenses = dto.fixedExpenseSnapshot.reduce((sum, i) => sum + i.amount, 0);
     const totalCardPayments = dto.cardPaymentSnapshot.reduce((sum, i) => sum + i.amount, 0);
     const realAvailableMoney = totalSelectedIncome - totalFixedExpenses - totalCardPayments;
-    const projectedSavings = realAvailableMoney * (dto.savingsPercentage / 100);
-    const projectedVariableExpenses = realAvailableMoney * (dto.variableExpensesPercentage / 100);
+    const projectedSavings = Math.round(totalSelectedIncome * (dto.savingsPercentage / 100));
+    const projectedVariableExpenses = Math.round(totalSelectedIncome * (dto.variableExpensesPercentage / 100));
 
     return this.prisma.monthlyProjection.create({
       data: {
@@ -121,8 +121,8 @@ export class MonthlyProjectionService {
     updateData.totalFixedExpenses = totalFixedExpenses;
     updateData.totalCardPayments = totalCardPayments;
     updateData.realAvailableMoney = realAvailableMoney;
-    updateData.projectedSavings = realAvailableMoney * (savingsPct / 100);
-    updateData.projectedVariableExpenses = realAvailableMoney * (variablePct / 100);
+    updateData.projectedSavings = Math.round(totalSelectedIncome * (savingsPct / 100));
+    updateData.projectedVariableExpenses = Math.round(totalSelectedIncome * (variablePct / 100));
 
     const snapshotOps: any[] = [];
 

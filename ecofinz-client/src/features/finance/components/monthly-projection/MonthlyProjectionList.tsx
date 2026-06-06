@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from "@/lib/animations";
 import { useMonthlyProjections, useDeleteMonthlyProjection, useDuplicateMonthlyProjection } from "../../hooks/useMonthlyProjections";
 import { CalendarRange, Plus, Eye, Edit, Copy, Trash2, Search, Loader2 } from "lucide-react";
-import { ProjectionStatus } from "../../types/finance";
+import { ProjectionStatus, MonthlyProjectionFilters } from "../../types/finance";
 import toast from "react-hot-toast";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -22,17 +23,22 @@ const STATUS_LABELS: Record<ProjectionStatus, { label: string; color: string }> 
 
 export function MonthlyProjectionList() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProjectionStatus | "">("");
   const [yearFilter, setYearFilter] = useState<number | "">("");
   const [monthFilter, setMonthFilter] = useState<number | "">("");
 
-  const { data: projections = [], isLoading } = useMonthlyProjections({
-    ...(search ? { search } : {}),
-    ...(statusFilter ? { status: statusFilter as ProjectionStatus } : {}),
-    ...(yearFilter ? { year: yearFilter as number } : {}),
-    ...(monthFilter ? { month: monthFilter as number } : {}),
-  });
+  const filters = useMemo(() => {
+    const result: Record<string, unknown> = {};
+    if (search) result.search = search;
+    if (statusFilter) result.status = statusFilter;
+    if (yearFilter) result.year = yearFilter;
+    if (monthFilter) result.month = monthFilter;
+    return Object.keys(result).length > 0 ? result as MonthlyProjectionFilters : undefined;
+  }, [search, statusFilter, yearFilter, monthFilter]);
+
+  const { data: projections = [], isLoading } = useMonthlyProjections(filters, { enabled: isAuthenticated });
 
   const deleteProjection = useDeleteMonthlyProjection();
   const duplicateProjection = useDuplicateMonthlyProjection();
@@ -157,7 +163,7 @@ export function MonthlyProjectionList() {
           </button>
         </motion.div>
       ) : (
-        <motion.div variants={itemVariants} className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-[32px] border border-zinc-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -219,7 +225,7 @@ export function MonthlyProjectionList() {
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </div>
       )}
     </motion.div>
   );

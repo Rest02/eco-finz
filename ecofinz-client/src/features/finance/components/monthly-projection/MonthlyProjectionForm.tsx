@@ -36,8 +36,8 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
   const [month, setMonth] = useState(initialData ? parseInt(initialData.period.split("-")[1]) : now.getMonth() + 1);
   const [year, setYear] = useState(initialData ? parseInt(initialData.period.split("-")[0]) : now.getFullYear());
   const [payDay, setPayDay] = useState(initialData?.payDay || 15);
-  const [savingsPercentage, setSavingsPercentage] = useState(initialData?.savingsPercentage || 20);
-  const [variablePercentage, setVariablePercentage] = useState(initialData?.variableExpensesPercentage || 25);
+  const [savingsPercentage, setSavingsPercentage] = useState(Number(initialData?.savingsPercentage) || 20);
+  const [variablePercentage, setVariablePercentage] = useState(Number(initialData?.variableExpensesPercentage) || 25);
   const normalizedIncomes = initialData?.incomeSnapshot?.map(i => ({ name: i.name, amount: Number(i.amount) })) || [];
   const normalizedExpenses = initialData?.fixedExpenseSnapshot?.map(i => ({ name: i.name, amount: Number(i.amount) })) || [];
   const normalizedPayments = initialData?.cardPaymentSnapshot?.map(i => ({ name: i.name, amount: Number(i.amount) })) || [];
@@ -48,25 +48,27 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
 
   const { data: accounts = [] } = useAccounts();
   const savingsAccounts = accounts.filter(a => a.isSavingsAccount);
-  const currentSavingsBalance = savingsAccounts.reduce((s, a) => s + a.balance, 0);
+  const currentSavingsBalance = savingsAccounts.reduce((s, a) => s + Number(a.balance), 0);
 
   const totalIncome = useMemo(() => incomes.reduce((s, i) => s + i.amount, 0), [incomes]);
   const totalExpenses = useMemo(() => expenses.reduce((s, i) => s + i.amount, 0), [expenses]);
   const totalPayments = useMemo(() => payments.reduce((s, i) => s + i.amount, 0), [payments]);
   const availableMoney = Math.max(0, totalIncome - totalExpenses - totalPayments);
-  const projectedSavings = availableMoney * (savingsPercentage / 100);
-  const projectedVariable = availableMoney * (variablePercentage / 100);
+  const projectedSavings = Math.round(totalIncome * (savingsPercentage / 100));
+  const projectedVariable = Math.round(totalIncome * (variablePercentage / 100));
   const remaining = Math.max(0, availableMoney - projectedSavings - projectedVariable);
   const mandatoryTotal = totalExpenses + totalPayments;
   const mandatoryPercentage = totalIncome > 0
-    ? Math.round((mandatoryTotal / totalIncome) * 100)
+    ? (mandatoryTotal / totalIncome) * 100
     : 0;
   const fixedPercentage = totalIncome > 0
-    ? Math.round((totalExpenses / totalIncome) * 100)
+    ? (totalExpenses / totalIncome) * 100
     : 0;
-  const remainingAfterFixed = Math.max(0, 100 - fixedPercentage);
-  const maxSavings = Math.max(0, +(remainingAfterFixed - variablePercentage).toFixed(2));
-  const maxVariable = Math.max(0, +(remainingAfterFixed - savingsPercentage).toFixed(2));
+  const availablePct = Math.max(0, 100 - mandatoryPercentage);
+  const maxSavings = Math.max(0, +(availablePct - variablePercentage).toFixed(2));
+  const maxVariable = Math.max(0, +(availablePct - savingsPercentage).toFixed(2));
+  const maxSavingsAmount = availableMoney - projectedVariable;
+  const maxVariableAmount = availableMoney - projectedSavings;
 
   useEffect(() => {
     setSavingsPercentage(prev => Math.min(prev, maxSavings));
@@ -86,8 +88,8 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
       name: autoName,
       period: formattedPeriod,
       payDay,
-      savingsPercentage,
-      variableExpensesPercentage: variablePercentage,
+      savingsPercentage: Number(savingsPercentage),
+      variableExpensesPercentage: Number(variablePercentage),
       incomeSnapshot: incomes,
       fixedExpenseSnapshot: expenses,
       cardPaymentSnapshot: payments,
@@ -204,7 +206,7 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
               <span className="text-xs font-bold text-zinc-600">
                 Gastos Obligatorios (Fijos + Tarjetas)
               </span>
-              <span className="text-sm font-bold text-zinc-800">{mandatoryPercentage}%</span>
+              <span className="text-sm font-bold text-zinc-800">{mandatoryPercentage.toFixed(2)}%</span>
             </div>
             <div className="w-full h-3 rounded-full bg-zinc-200 overflow-hidden">
               <div
@@ -231,7 +233,7 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">Gastos fijos: {fixedPercentage}%</label>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Gastos fijos: {fixedPercentage.toFixed(2)}%</label>
             <div className="w-full h-2 rounded-full bg-zinc-200 overflow-hidden mt-3">
               <div
                 className="h-full rounded-full bg-zinc-400"
@@ -273,7 +275,23 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
             />
             <div className="flex justify-between text-xs text-zinc-400 mt-1">
               <span>0%</span>
-              <span>{maxSavings}%</span>
+              <span>{maxSavings.toFixed(2)}%</span>
+            </div>
+            <div className="mt-2 pt-2 border-t border-zinc-100">
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-zinc-500">$ Ahorro</label>
+                <input
+                  type="number"
+                  value={projectedSavings}
+                  onChange={e => {
+                    const amount = Math.max(0, parseFloat(e.target.value) || 0);
+                    const capped = Math.min(maxSavingsAmount, amount);
+                    const pct = totalIncome > 0 ? (capped / totalIncome) * 100 : 0;
+                    setSavingsPercentage(pct);
+                  }}
+                  className="w-full px-2 py-1 rounded-lg border border-zinc-200 text-xs text-center font-medium focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -306,7 +324,23 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
             />
             <div className="flex justify-between text-xs text-zinc-400 mt-1">
               <span>0%</span>
-              <span>{maxVariable}%</span>
+              <span>{maxVariable.toFixed(2)}%</span>
+            </div>
+            <div className="mt-2 pt-2 border-t border-zinc-100">
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-zinc-500">$ Gastos Variables</label>
+                <input
+                  type="number"
+                  value={projectedVariable}
+                  onChange={e => {
+                    const amount = Math.max(0, parseFloat(e.target.value) || 0);
+                    const capped = Math.min(maxVariableAmount, amount);
+                    const pct = totalIncome > 0 ? (capped / totalIncome) * 100 : 0;
+                    setVariablePercentage(pct);
+                  }}
+                  className="w-full px-2 py-1 rounded-lg border border-zinc-200 text-xs text-center font-medium focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -346,11 +380,11 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
           </div>
           <div className="space-y-2">
             <div className="flex justify-between py-2 px-3 rounded-xl bg-emerald-50">
-              <span className="text-xs font-medium text-emerald-600">- Ahorro ({savingsPercentage}%)</span>
+              <span className="text-xs font-medium text-emerald-600">- Ahorro ({savingsPercentage.toFixed(2)}%)</span>
               <span className="text-sm font-bold text-emerald-600">- {formatCurrency(projectedSavings)}</span>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-amber-50">
-              <span className="text-xs font-medium text-amber-600">- Gastos variables ({variablePercentage}%)</span>
+              <span className="text-xs font-medium text-amber-600">- Gastos variables ({variablePercentage.toFixed(2)}%)</span>
               <span className="text-sm font-bold text-amber-600">- {formatCurrency(projectedVariable)}</span>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-zinc-100 border border-zinc-200">

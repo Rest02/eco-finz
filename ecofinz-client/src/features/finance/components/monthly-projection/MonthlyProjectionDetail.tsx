@@ -27,7 +27,7 @@ export function MonthlyProjectionDetail({ id }: MonthlyProjectionDetailProps) {
 
   const savingsAccounts = useMemo(() => accounts.filter(a => a.isSavingsAccount), [accounts]);
   const currentSavingsBalance = useMemo(
-    () => savingsAccounts.reduce((s, a) => s + a.balance, 0),
+    () => savingsAccounts.reduce((s, a) => s + Number(a.balance), 0),
     [savingsAccounts]
   );
 
@@ -214,17 +214,17 @@ export function MonthlyProjectionDetail({ id }: MonthlyProjectionDetailProps) {
               <span className="text-sm font-bold text-zinc-900">{formatCurrency(projection.realAvailableMoney)}</span>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-emerald-50">
-              <span className="text-xs font-medium text-emerald-600">Ahorro ({projection.savingsPercentage}%)</span>
+              <span className="text-xs font-medium text-emerald-600">Ahorro ({Number(projection.savingsPercentage).toFixed(2)}%)</span>
               <span className="text-sm font-bold text-emerald-600">{formatCurrency(projection.projectedSavings)}</span>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-amber-50">
-              <span className="text-xs font-medium text-amber-600">Gastos variables ({projection.variableExpensesPercentage}%)</span>
+              <span className="text-xs font-medium text-amber-600">Gastos variables ({Number(projection.variableExpensesPercentage).toFixed(2)}%)</span>
               <span className="text-sm font-bold text-amber-600">{formatCurrency(projection.projectedVariableExpenses)}</span>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-zinc-100 border border-zinc-200">
               <span className="text-xs font-bold text-zinc-700">Saldo restante</span>
               <span className="text-sm font-bold text-emerald-600">
-                {formatCurrency(projection.realAvailableMoney - projection.projectedSavings - projection.projectedVariableExpenses)}
+                {formatCurrency(Math.max(0, projection.realAvailableMoney - projection.projectedSavings - projection.projectedVariableExpenses))}
               </span>
             </div>
           </div>
