@@ -248,7 +248,7 @@ export function MonthlyProjectionDetail({ id }: MonthlyProjectionDetailProps) {
                 <div className="flex justify-between py-2 px-3 rounded-xl bg-violet-100 border border-violet-300">
                   <span className="text-xs font-bold text-violet-800">Total ahorro acumulado</span>
                   <span className="text-sm font-bold text-violet-800">
-                    {formatCurrency(currentSavingsBalance + projection.projectedSavings)}
+                    {formatCurrency(currentSavingsBalance + Number(projection.projectedSavings))}
                   </span>
                 </div>
               </div>

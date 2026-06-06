@@ -168,27 +168,27 @@ export function MonthlyProjectionList() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-zinc-100">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Período</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Nombre</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Disponible Real</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Ahorro</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estado</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Acciones</th>
+                  <th className="text-left px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Período</th>
+                  <th className="text-left px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Nombre</th>
+                  <th className="text-right px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Disponible Real</th>
+                  <th className="text-right px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Ahorro</th>
+                  <th className="text-center px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estado</th>
+                  <th className="text-right px-6 py-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
                 {projections.map(p => (
                   <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-bold text-zinc-700">{formatPeriod(p.period)}</td>
-                    <td className="px-4 py-3 text-sm text-zinc-600">{p.name}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-right text-zinc-900">{formatCurrency(p.realAvailableMoney)}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-right text-emerald-600">{formatCurrency(p.projectedSavings)}</td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-6 py-3 text-sm font-bold text-zinc-700">{formatPeriod(p.period)}</td>
+                    <td className="px-6 py-3 text-sm text-zinc-600">{p.name}</td>
+                    <td className="px-6 py-3 text-sm font-bold text-right text-zinc-900">{formatCurrency(p.realAvailableMoney)}</td>
+                    <td className="px-6 py-3 text-sm font-bold text-right text-emerald-600">{formatCurrency(p.projectedSavings)}</td>
+                    <td className="px-6 py-3 text-center">
                       <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold ${STATUS_LABELS[p.status].color}`}>
                         {STATUS_LABELS[p.status].label}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => router.push(`/finance/projection/monthly/${p.id}`)}

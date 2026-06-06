@@ -5,7 +5,7 @@ import { MonthlyProjectionList } from "@/features/finance/components/monthly-pro
 
 export default function MonthlyProjectionListPage() {
   return (
-    <div className="relative min-h-screen p-6 lg:p-10 pb-20 w-full max-w-7xl mx-auto transition-all duration-500">
+    <div className="relative min-h-screen p-6 lg:p-10 pb-20 w-full transition-all duration-500">
       <MonthlyProjectionList />
     </div>
   );
