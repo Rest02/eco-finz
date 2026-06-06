@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from "@/lib/animations";
 import { IncomeSelector } from "./IncomeSelector";
@@ -57,6 +57,23 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
   const projectedSavings = availableMoney * (savingsPercentage / 100);
   const projectedVariable = availableMoney * (variablePercentage / 100);
   const remaining = Math.max(0, availableMoney - projectedSavings - projectedVariable);
+  const mandatoryTotal = totalExpenses + totalPayments;
+  const mandatoryPercentage = totalIncome > 0
+    ? Math.round((mandatoryTotal / totalIncome) * 100)
+    : 0;
+  const fixedPercentage = totalIncome > 0
+    ? Math.round((totalExpenses / totalIncome) * 100)
+    : 0;
+  const remainingAfterFixed = Math.max(0, 100 - fixedPercentage);
+  const maxSavings = Math.max(0, +(remainingAfterFixed - variablePercentage).toFixed(2));
+  const maxVariable = Math.max(0, +(remainingAfterFixed - savingsPercentage).toFixed(2));
+
+  useEffect(() => {
+    setSavingsPercentage(prev => Math.min(prev, maxSavings));
+  }, [maxSavings]);
+  useEffect(() => {
+    setVariablePercentage(prev => Math.min(prev, maxVariable));
+  }, [maxVariable]);
 
   const formattedPeriod = `${year}-${String(month).padStart(2, "0")}`;
   const autoName = name || `Proyección ${MONTHS[month - 1]} ${year}`;
@@ -180,7 +197,28 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
           <Sliders className="w-4 h-4" />
           ❺ Configuración
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="space-y-6">
+          {/* Barra bloqueada: Gastos Obligatorios */}
+          <div className="rounded-xl bg-zinc-50 border border-zinc-200 p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-bold text-zinc-600">
+                Gastos Obligatorios (Fijos + Tarjetas)
+              </span>
+              <span className="text-sm font-bold text-zinc-800">{mandatoryPercentage}%</span>
+            </div>
+            <div className="w-full h-3 rounded-full bg-zinc-200 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-zinc-400 transition-all duration-300"
+                style={{ width: `${Math.min(mandatoryPercentage, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-zinc-400 mt-1.5">
+              <span>{formatCurrency(mandatoryTotal)} de {formatCurrency(totalIncome)}</span>
+              <span>Fijo — sale directo de tus ingresos</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Día de pago</label>
             <input
@@ -193,35 +231,85 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">% Ahorro: {savingsPercentage}%</label>
-            <input
-              type="range"
-              value={savingsPercentage}
-              onChange={e => setSavingsPercentage(parseInt(e.target.value))}
-              min={0}
-              max={100}
-              className="w-full accent-black"
-            />
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Gastos fijos: {fixedPercentage}%</label>
+            <div className="w-full h-2 rounded-full bg-zinc-200 overflow-hidden mt-3">
+              <div
+                className="h-full rounded-full bg-zinc-400"
+                style={{ width: `${Math.min(fixedPercentage, 100)}%` }}
+              />
+            </div>
             <div className="flex justify-between text-xs text-zinc-400 mt-1">
               <span>0%</span>
               <span>100%</span>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">% Gastos Variables: {variablePercentage}%</label>
+            <div className="flex items-center gap-2 mb-1.5">
+              <label className="text-xs font-medium text-zinc-500">% Ahorro</label>
+              <input
+                type="number"
+                value={savingsPercentage}
+                onChange={e => {
+                  const val = Math.min(maxSavings, Math.max(0, parseFloat(e.target.value) || 0));
+                  setSavingsPercentage(val);
+                }}
+                step="0.01"
+                min={0}
+                max={maxSavings}
+                className="w-20 px-2 py-1 rounded-lg border border-zinc-200 text-xs text-center font-medium focus:outline-none focus:ring-2 focus:ring-black/10"
+              />
+            </div>
             <input
               type="range"
-              value={variablePercentage}
-              onChange={e => setVariablePercentage(parseInt(e.target.value))}
+              value={savingsPercentage}
+              onChange={e => {
+                const val = Math.min(maxSavings, Math.max(0, parseFloat(e.target.value) || 0));
+                setSavingsPercentage(val);
+              }}
               min={0}
-              max={100}
+              max={Math.max(0.01, maxSavings)}
+              step="0.1"
               className="w-full accent-black"
             />
             <div className="flex justify-between text-xs text-zinc-400 mt-1">
               <span>0%</span>
-              <span>100%</span>
+              <span>{maxSavings}%</span>
             </div>
           </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <label className="text-xs font-medium text-zinc-500">% Gastos Variables</label>
+              <input
+                type="number"
+                value={variablePercentage}
+                onChange={e => {
+                  const val = Math.min(maxVariable, Math.max(0, parseFloat(e.target.value) || 0));
+                  setVariablePercentage(val);
+                }}
+                step="0.01"
+                min={0}
+                max={maxVariable}
+                className="w-20 px-2 py-1 rounded-lg border border-zinc-200 text-xs text-center font-medium focus:outline-none focus:ring-2 focus:ring-black/10"
+              />
+            </div>
+            <input
+              type="range"
+              value={variablePercentage}
+              onChange={e => {
+                const val = Math.min(maxVariable, Math.max(0, parseFloat(e.target.value) || 0));
+                setVariablePercentage(val);
+              }}
+              min={0}
+              max={Math.max(0.01, maxVariable)}
+              step="0.1"
+              className="w-full accent-black"
+            />
+            <div className="flex justify-between text-xs text-zinc-400 mt-1">
+              <span>0%</span>
+              <span>{maxVariable}%</span>
+            </div>
+          </div>
+        </div>
         </div>
       </motion.div>
 
@@ -237,13 +325,19 @@ export function MonthlyProjectionForm({ initialData, onSave, isSaving }: Monthly
               <span className="text-xs font-medium text-zinc-500">Ingresos totales</span>
               <span className="text-sm font-bold text-emerald-600">{formatCurrency(totalIncome)}</span>
             </div>
-            <div className="flex justify-between py-2 px-3 rounded-xl bg-rose-50">
-              <span className="text-xs font-medium text-rose-600">- Gastos fijos</span>
-              <span className="text-sm font-bold text-rose-600">- {formatCurrency(totalExpenses)}</span>
-            </div>
-            <div className="flex justify-between py-2 px-3 rounded-xl bg-blue-50">
-              <span className="text-xs font-medium text-blue-600">- Pagos tarjetas</span>
-              <span className="text-sm font-bold text-blue-600">- {formatCurrency(totalPayments)}</span>
+            <div className="rounded-xl bg-rose-50 overflow-hidden">
+              <div className="flex justify-between items-center py-2 px-3 border-b border-rose-100">
+                <span className="text-xs font-bold text-rose-700">- Gastos Obligatorios</span>
+                <span className="text-sm font-bold text-rose-700">- {formatCurrency(mandatoryTotal)}</span>
+              </div>
+              <div className="flex justify-between py-1.5 px-3">
+                <span className="text-[11px] font-medium text-rose-500">Gastos fijos</span>
+                <span className="text-xs font-medium text-rose-500">- {formatCurrency(totalExpenses)}</span>
+              </div>
+              <div className="flex justify-between py-1.5 px-3">
+                <span className="text-[11px] font-medium text-rose-500">Pagos tarjetas</span>
+                <span className="text-xs font-medium text-rose-500">- {formatCurrency(totalPayments)}</span>
+              </div>
             </div>
             <div className="flex justify-between py-2 px-3 rounded-xl bg-zinc-100 border border-zinc-200">
               <span className="text-xs font-bold text-zinc-700">Dinero disponible real</span>
