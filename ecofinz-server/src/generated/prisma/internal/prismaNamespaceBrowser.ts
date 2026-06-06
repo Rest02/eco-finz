@@ -239,7 +239,12 @@ export const MonthlyProjectionScalarFieldEnum = {
   projectedVariableExpenses: 'projectedVariableExpenses',
   userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  variableExpensesAccountId: 'variableExpensesAccountId',
+  spendingPlanPattern: 'spendingPlanPattern',
+  spendingDays: 'spendingDays',
+  variableExpenseDistribution: 'variableExpenseDistribution',
+  variableExpenseWeeks: 'variableExpenseWeeks'
 } as const
 
 export type MonthlyProjectionScalarFieldEnum = (typeof MonthlyProjectionScalarFieldEnum)[keyof typeof MonthlyProjectionScalarFieldEnum]

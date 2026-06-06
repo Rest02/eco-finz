@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMonthlyProjectionDto } from './dto/create-monthly-projection.dto';
 import { UpdateMonthlyProjectionDto } from './dto/update-monthly-projection.dto';
+import { UpdateSpendingPlanDto } from './dto/update-spending-plan.dto';
 import { QueryMonthlyProjectionDto } from './dto/query-monthly-projection.dto';
 import { ProjectionStatus } from 'src/generated/prisma/enums';
 
@@ -30,6 +31,7 @@ export class MonthlyProjectionService {
         variableExpensesPercentage: dto.variableExpensesPercentage,
         projectedSavings,
         projectedVariableExpenses,
+        variableExpensesAccountId: dto.variableExpensesAccountId,
         userId,
         incomeSnapshot: {
           create: dto.incomeSnapshot,
@@ -81,6 +83,7 @@ export class MonthlyProjectionService {
         incomeSnapshot: true,
         fixedExpenseSnapshot: true,
         cardPaymentSnapshot: true,
+        variableExpensesAccount: true,
       },
     });
 
@@ -105,6 +108,7 @@ export class MonthlyProjectionService {
     if (dto.payDay !== undefined) updateData.payDay = dto.payDay;
     if (dto.savingsPercentage !== undefined) updateData.savingsPercentage = dto.savingsPercentage;
     if (dto.variableExpensesPercentage !== undefined) updateData.variableExpensesPercentage = dto.variableExpensesPercentage;
+    if (dto.variableExpensesAccountId !== undefined) updateData.variableExpensesAccountId = dto.variableExpensesAccountId;
 
     const incomes = dto.incomeSnapshot || current.incomeSnapshot.map(i => ({ name: i.name, amount: Number(i.amount) }));
     const expenses = dto.fixedExpenseSnapshot || current.fixedExpenseSnapshot.map(i => ({ name: i.name, amount: Number(i.amount) }));
@@ -195,6 +199,30 @@ export class MonthlyProjectionService {
         incomeSnapshot: true,
         fixedExpenseSnapshot: true,
         cardPaymentSnapshot: true,
+      },
+    });
+  }
+
+  async updateSpendingPlan(userId: string, id: string, dto: UpdateSpendingPlanDto) {
+    await this.findOne(userId, id);
+
+    const updateData: any = {};
+    if (dto.variableExpensesAccountId !== undefined) {
+      updateData.variableExpensesAccountId = dto.variableExpensesAccountId === '' ? null : dto.variableExpensesAccountId;
+    }
+    if (dto.spendingPlanPattern !== undefined) updateData.spendingPlanPattern = dto.spendingPlanPattern;
+    if (dto.spendingDays !== undefined) updateData.spendingDays = dto.spendingDays;
+    if (dto.variableExpenseDistribution !== undefined) updateData.variableExpenseDistribution = dto.variableExpenseDistribution;
+    if (dto.variableExpenseWeeks !== undefined) updateData.variableExpenseWeeks = dto.variableExpenseWeeks;
+
+    return this.prisma.monthlyProjection.update({
+      where: { id },
+      data: updateData,
+      include: {
+        incomeSnapshot: true,
+        fixedExpenseSnapshot: true,
+        cardPaymentSnapshot: true,
+        variableExpensesAccount: true,
       },
     });
   }

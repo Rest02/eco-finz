@@ -148,6 +148,12 @@ export interface MonthlyProjection {
   incomeSnapshot: { name: string; amount: number }[];
   fixedExpenseSnapshot: { name: string; amount: number }[];
   cardPaymentSnapshot: { name: string; amount: number }[];
+  variableExpensesAccountId?: string;
+  variableExpensesAccount?: Account;
+  spendingPlanPattern?: string;
+  spendingDays?: string;
+  variableExpenseDistribution?: string;
+  variableExpenseWeeks?: number;
   createdAt: string;
   updatedAt: string;
 }

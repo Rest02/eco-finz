@@ -49,4 +49,8 @@ export class CreateMonthlyProjectionDto {
   @ValidateNested({ each: true })
   @Type(() => SnapshotItemDto)
   cardPaymentSnapshot: SnapshotItemDto[];
+
+  @IsOptional()
+  @IsString()
+  variableExpensesAccountId?: string;
 }

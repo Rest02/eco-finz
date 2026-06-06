@@ -6,6 +6,7 @@ import {
   updateMonthlyProjection,
   duplicateMonthlyProjection,
   deleteMonthlyProjection,
+  updateSpendingPlan,
 } from '../services/financeService';
 import {
   CreateMonthlyProjectionDto,
@@ -80,6 +81,18 @@ export const useDeleteMonthlyProjection = () => {
     mutationFn: (id: string) => deleteMonthlyProjection(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monthly-projections'] });
+    },
+  });
+};
+
+export const useUpdateSpendingPlan = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { variableExpensesAccountId?: string; spendingPlanPattern?: string; spendingDays?: string; variableExpenseDistribution?: string; variableExpenseWeeks?: number } }) =>
+      updateSpendingPlan(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['monthly-projections', variables.id] });
     },
   });
 };

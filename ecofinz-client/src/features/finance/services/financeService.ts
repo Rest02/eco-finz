@@ -183,4 +183,14 @@ export const deleteMonthlyProjection = (id: string): Promise<AxiosResponse<void>
   return apiClient.delete(`/finance/monthly-projection/${id}`);
 };
 
+export const updateSpendingPlan = (id: string, data: {
+  variableExpensesAccountId?: string;
+  spendingPlanPattern?: string;
+  spendingDays?: string;
+  variableExpenseDistribution?: string;
+  variableExpenseWeeks?: number;
+}): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/spending-plan`, data);
+};
+
 

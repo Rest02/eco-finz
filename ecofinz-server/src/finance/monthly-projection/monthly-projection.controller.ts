@@ -13,6 +13,7 @@ import {
 import { MonthlyProjectionService } from './monthly-projection.service';
 import { CreateMonthlyProjectionDto } from './dto/create-monthly-projection.dto';
 import { UpdateMonthlyProjectionDto } from './dto/update-monthly-projection.dto';
+import { UpdateSpendingPlanDto } from './dto/update-spending-plan.dto';
 import { QueryMonthlyProjectionDto } from './dto/query-monthly-projection.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -43,6 +44,15 @@ export class MonthlyProjectionController {
     @Request() req,
   ) {
     return this.service.update(req.user.id, id, dto);
+  }
+
+  @Patch(':id/spending-plan')
+  updateSpendingPlan(
+    @Param('id') id: string,
+    @Body() dto: UpdateSpendingPlanDto,
+    @Request() req,
+  ) {
+    return this.service.updateSpendingPlan(req.user.id, id, dto);
   }
 
   @Post(':id/duplicate')

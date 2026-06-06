@@ -7,6 +7,7 @@ import { containerVariants, itemVariants } from "@/lib/animations";
 import { useMonthlyProjection, useDeleteMonthlyProjection, useDuplicateMonthlyProjection } from "../../hooks/useMonthlyProjections";
 import { useAccounts } from "../../hooks/useAccounts";
 import { CalendarRange, Edit, Copy, Trash2, ArrowLeft, Loader2, Wallet, CreditCard, Calculator, PiggyBank } from "lucide-react";
+import { VariableExpensePlan } from "./VariableExpensePlan";
 import toast from "react-hot-toast";
 
 const MONTHS = [
@@ -256,6 +257,8 @@ export function MonthlyProjectionDetail({ id }: MonthlyProjectionDetailProps) {
           )}
         </motion.div>
       </div>
+
+      <VariableExpensePlan projection={projection} accounts={accounts} />
     </motion.div>
   );
 }
