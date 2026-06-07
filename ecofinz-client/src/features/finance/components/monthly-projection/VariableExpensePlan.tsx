@@ -78,7 +78,26 @@ interface WeekInfo {
   dateStrings: string[];
 }
 
-function buildEqualWeeks(
+function createWeekEntry(start: Date, end: Date, budget: number): WeekInfo {
+  const dateStrings: string[] = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    dateStrings.push(cursor.toISOString().slice(0, 10));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  const s = start;
+  const e = end;
+  return {
+    weekLabel: `${s.getDate()} ${MONTH_SHORT[s.getMonth()]} - ${e.getDate()} ${MONTH_SHORT[e.getMonth()]}`,
+    weekStart: start,
+    weekEnd: end,
+    dayCount: dateStrings.length,
+    totalBudget: budget,
+    dateStrings,
+  };
+}
+
+function buildCalendarWeeks(
   prevYear: number, prevMonthNum: number,
   currYear: number, currMonth: number,
   payDay: number,
@@ -87,41 +106,27 @@ function buildEqualWeeks(
 ): WeekInfo[] {
   const startDate = new Date(prevYear, prevMonthNum - 1, payDay);
   const endDate = new Date(currYear, currMonth - 1, payDay);
-
-  const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const weeklyBudget = totalBudget / numberOfWeeks;
-  const chunkSize = Math.ceil(totalDays / numberOfWeeks);
 
   const weeks: WeekInfo[] = [];
   const cursor = new Date(startDate);
 
-  for (let w = 0; w < numberOfWeeks; w++) {
-    const weekStart = new Date(cursor);
-    const chunkEnd = new Date(cursor);
-    chunkEnd.setDate(chunkEnd.getDate() + chunkSize - 1);
-    const actualEnd = chunkEnd > endDate ? new Date(endDate) : chunkEnd;
+  // Week 1: prevPayDay → next Sunday
+  const firstSun = new Date(cursor);
+  firstSun.setDate(cursor.getDate() + (6 - cursor.getDay()));
+  const w1End = firstSun > endDate ? new Date(endDate) : firstSun;
+  weeks.push(createWeekEntry(cursor, w1End, weeklyBudget));
 
-    const dateStrings: string[] = [];
-    const dayCursor = new Date(weekStart);
-    while (dayCursor <= actualEnd) {
-      dateStrings.push(dayCursor.toISOString().slice(0, 10));
-      dayCursor.setDate(dayCursor.getDate() + 1);
-    }
+  // Remaining weeks: Mon → Sun (or Mon → currPayDay for the last)
+  cursor.setTime(w1End.getTime());
+  cursor.setDate(cursor.getDate() + 1);
 
-    const s = weekStart;
-    const e = actualEnd;
-    const label = `${s.getDate()} ${MONTH_SHORT[s.getMonth()]} - ${e.getDate()} ${MONTH_SHORT[e.getMonth()]}`;
-
-    weeks.push({
-      weekLabel: label,
-      weekStart,
-      weekEnd: actualEnd,
-      dayCount: dateStrings.length,
-      totalBudget: weeklyBudget,
-      dateStrings,
-    });
-
-    cursor.setDate(cursor.getDate() + chunkSize);
+  while (weeks.length < numberOfWeeks && cursor < endDate) {
+    const weekEnd = new Date(cursor);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const actualEnd = weekEnd > endDate ? new Date(endDate) : weekEnd;
+    weeks.push(createWeekEntry(cursor, actualEnd, weeklyBudget));
+    cursor.setDate(cursor.getDate() + 7);
   }
 
   return weeks;
@@ -167,7 +172,8 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   const [showProgress, setShowProgress] = useState(true);
   const [expandedWeekIdx, setExpandedWeekIdx] = useState<number | null>(null);
   const [deselectedTxIds, setDeselectedTxIds] = useState<Set<string>>(new Set());
-  const [weekCategoryFilter, setWeekCategoryFilter] = useState<Record<number, string | null>>({});
+  const [weekEgresoCatFilter, setWeekEgresoCatFilter] = useState<Record<number, string | null>>({});
+  const [weekIngresoCatFilter, setWeekIngresoCatFilter] = useState<Record<number, string | null>>({});
 
   // --- Derived data ---
 
@@ -205,15 +211,24 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   const maxWeeks = useMemo(() => {
     const start = new Date(prevYear, prevMonth - 1, payDay);
     const end = new Date(currYear, currMonth - 1, payDay);
-    const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.max(1, Math.ceil(totalDays / 7));
+    const firstSun = new Date(start);
+    firstSun.setDate(start.getDate() + (6 - start.getDay()));
+    if (firstSun >= end) return 1;
+    let count = 1;
+    const cur = new Date(firstSun);
+    cur.setDate(cur.getDate() + 1);
+    while (cur < end) {
+      count++;
+      cur.setDate(cur.getDate() + 7);
+    }
+    return count;
   }, [prevYear, prevMonth, currYear, currMonth, payDay]);
 
   const effectiveWeeks = customWeeks ?? maxWeeks;
   const weeklyBudget = effectiveWeeks > 0 ? totalBudget / effectiveWeeks : 0;
 
   const weeks = useMemo(
-    () => buildEqualWeeks(prevYear, prevMonth, currYear, currMonth, payDay, totalBudget, effectiveWeeks),
+    () => buildCalendarWeeks(prevYear, prevMonth, currYear, currMonth, payDay, totalBudget, effectiveWeeks),
     [prevYear, prevMonth, currYear, currMonth, payDay, totalBudget, effectiveWeeks]
   );
 
@@ -244,11 +259,10 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
 
   const { data: categories = [] } = useCategories();
 
-  // Transactions grouped by week index
+  // All transactions grouped by week index
   const transactionsByWeek = useMemo(() => {
     const map: Record<number, Transaction[]> = {};
     for (const tx of txsData?.data || []) {
-      if (tx.isInflow) continue;
       const iso = tx.date.slice(0, 10);
       for (let i = 0; i < weeks.length; i++) {
         if (weeks[i].dateStrings.includes(iso)) {
@@ -261,17 +275,47 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     return map;
   }, [txsData, weeks]);
 
-  // Per-week progress
+  // Separate expense and income maps
+  const egresosByWeek = useMemo(() => {
+    const map: Record<number, Transaction[]> = {};
+    for (const [idx, txs] of Object.entries(transactionsByWeek)) {
+      map[Number(idx)] = txs.filter(tx => !tx.isInflow);
+    }
+    return map;
+  }, [transactionsByWeek]);
+
+  const ingresosByWeek = useMemo(() => {
+    const map: Record<number, Transaction[]> = {};
+    for (const [idx, txs] of Object.entries(transactionsByWeek)) {
+      map[Number(idx)] = txs.filter(tx => tx.isInflow);
+    }
+    return map;
+  }, [transactionsByWeek]);
+
+  // Per-week progress (net: egresos - ingresos)
   const weekProgress = useMemo(() => {
     return weeks.map((w, idx) => {
-      let spent = 0;
-      const txs = (transactionsByWeek[idx] || []).filter(tx => !deselectedTxIds.has(tx.id));
-      if (txs.length > 0) {
-        spent = txs.reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
+      const weekTxs = transactionsByWeek[idx] || [];
+      const selectedTxs = weekTxs.filter(tx => !deselectedTxIds.has(tx.id));
+
+      let egresoTotal = 0;
+      let ingresoTotal = 0;
+
+      if (selectedTxs.length > 0) {
+        for (const tx of selectedTxs) {
+          const amt = Math.abs(Number(tx.amount));
+          if (tx.isInflow) ingresoTotal += amt;
+          else egresoTotal += amt;
+        }
       } else {
-        for (const iso of w.dateStrings) spent += spendingByDate.get(iso) || 0;
+        // Fallback to raw expense data
+        for (const iso of w.dateStrings) egresoTotal += spendingByDate.get(iso) || 0;
       }
-      return { ...w, weekSpent: spent, weekPct: w.totalBudget > 0 ? (spent / w.totalBudget) * 100 : 0 };
+
+      const netOutflow = egresoTotal - ingresoTotal;
+      const weekPct = w.totalBudget > 0 ? Math.max(0, netOutflow) / w.totalBudget * 100 : 0;
+
+      return { ...w, weekEgresos: egresoTotal, weekIngresos: ingresoTotal, weekNet: netOutflow, weekPct };
     });
   }, [weeks, transactionsByWeek, deselectedTxIds, spendingByDate]);
 
@@ -289,11 +333,17 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     return map;
   }, [txsData, currMonth, currYear]);
 
-  const getFilteredTxs = useCallback((weekIdx: number) => {
-    const txs = transactionsByWeek[weekIdx] || [];
-    const catId = weekCategoryFilter[weekIdx];
+  const getFilteredEgresos = useCallback((weekIdx: number) => {
+    const txs = egresosByWeek[weekIdx] || [];
+    const catId = weekEgresoCatFilter[weekIdx];
     return catId ? txs.filter(tx => tx.categoryId === catId) : txs;
-  }, [transactionsByWeek, weekCategoryFilter]);
+  }, [egresosByWeek, weekEgresoCatFilter]);
+
+  const getFilteredIngresos = useCallback((weekIdx: number) => {
+    const txs = ingresosByWeek[weekIdx] || [];
+    const catId = weekIngresoCatFilter[weekIdx];
+    return catId ? txs.filter(tx => tx.categoryId === catId) : txs;
+  }, [ingresosByWeek, weekIngresoCatFilter]);
 
   // --- Persistence ---
 
@@ -395,8 +445,9 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     });
   }, []);
 
-  const handleSelectAll = useCallback((weekIdx: number, select: boolean) => {
-    const txs = transactionsByWeek[weekIdx] || [];
+  const handleSelectAll = useCallback((weekIdx: number, type: 'egreso' | 'ingreso', select: boolean) => {
+    const source = type === 'egreso' ? egresosByWeek : ingresosByWeek;
+    const txs = source[weekIdx] || [];
     setDeselectedTxIds(prev => {
       const next = new Set(prev);
       for (const tx of txs) {
@@ -405,7 +456,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       }
       return next;
     });
-  }, [transactionsByWeek]);
+  }, [egresosByWeek, ingresosByWeek]);
 
   const patterns = [
     { key: "business_days", label: "Días hábiles" },
@@ -512,12 +563,21 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             {weekProgress.map((w, idx) => {
               const isExpanded = expandedWeekIdx === idx;
-              const filteredTxs = getFilteredTxs(idx);
               const weekTxs = transactionsByWeek[idx] || [];
-              const allSelected = weekTxs.length > 0 && weekTxs.every(tx => !deselectedTxIds.has(tx.id));
-              const selectedSum = weekTxs
+              const weekEgresosTxs = egresosByWeek[idx] || [];
+              const weekIngresosTxs = ingresosByWeek[idx] || [];
+              const filteredEgresos = getFilteredEgresos(idx);
+              const filteredIngresos = getFilteredIngresos(idx);
+              const allEgresosSelected = weekEgresosTxs.length > 0 && weekEgresosTxs.every(tx => !deselectedTxIds.has(tx.id));
+              const allIngresosSelected = weekIngresosTxs.length > 0 && weekIngresosTxs.every(tx => !deselectedTxIds.has(tx.id));
+              const selectedEgresoSum = weekEgresosTxs
                 .filter(tx => !deselectedTxIds.has(tx.id))
                 .reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
+              const selectedIngresoSum = weekIngresosTxs
+                .filter(tx => !deselectedTxIds.has(tx.id))
+                .reduce((s, tx) => s + Math.abs(Number(tx.amount)), 0);
+              const netSum = selectedEgresoSum - selectedIngresoSum;
+              const hasTransactions = weekTxs.length > 0;
               return (
                 <div key={w.weekLabel}
                   className={`relative p-3 rounded-xl bg-zinc-50 border border-zinc-200/60 overflow-hidden transition-all ${
@@ -532,7 +592,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                         {w.dayCount} día{w.dayCount !== 1 ? "s" : ""}
                       </p>
                     </div>
-                    {linkedAccount && weekTxs.length > 0 && (
+                    {linkedAccount && hasTransactions && (
                       <button onClick={() => setExpandedWeekIdx(isExpanded ? null : idx)}
                         className="shrink-0 p-1 rounded-lg hover:bg-zinc-200/60 transition-colors text-zinc-400 hover:text-zinc-700"
                       >
@@ -540,76 +600,169 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                       </button>
                     )}
                   </div>
-                  {linkedAccount && w.weekSpent > 0 && (
+                  {linkedAccount && (w.weekEgresos > 0 || w.weekIngresos > 0) && (
                     <div className="mt-2">
                       <div className="w-full h-1.5 rounded-full bg-zinc-200 overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-300 ${w.weekPct > 100 ? "bg-red-500" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"}`}
-                          style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+                        {w.weekNet < 0 ? (
+                          <div className="h-full rounded-full bg-emerald-400" style={{ width: '100%' }} />
+                        ) : (
+                          <div className={`h-full rounded-full transition-all duration-300 ${
+                            w.weekPct > 100 ? "bg-red-500" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"
+                          }`} style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+                        )}
                       </div>
-                      <p className="text-[10px] text-zinc-400 mt-0.5">{formatCurrency(w.weekSpent)} gastado</p>
-                    </div>
-                  )}
-                  {isExpanded && linkedAccount && weekTxs.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-zinc-200 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Tag className="w-3 h-3 text-zinc-400" />
-                        <select
-                          value={weekCategoryFilter[idx] || ''}
-                          onChange={e => setWeekCategoryFilter(prev => ({ ...prev, [idx]: e.target.value || null }))}
-                          className="text-[11px] px-2 py-1 rounded-lg border border-zinc-200 bg-white text-zinc-700 outline-none focus:ring-2 focus:ring-amber-200"
-                        >
-                          <option value="">Todas las categorías</option>
-                          {categories.filter(c => c.type === 'EGRESO').map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                          ))}
-                        </select>
-                        <button
-                          onClick={() => handleSelectAll(idx, !allSelected)}
-                          className="ml-auto text-[10px] font-bold text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1"
-                        >
-                          {allSelected ? (
-                            <><Square className="w-3 h-3" /> Deseleccionar todo</>
-                          ) : (
-                            <><CheckSquare className="w-3 h-3" /> Seleccionar todo</>
-                          )}
-                        </button>
-                      </div>
-                      <div className="max-h-48 overflow-y-auto space-y-0.5 custom-scrollbar">
-                        {filteredTxs.length === 0 ? (
-                          <p className="text-xs text-zinc-400 text-center py-4">No hay egresos en esta semana</p>
-                        ) : filteredTxs.map(tx => (
-                          <label key={tx.id}
-                            className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white cursor-pointer transition-colors"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={!deselectedTxIds.has(tx.id)}
-                              onChange={() => handleToggleTx(tx.id)}
-                              className="accent-amber-500 w-3.5 h-3.5 shrink-0"
-                            />
-                            <span className="flex-1 text-xs text-zinc-700 truncate min-w-0">{tx.description}</span>
-                            {tx.category && (
-                              <span className="text-[9px] text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-full shrink-0 uppercase tracking-tighter">
-                                {tx.category.name}
-                              </span>
-                            )}
-                            <span className="text-xs font-bold text-zinc-700 shrink-0 tabular-nums">
-                              {formatCurrency(Math.abs(Number(tx.amount)))}
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                      <div className={`flex justify-between pt-2 border-t border-zinc-200 text-xs font-bold ${
-                        selectedSum > w.totalBudget ? 'text-red-500' : 'text-zinc-700'
-                      }`}>
-                        <span>Total seleccionado</span>
-                        <span>{formatCurrency(selectedSum)} de {formatCurrency(w.totalBudget)}</span>
+                      <div className="flex items-center justify-between mt-0.5">
+                        <p className={`text-[10px] ${w.weekNet < 0 ? 'text-emerald-600 font-bold' : 'text-zinc-400'}`}>
+                          {w.weekNet < 0
+                            ? `Excedente +${formatCurrency(Math.abs(w.weekNet))}`
+                            : `${formatCurrency(w.weekNet)} neto de ${formatCurrency(w.totalBudget)}`
+                          }
+                        </p>
+                        {w.weekIngresos > 0 && (
+                          <span className="text-[10px] font-bold text-emerald-500">+{formatCurrency(w.weekIngresos)}</span>
+                        )}
                       </div>
                     </div>
                   )}
-                  {isExpanded && linkedAccount && weekTxs.length === 0 && (
+                  {isExpanded && linkedAccount && hasTransactions && (
                     <div className="mt-3 pt-3 border-t border-zinc-200">
-                      <p className="text-xs text-zinc-400 text-center py-4">No hay egresos en esta semana</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* --- Egresos Column --- */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Tag className="w-3 h-3 text-red-400" />
+                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">Egresos</span>
+                            <select
+                              value={weekEgresoCatFilter[idx] || ''}
+                              onChange={e => setWeekEgresoCatFilter(prev => ({ ...prev, [idx]: e.target.value || null }))}
+                              className="text-[11px] px-2 py-1 rounded-lg border border-zinc-200 bg-white text-zinc-700 outline-none focus:ring-2 focus:ring-amber-200 ml-auto"
+                            >
+                              <option value="">Todas las categorías</option>
+                              {categories.filter(c => c.type === 'EGRESO').map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="flex items-center justify-between mb-1">
+                            <button
+                              onClick={() => handleSelectAll(idx, 'egreso', !allEgresosSelected)}
+                              className="text-[10px] font-bold text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1"
+                            >
+                              {allEgresosSelected ? (
+                                <><Square className="w-3 h-3" /> Deseleccionar todo</>
+                              ) : (
+                                <><CheckSquare className="w-3 h-3" /> Seleccionar todo</>
+                              )}
+                            </button>
+                          </div>
+                          <div className="max-h-48 overflow-y-auto space-y-0.5 custom-scrollbar">
+                            {filteredEgresos.length === 0 ? (
+                              <p className="text-xs text-zinc-400 text-center py-4">Sin egresos</p>
+                            ) : filteredEgresos.map(tx => (
+                              <label key={tx.id}
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white cursor-pointer transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={!deselectedTxIds.has(tx.id)}
+                                  onChange={() => handleToggleTx(tx.id)}
+                                  className="accent-amber-500 w-3.5 h-3.5 shrink-0"
+                                />
+                                <span className="flex-1 text-xs text-zinc-700 truncate min-w-0">{tx.description}</span>
+                                {tx.category && (
+                                  <span className="text-[9px] text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-full shrink-0 uppercase tracking-tighter">
+                                    {tx.category.name}
+                                  </span>
+                                )}
+                                <span className="text-xs font-bold text-zinc-700 shrink-0 tabular-nums">-{formatCurrency(Math.abs(Number(tx.amount)))}</span>
+                              </label>
+                            ))}
+                          </div>
+                          {weekEgresosTxs.length > 0 && (
+                            <div className="flex justify-between pt-2 border-t border-zinc-200 text-xs font-bold text-zinc-700 mt-1">
+                              <span>Total egresos</span>
+                              <span>{formatCurrency(selectedEgresoSum)}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* --- Ingresos Column --- */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Tag className="w-3 h-3 text-emerald-400" />
+                            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Ingresos</span>
+                            <select
+                              value={weekIngresoCatFilter[idx] || ''}
+                              onChange={e => setWeekIngresoCatFilter(prev => ({ ...prev, [idx]: e.target.value || null }))}
+                              className="text-[11px] px-2 py-1 rounded-lg border border-zinc-200 bg-white text-zinc-700 outline-none focus:ring-2 focus:ring-amber-200 ml-auto"
+                            >
+                              <option value="">Todas las categorías</option>
+                              {categories.filter(c => c.type === 'INGRESO').map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="flex items-center justify-between mb-1">
+                            <button
+                              onClick={() => handleSelectAll(idx, 'ingreso', !allIngresosSelected)}
+                              className="text-[10px] font-bold text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1"
+                            >
+                              {allIngresosSelected ? (
+                                <><Square className="w-3 h-3" /> Deseleccionar todo</>
+                              ) : (
+                                <><CheckSquare className="w-3 h-3" /> Seleccionar todo</>
+                              )}
+                            </button>
+                          </div>
+                          <div className="max-h-48 overflow-y-auto space-y-0.5 custom-scrollbar">
+                            {filteredIngresos.length === 0 ? (
+                              <p className="text-xs text-zinc-400 text-center py-4">Sin ingresos</p>
+                            ) : filteredIngresos.map(tx => (
+                              <label key={tx.id}
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white cursor-pointer transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={!deselectedTxIds.has(tx.id)}
+                                  onChange={() => handleToggleTx(tx.id)}
+                                  className="accent-emerald-500 w-3.5 h-3.5 shrink-0"
+                                />
+                                <span className="flex-1 text-xs text-zinc-700 truncate min-w-0">{tx.description}</span>
+                                {tx.category && (
+                                  <span className="text-[9px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0 uppercase tracking-tighter">
+                                    {tx.category.name}
+                                  </span>
+                                )}
+                                <span className="text-xs font-bold text-emerald-600 shrink-0 tabular-nums">+{formatCurrency(Math.abs(Number(tx.amount)))}</span>
+                              </label>
+                            ))}
+                          </div>
+                          {weekIngresosTxs.length > 0 && (
+                            <div className="flex justify-between pt-2 border-t border-zinc-200 text-xs font-bold text-emerald-600 mt-1">
+                              <span>Total ingresos</span>
+                              <span>+{formatCurrency(selectedIngresoSum)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Net footer */}
+                      <div className={`flex justify-between pt-3 mt-3 border-t border-zinc-200 text-xs font-bold ${
+                        netSum > w.totalBudget ? 'text-red-500' : netSum <= 0 ? 'text-emerald-600' : 'text-zinc-700'
+                      }`}>
+                        <span>Neto semanal</span>
+                        <span>
+                          {formatCurrency(netSum)} de {formatCurrency(w.totalBudget)}
+                          {selectedIngresoSum > 0 && (
+                            <span className="text-emerald-500 ml-1">(+{formatCurrency(selectedIngresoSum)})</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {isExpanded && linkedAccount && !hasTransactions && (
+                    <div className="mt-3 pt-3 border-t border-zinc-200">
+                      <p className="text-xs text-zinc-400 text-center py-4">No hay movimientos en esta semana</p>
                     </div>
                   )}
                 </div>
@@ -747,17 +900,21 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                 </div>
               </div>
 
-              {weekProgress.some(w => w.weekSpent > 0) && (
+              {weekProgress.some(w => w.weekEgresos > 0 || w.weekIngresos > 0) && (
                 <div className="space-y-2">
-                  {weekProgress.map(w => (
+                  {weekProgress.map(w => (w.weekEgresos > 0 || w.weekIngresos > 0) && (
                     <div key={w.weekLabel} className="p-3 rounded-xl bg-white border border-zinc-200">
                       <div className="flex justify-between items-center mb-1.5">
                         <span className="text-[10px] font-bold text-zinc-500">{w.weekLabel}</span>
-                        <span className="text-xs font-bold text-zinc-700">{formatCurrency(w.weekSpent)} de {formatCurrency(w.totalBudget)}</span>
+                        <span className="text-xs font-bold text-zinc-700">{formatCurrency(w.weekNet)} neto de {formatCurrency(w.totalBudget)}</span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-300 ${w.weekPct > 100 ? "bg-red-400" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"}`}
-                          style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+                        {w.weekNet < 0 ? (
+                          <div className="h-full rounded-full bg-emerald-400" style={{ width: '100%' }} />
+                        ) : (
+                          <div className={`h-full rounded-full transition-all duration-300 ${w.weekPct > 100 ? "bg-red-400" : w.weekPct > 80 ? "bg-amber-400" : "bg-emerald-400"}`}
+                            style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
+                        )}
                       </div>
                     </div>
                   ))}
