@@ -315,7 +315,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       const netOutflow = egresoTotal - ingresoTotal;
       const weekPct = w.totalBudget > 0 ? Math.max(0, netOutflow) / w.totalBudget * 100 : 0;
 
-      return { ...w, weekEgresos: egresoTotal, weekIngresos: ingresoTotal, weekNet: netOutflow, weekPct };
+      return { ...w, weekEgresos: egresoTotal, weekIngresos: ingresoTotal, weekNet: netOutflow, weekPct, weekAhorro: w.totalBudget - netOutflow };
     });
   }, [weeks, transactionsByWeek, deselectedTxIds, spendingByDate]);
 
@@ -622,6 +622,11 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                           <span className="text-[10px] font-bold text-emerald-500">+{formatCurrency(w.weekIngresos)}</span>
                         )}
                       </div>
+                      {w.weekAhorro > 0 && (
+                        <p className="text-[10px] font-bold text-emerald-600 mt-1">
+                          🏦 {formatCurrency(w.weekAhorro)} ahorrado
+                        </p>
+                      )}
                     </div>
                   )}
                   {isExpanded && linkedAccount && hasTransactions && (
@@ -758,6 +763,12 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                           )}
                         </span>
                       </div>
+                      {w.weekAhorro > 0 && (
+                        <div className="flex justify-between pt-1 text-[10px] font-bold text-emerald-600">
+                          <span>🏦 Ahorro de la semana</span>
+                          <span>+{formatCurrency(w.weekAhorro)}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                   {isExpanded && linkedAccount && !hasTransactions && (
@@ -916,6 +927,9 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                             style={{ width: `${Math.min(w.weekPct, 100)}%` }} />
                         )}
                       </div>
+                      {w.weekAhorro > 0 && (
+                        <p className="text-[10px] font-bold text-emerald-500 mt-1">🏦 {formatCurrency(w.weekAhorro)} ahorrado</p>
+                      )}
                     </div>
                   ))}
                 </div>
