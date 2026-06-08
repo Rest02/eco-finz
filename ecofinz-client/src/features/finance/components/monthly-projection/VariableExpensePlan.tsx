@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { itemVariants } from "@/lib/animations";
 import { CreditCard, CalendarDays, TrendingUp, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag, Save } from "lucide-react";
 import { MonthlyProjection, Account } from "../../types/finance";
@@ -594,7 +594,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <div className="space-y-3">
             {weekProgress.map((w, idx) => {
               const isExpanded = expandedWeekIdx === idx;
               const weekTxs = transactionsByWeek[idx] || [];
@@ -613,11 +613,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
               const netSum = selectedEgresoSum - selectedIngresoSum;
               const hasTransactions = weekTxs.length > 0;
               return (
-                <div key={w.weekLabel}
-                  className={`relative p-3 rounded-xl bg-zinc-50 border border-zinc-200/60 overflow-hidden transition-all ${
-                    isExpanded ? 'col-span-2 lg:col-span-5' : ''
-                  }`}
-                >
+                <div className="relative p-3 rounded-xl bg-zinc-50 border border-zinc-200/60">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{w.weekLabel}</p>
@@ -663,8 +659,16 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                       )}
                     </div>
                   )}
+                  <AnimatePresence initial={false}>
                   {isExpanded && linkedAccount && hasTransactions && (
-                    <div className="mt-3 pt-3 border-t border-zinc-200">
+                    <motion.div
+                      key="content"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-3 pt-3 border-t border-zinc-200"
+                    >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* --- Egresos Column --- */}
                         <div>
@@ -803,13 +807,21 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                           <span>+{formatCurrency(w.weekAhorro)}</span>
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   )}
                   {isExpanded && linkedAccount && !hasTransactions && (
-                    <div className="mt-3 pt-3 border-t border-zinc-200">
+                    <motion.div
+                      key="no-tx"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-3 pt-3 border-t border-zinc-200"
+                    >
                       <p className="text-xs text-zinc-400 text-center py-4">No hay movimientos en esta semana</p>
-                    </div>
+                    </motion.div>
                   )}
+                  </AnimatePresence>
                 </div>
               );
             })}
