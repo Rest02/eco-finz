@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMonthlyProjectionDto } from './dto/create-monthly-projection.dto';
 import { UpdateMonthlyProjectionDto } from './dto/update-monthly-projection.dto';
 import { UpdateSpendingPlanDto } from './dto/update-spending-plan.dto';
+import { UpdateExcludedTransactionsDto } from './dto/update-excluded-transactions.dto';
 import { QueryMonthlyProjectionDto } from './dto/query-monthly-projection.dto';
 import { ProjectionStatus } from 'src/generated/prisma/enums';
 
@@ -84,6 +85,7 @@ export class MonthlyProjectionService {
         fixedExpenseSnapshot: true,
         cardPaymentSnapshot: true,
         variableExpensesAccount: true,
+        excludedTransactions: true,
       },
     });
 
@@ -225,6 +227,28 @@ export class MonthlyProjectionService {
         variableExpensesAccount: true,
       },
     });
+  }
+
+  async updateExcludedTransactions(userId: string, id: string, dto: UpdateExcludedTransactionsDto) {
+    await this.findOne(userId, id);
+
+    await this.prisma.$transaction([
+      this.prisma.monthlyProjectionExcludedTransaction.deleteMany({
+        where: { projectionId: id },
+      }),
+      ...(dto.excludedTransactionIds.length > 0
+        ? [
+            this.prisma.monthlyProjectionExcludedTransaction.createMany({
+              data: dto.excludedTransactionIds.map(transactionId => ({
+                projectionId: id,
+                transactionId,
+              })),
+            }),
+          ]
+        : []),
+    ]);
+
+    return this.findOne(userId, id);
   }
 
   async remove(userId: string, id: string) {

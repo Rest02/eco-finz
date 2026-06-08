@@ -88,6 +88,11 @@ export type Projection = Prisma.ProjectionModel
  */
 export type MonthlyProjection = Prisma.MonthlyProjectionModel
 /**
+ * Model MonthlyProjectionExcludedTransaction
+ * 
+ */
+export type MonthlyProjectionExcludedTransaction = Prisma.MonthlyProjectionExcludedTransactionModel
+/**
  * Model MonthlyProjectionIncome
  * 
  */

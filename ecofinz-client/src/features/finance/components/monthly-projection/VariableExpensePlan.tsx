@@ -3,10 +3,10 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { itemVariants } from "@/lib/animations";
-import { CreditCard, CalendarDays, TrendingUp, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag } from "lucide-react";
+import { CreditCard, CalendarDays, TrendingUp, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag, Save } from "lucide-react";
 import { MonthlyProjection, Account } from "../../types/finance";
 import { useTransactions } from "../../hooks/useTransactions";
-import { useUpdateSpendingPlan } from "../../hooks/useMonthlyProjections";
+import { useUpdateSpendingPlan, useUpdateExcludedTransactions } from "../../hooks/useMonthlyProjections";
 import { useCategories } from "../../hooks/useCategories";
 import type { Transaction } from "../../types/finance";
 import toast from "react-hot-toast";
@@ -149,6 +149,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   const prevMonth = pm.month;
 
   const { mutate: updateSpendingPlan } = useUpdateSpendingPlan();
+  const { mutate: saveExcluded, isPending: isSaving } = useUpdateExcludedTransactions();
 
   const [selectedAccountId, setSelectedAccountId] = useState<string | undefined>(
     projection.variableExpensesAccountId || undefined
@@ -171,7 +172,13 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [showProgress, setShowProgress] = useState(true);
   const [expandedWeekIdx, setExpandedWeekIdx] = useState<number | null>(null);
-  const [deselectedTxIds, setDeselectedTxIds] = useState<Set<string>>(new Set());
+  const [deselectedTxIds, setDeselectedTxIds] = useState<Set<string>>(() => {
+    const excluded = (projection as any).excludedTransactions;
+    return excluded && Array.isArray(excluded)
+      ? new Set<string>(excluded.map((e: any) => e.transactionId))
+      : new Set<string>();
+  });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [weekEgresoCatFilter, setWeekEgresoCatFilter] = useState<Record<number, string | null>>({});
   const [weekIngresoCatFilter, setWeekIngresoCatFilter] = useState<Record<number, string | null>>({});
 
@@ -425,6 +432,19 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     );
   }, [projection.id, spendingDays, currentPattern, updateSpendingPlan]);
 
+  const handleSaveExclusions = useCallback(() => {
+    saveExcluded(
+      { id: projection.id, excludedTransactionIds: Array.from(deselectedTxIds) },
+      {
+        onSuccess: () => {
+          toast.success("Movimientos guardados");
+          setHasUnsavedChanges(false);
+        },
+        onError: () => toast.error("Error al guardar los movimientos"),
+      }
+    );
+  }, [projection.id, deselectedTxIds, saveExcluded]);
+
   const handleWeeksChange = useCallback((weeks: number | null) => {
     setCustomWeeks(weeks);
     updateSpendingPlan(
@@ -443,6 +463,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       else next.add(txId);
       return next;
     });
+    setHasUnsavedChanges(true);
   }, []);
 
   const handleSelectAll = useCallback((weekIdx: number, type: 'egreso' | 'ingreso', select: boolean) => {
@@ -456,6 +477,7 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       }
       return next;
     });
+    setHasUnsavedChanges(true);
   }, [egresosByWeek, ingresosByWeek]);
 
   const patterns = [
@@ -474,7 +496,19 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
           <CreditCard className="w-4 h-4" />
           Plan de Gastos Variables
         </h3>
-        <span className="text-lg font-black text-amber-600">{formatCurrency(totalBudget)}</span>
+        <div className="flex items-center gap-3">
+          {linkedAccount && hasUnsavedChanges && (
+            <button
+              onClick={handleSaveExclusions}
+              disabled={isSaving}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white text-xs font-bold transition-colors"
+            >
+              <Save className="w-3.5 h-3.5" />
+              {isSaving ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+          <span className="text-lg font-black text-amber-600">{formatCurrency(totalBudget)}</span>
+        </div>
       </div>
 
       {/* Periodo info */}

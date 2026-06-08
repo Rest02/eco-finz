@@ -193,4 +193,8 @@ export const updateSpendingPlan = (id: string, data: {
   return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/spending-plan`, data);
 };
 
+export const updateExcludedTransactions = (id: string, excludedTransactionIds: string[]): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/excluded-transactions`, { excludedTransactionIds });
+};
+
 

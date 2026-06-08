@@ -225,7 +225,19 @@ model MonthlyProjection {
   variableExpenseDistribution String? @default("equal_weeks")
   variableExpenseWeeks       Int?
 
+  excludedTransactions     MonthlyProjectionExcludedTransaction[]
+
   @@map("monthly_projections")
+}
+
+model MonthlyProjectionExcludedTransaction {
+  id            String            @id @default(cuid())
+  projectionId  String
+  transactionId String
+  projection    MonthlyProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectionId, transactionId])
+  @@map("monthly_projection_excluded_transactions")
 }
 
 model MonthlyProjectionIncome {

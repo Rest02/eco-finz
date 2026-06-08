@@ -385,6 +385,7 @@ export type MonthlyProjectionWhereInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseListRelationFilter
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentListRelationFilter
   variableExpensesAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionListRelationFilter
 }
 
 export type MonthlyProjectionOrderByWithRelationInput = {
@@ -414,6 +415,7 @@ export type MonthlyProjectionOrderByWithRelationInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseOrderByRelationAggregateInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentOrderByRelationAggregateInput
   variableExpensesAccount?: Prisma.AccountOrderByWithRelationInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionOrderByRelationAggregateInput
 }
 
 export type MonthlyProjectionWhereUniqueInput = Prisma.AtLeast<{
@@ -446,6 +448,7 @@ export type MonthlyProjectionWhereUniqueInput = Prisma.AtLeast<{
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseListRelationFilter
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentListRelationFilter
   variableExpensesAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionListRelationFilter
 }, "id">
 
 export type MonthlyProjectionOrderByWithAggregationInput = {
@@ -529,6 +532,7 @@ export type MonthlyProjectionCreateInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
   variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateInput = {
@@ -556,6 +560,7 @@ export type MonthlyProjectionUncheckedCreateInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUpdateInput = {
@@ -583,6 +588,7 @@ export type MonthlyProjectionUpdateInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
   variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateInput = {
@@ -610,6 +616,7 @@ export type MonthlyProjectionUncheckedUpdateInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionCreateManyInput = {
@@ -883,6 +890,20 @@ export type EnumProjectionStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProjectionStatus
 }
 
+export type MonthlyProjectionCreateNestedOneWithoutExcludedTransactionsInput = {
+  create?: Prisma.XOR<Prisma.MonthlyProjectionCreateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedCreateWithoutExcludedTransactionsInput>
+  connectOrCreate?: Prisma.MonthlyProjectionCreateOrConnectWithoutExcludedTransactionsInput
+  connect?: Prisma.MonthlyProjectionWhereUniqueInput
+}
+
+export type MonthlyProjectionUpdateOneRequiredWithoutExcludedTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.MonthlyProjectionCreateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedCreateWithoutExcludedTransactionsInput>
+  connectOrCreate?: Prisma.MonthlyProjectionCreateOrConnectWithoutExcludedTransactionsInput
+  upsert?: Prisma.MonthlyProjectionUpsertWithoutExcludedTransactionsInput
+  connect?: Prisma.MonthlyProjectionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MonthlyProjectionUpdateToOneWithWhereWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUpdateWithoutExcludedTransactionsInput>, Prisma.MonthlyProjectionUncheckedUpdateWithoutExcludedTransactionsInput>
+}
+
 export type MonthlyProjectionCreateNestedOneWithoutIncomeSnapshotInput = {
   create?: Prisma.XOR<Prisma.MonthlyProjectionCreateWithoutIncomeSnapshotInput, Prisma.MonthlyProjectionUncheckedCreateWithoutIncomeSnapshotInput>
   connectOrCreate?: Prisma.MonthlyProjectionCreateOrConnectWithoutIncomeSnapshotInput
@@ -949,6 +970,7 @@ export type MonthlyProjectionCreateWithoutUserInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
   variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateWithoutUserInput = {
@@ -975,6 +997,7 @@ export type MonthlyProjectionUncheckedCreateWithoutUserInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionCreateOrConnectWithoutUserInput = {
@@ -1054,6 +1077,7 @@ export type MonthlyProjectionCreateWithoutVariableExpensesAccountInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateWithoutVariableExpensesAccountInput = {
@@ -1080,6 +1104,7 @@ export type MonthlyProjectionUncheckedCreateWithoutVariableExpensesAccountInput 
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionCreateOrConnectWithoutVariableExpensesAccountInput = {
@@ -1108,6 +1133,130 @@ export type MonthlyProjectionUpdateManyWithWhereWithoutVariableExpensesAccountIn
   data: Prisma.XOR<Prisma.MonthlyProjectionUpdateManyMutationInput, Prisma.MonthlyProjectionUncheckedUpdateManyWithoutVariableExpensesAccountInput>
 }
 
+export type MonthlyProjectionCreateWithoutExcludedTransactionsInput = {
+  id?: string
+  name: string
+  period: string
+  status?: $Enums.ProjectionStatus
+  payDay: number
+  totalSelectedIncome: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalFixedExpenses: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCardPayments: runtime.Decimal | runtime.DecimalJsLike | number | string
+  realAvailableMoney: runtime.Decimal | runtime.DecimalJsLike | number | string
+  savingsPercentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  variableExpensesPercentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedSavings: runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedVariableExpenses: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  spendingPlanPattern?: string | null
+  spendingDays?: string | null
+  variableExpenseDistribution?: string | null
+  variableExpenseWeeks?: number | null
+  user: Prisma.UserCreateNestedOneWithoutMonthlyProjectionsInput
+  incomeSnapshot?: Prisma.MonthlyProjectionIncomeCreateNestedManyWithoutProjectionInput
+  fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
+  cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
+  variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+}
+
+export type MonthlyProjectionUncheckedCreateWithoutExcludedTransactionsInput = {
+  id?: string
+  name: string
+  period: string
+  status?: $Enums.ProjectionStatus
+  payDay: number
+  totalSelectedIncome: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalFixedExpenses: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCardPayments: runtime.Decimal | runtime.DecimalJsLike | number | string
+  realAvailableMoney: runtime.Decimal | runtime.DecimalJsLike | number | string
+  savingsPercentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  variableExpensesPercentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedSavings: runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedVariableExpenses: runtime.Decimal | runtime.DecimalJsLike | number | string
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  variableExpensesAccountId?: string | null
+  spendingPlanPattern?: string | null
+  spendingDays?: string | null
+  variableExpenseDistribution?: string | null
+  variableExpenseWeeks?: number | null
+  incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
+  fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
+  cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+}
+
+export type MonthlyProjectionCreateOrConnectWithoutExcludedTransactionsInput = {
+  where: Prisma.MonthlyProjectionWhereUniqueInput
+  create: Prisma.XOR<Prisma.MonthlyProjectionCreateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedCreateWithoutExcludedTransactionsInput>
+}
+
+export type MonthlyProjectionUpsertWithoutExcludedTransactionsInput = {
+  update: Prisma.XOR<Prisma.MonthlyProjectionUpdateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedUpdateWithoutExcludedTransactionsInput>
+  create: Prisma.XOR<Prisma.MonthlyProjectionCreateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedCreateWithoutExcludedTransactionsInput>
+  where?: Prisma.MonthlyProjectionWhereInput
+}
+
+export type MonthlyProjectionUpdateToOneWithWhereWithoutExcludedTransactionsInput = {
+  where?: Prisma.MonthlyProjectionWhereInput
+  data: Prisma.XOR<Prisma.MonthlyProjectionUpdateWithoutExcludedTransactionsInput, Prisma.MonthlyProjectionUncheckedUpdateWithoutExcludedTransactionsInput>
+}
+
+export type MonthlyProjectionUpdateWithoutExcludedTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  period?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProjectionStatusFieldUpdateOperationsInput | $Enums.ProjectionStatus
+  payDay?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSelectedIncome?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalFixedExpenses?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCardPayments?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  realAvailableMoney?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  savingsPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  variableExpensesPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedSavings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedVariableExpenses?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  spendingPlanPattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spendingDays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variableExpenseDistribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variableExpenseWeeks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  user?: Prisma.UserUpdateOneRequiredWithoutMonthlyProjectionsNestedInput
+  incomeSnapshot?: Prisma.MonthlyProjectionIncomeUpdateManyWithoutProjectionNestedInput
+  fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
+  cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
+  variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+}
+
+export type MonthlyProjectionUncheckedUpdateWithoutExcludedTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  period?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProjectionStatusFieldUpdateOperationsInput | $Enums.ProjectionStatus
+  payDay?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSelectedIncome?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalFixedExpenses?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCardPayments?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  realAvailableMoney?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  savingsPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  variableExpensesPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedSavings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  projectedVariableExpenses?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  variableExpensesAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spendingPlanPattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  spendingDays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variableExpenseDistribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variableExpenseWeeks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
+  fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
+  cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+}
+
 export type MonthlyProjectionCreateWithoutIncomeSnapshotInput = {
   id?: string
   name: string
@@ -1132,6 +1281,7 @@ export type MonthlyProjectionCreateWithoutIncomeSnapshotInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
   variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateWithoutIncomeSnapshotInput = {
@@ -1158,6 +1308,7 @@ export type MonthlyProjectionUncheckedCreateWithoutIncomeSnapshotInput = {
   variableExpenseWeeks?: number | null
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionCreateOrConnectWithoutIncomeSnapshotInput = {
@@ -1200,6 +1351,7 @@ export type MonthlyProjectionUpdateWithoutIncomeSnapshotInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
   variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateWithoutIncomeSnapshotInput = {
@@ -1226,6 +1378,7 @@ export type MonthlyProjectionUncheckedUpdateWithoutIncomeSnapshotInput = {
   variableExpenseWeeks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionCreateWithoutFixedExpenseSnapshotInput = {
@@ -1252,6 +1405,7 @@ export type MonthlyProjectionCreateWithoutFixedExpenseSnapshotInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentCreateNestedManyWithoutProjectionInput
   variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateWithoutFixedExpenseSnapshotInput = {
@@ -1278,6 +1432,7 @@ export type MonthlyProjectionUncheckedCreateWithoutFixedExpenseSnapshotInput = {
   variableExpenseWeeks?: number | null
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionCreateOrConnectWithoutFixedExpenseSnapshotInput = {
@@ -1320,6 +1475,7 @@ export type MonthlyProjectionUpdateWithoutFixedExpenseSnapshotInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
   variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateWithoutFixedExpenseSnapshotInput = {
@@ -1346,6 +1502,7 @@ export type MonthlyProjectionUncheckedUpdateWithoutFixedExpenseSnapshotInput = {
   variableExpenseWeeks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionCreateWithoutCardPaymentSnapshotInput = {
@@ -1372,6 +1529,7 @@ export type MonthlyProjectionCreateWithoutCardPaymentSnapshotInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseCreateNestedManyWithoutProjectionInput
   variableExpensesAccount?: Prisma.AccountCreateNestedOneWithoutVariableExpenseProjectionsInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionUncheckedCreateWithoutCardPaymentSnapshotInput = {
@@ -1398,6 +1556,7 @@ export type MonthlyProjectionUncheckedCreateWithoutCardPaymentSnapshotInput = {
   variableExpenseWeeks?: number | null
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedCreateNestedManyWithoutProjectionInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedCreateNestedManyWithoutProjectionInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedCreateNestedManyWithoutProjectionInput
 }
 
 export type MonthlyProjectionCreateOrConnectWithoutCardPaymentSnapshotInput = {
@@ -1440,6 +1599,7 @@ export type MonthlyProjectionUpdateWithoutCardPaymentSnapshotInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
   variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateWithoutCardPaymentSnapshotInput = {
@@ -1466,6 +1626,7 @@ export type MonthlyProjectionUncheckedUpdateWithoutCardPaymentSnapshotInput = {
   variableExpenseWeeks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionCreateManyUserInput = {
@@ -1515,6 +1676,7 @@ export type MonthlyProjectionUpdateWithoutUserInput = {
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
   variableExpensesAccount?: Prisma.AccountUpdateOneWithoutVariableExpenseProjectionsNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateWithoutUserInput = {
@@ -1541,6 +1703,7 @@ export type MonthlyProjectionUncheckedUpdateWithoutUserInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateManyWithoutUserInput = {
@@ -1613,6 +1776,7 @@ export type MonthlyProjectionUpdateWithoutVariableExpensesAccountInput = {
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateWithoutVariableExpensesAccountInput = {
@@ -1639,6 +1803,7 @@ export type MonthlyProjectionUncheckedUpdateWithoutVariableExpensesAccountInput 
   incomeSnapshot?: Prisma.MonthlyProjectionIncomeUncheckedUpdateManyWithoutProjectionNestedInput
   fixedExpenseSnapshot?: Prisma.MonthlyProjectionFixedExpenseUncheckedUpdateManyWithoutProjectionNestedInput
   cardPaymentSnapshot?: Prisma.MonthlyProjectionCardPaymentUncheckedUpdateManyWithoutProjectionNestedInput
+  excludedTransactions?: Prisma.MonthlyProjectionExcludedTransactionUncheckedUpdateManyWithoutProjectionNestedInput
 }
 
 export type MonthlyProjectionUncheckedUpdateManyWithoutVariableExpensesAccountInput = {
@@ -1673,12 +1838,14 @@ export type MonthlyProjectionCountOutputType = {
   incomeSnapshot: number
   fixedExpenseSnapshot: number
   cardPaymentSnapshot: number
+  excludedTransactions: number
 }
 
 export type MonthlyProjectionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   incomeSnapshot?: boolean | MonthlyProjectionCountOutputTypeCountIncomeSnapshotArgs
   fixedExpenseSnapshot?: boolean | MonthlyProjectionCountOutputTypeCountFixedExpenseSnapshotArgs
   cardPaymentSnapshot?: boolean | MonthlyProjectionCountOutputTypeCountCardPaymentSnapshotArgs
+  excludedTransactions?: boolean | MonthlyProjectionCountOutputTypeCountExcludedTransactionsArgs
 }
 
 /**
@@ -1712,6 +1879,13 @@ export type MonthlyProjectionCountOutputTypeCountCardPaymentSnapshotArgs<ExtArgs
   where?: Prisma.MonthlyProjectionCardPaymentWhereInput
 }
 
+/**
+ * MonthlyProjectionCountOutputType without action
+ */
+export type MonthlyProjectionCountOutputTypeCountExcludedTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MonthlyProjectionExcludedTransactionWhereInput
+}
+
 
 export type MonthlyProjectionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1740,6 +1914,7 @@ export type MonthlyProjectionSelect<ExtArgs extends runtime.Types.Extensions.Int
   fixedExpenseSnapshot?: boolean | Prisma.MonthlyProjection$fixedExpenseSnapshotArgs<ExtArgs>
   cardPaymentSnapshot?: boolean | Prisma.MonthlyProjection$cardPaymentSnapshotArgs<ExtArgs>
   variableExpensesAccount?: boolean | Prisma.MonthlyProjection$variableExpensesAccountArgs<ExtArgs>
+  excludedTransactions?: boolean | Prisma.MonthlyProjection$excludedTransactionsArgs<ExtArgs>
   _count?: boolean | Prisma.MonthlyProjectionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monthlyProjection"]>
 
@@ -1826,6 +2001,7 @@ export type MonthlyProjectionInclude<ExtArgs extends runtime.Types.Extensions.In
   fixedExpenseSnapshot?: boolean | Prisma.MonthlyProjection$fixedExpenseSnapshotArgs<ExtArgs>
   cardPaymentSnapshot?: boolean | Prisma.MonthlyProjection$cardPaymentSnapshotArgs<ExtArgs>
   variableExpensesAccount?: boolean | Prisma.MonthlyProjection$variableExpensesAccountArgs<ExtArgs>
+  excludedTransactions?: boolean | Prisma.MonthlyProjection$excludedTransactionsArgs<ExtArgs>
   _count?: boolean | Prisma.MonthlyProjectionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MonthlyProjectionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1845,6 +2021,7 @@ export type $MonthlyProjectionPayload<ExtArgs extends runtime.Types.Extensions.I
     fixedExpenseSnapshot: Prisma.$MonthlyProjectionFixedExpensePayload<ExtArgs>[]
     cardPaymentSnapshot: Prisma.$MonthlyProjectionCardPaymentPayload<ExtArgs>[]
     variableExpensesAccount: Prisma.$AccountPayload<ExtArgs> | null
+    excludedTransactions: Prisma.$MonthlyProjectionExcludedTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2267,6 +2444,7 @@ export interface Prisma__MonthlyProjectionClient<T, Null = never, ExtArgs extend
   fixedExpenseSnapshot<T extends Prisma.MonthlyProjection$fixedExpenseSnapshotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlyProjection$fixedExpenseSnapshotArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyProjectionFixedExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cardPaymentSnapshot<T extends Prisma.MonthlyProjection$cardPaymentSnapshotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlyProjection$cardPaymentSnapshotArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyProjectionCardPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   variableExpensesAccount<T extends Prisma.MonthlyProjection$variableExpensesAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlyProjection$variableExpensesAccountArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  excludedTransactions<T extends Prisma.MonthlyProjection$excludedTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlyProjection$excludedTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyProjectionExcludedTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2801,6 +2979,30 @@ export type MonthlyProjection$variableExpensesAccountArgs<ExtArgs extends runtim
    */
   include?: Prisma.AccountInclude<ExtArgs> | null
   where?: Prisma.AccountWhereInput
+}
+
+/**
+ * MonthlyProjection.excludedTransactions
+ */
+export type MonthlyProjection$excludedTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MonthlyProjectionExcludedTransaction
+   */
+  select?: Prisma.MonthlyProjectionExcludedTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MonthlyProjectionExcludedTransaction
+   */
+  omit?: Prisma.MonthlyProjectionExcludedTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MonthlyProjectionExcludedTransactionInclude<ExtArgs> | null
+  where?: Prisma.MonthlyProjectionExcludedTransactionWhereInput
+  orderBy?: Prisma.MonthlyProjectionExcludedTransactionOrderByWithRelationInput | Prisma.MonthlyProjectionExcludedTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.MonthlyProjectionExcludedTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MonthlyProjectionExcludedTransactionScalarFieldEnum | Prisma.MonthlyProjectionExcludedTransactionScalarFieldEnum[]
 }
 
 /**

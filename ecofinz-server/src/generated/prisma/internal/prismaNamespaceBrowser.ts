@@ -61,6 +61,7 @@ export const ModelName = {
   FixedExpense: 'FixedExpense',
   Projection: 'Projection',
   MonthlyProjection: 'MonthlyProjection',
+  MonthlyProjectionExcludedTransaction: 'MonthlyProjectionExcludedTransaction',
   MonthlyProjectionIncome: 'MonthlyProjectionIncome',
   MonthlyProjectionFixedExpense: 'MonthlyProjectionFixedExpense',
   MonthlyProjectionCardPayment: 'MonthlyProjectionCardPayment'
@@ -248,6 +249,15 @@ export const MonthlyProjectionScalarFieldEnum = {
 } as const
 
 export type MonthlyProjectionScalarFieldEnum = (typeof MonthlyProjectionScalarFieldEnum)[keyof typeof MonthlyProjectionScalarFieldEnum]
+
+
+export const MonthlyProjectionExcludedTransactionScalarFieldEnum = {
+  id: 'id',
+  projectionId: 'projectionId',
+  transactionId: 'transactionId'
+} as const
+
+export type MonthlyProjectionExcludedTransactionScalarFieldEnum = (typeof MonthlyProjectionExcludedTransactionScalarFieldEnum)[keyof typeof MonthlyProjectionExcludedTransactionScalarFieldEnum]
 
 
 export const MonthlyProjectionIncomeScalarFieldEnum = {

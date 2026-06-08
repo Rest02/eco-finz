@@ -154,6 +154,7 @@ export interface MonthlyProjection {
   spendingDays?: string;
   variableExpenseDistribution?: string;
   variableExpenseWeeks?: number;
+  excludedTransactionIds?: string[];
   createdAt: string;
   updatedAt: string;
 }

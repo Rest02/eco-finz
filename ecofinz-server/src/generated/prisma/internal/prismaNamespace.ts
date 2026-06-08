@@ -394,6 +394,7 @@ export const ModelName = {
   FixedExpense: 'FixedExpense',
   Projection: 'Projection',
   MonthlyProjection: 'MonthlyProjection',
+  MonthlyProjectionExcludedTransaction: 'MonthlyProjectionExcludedTransaction',
   MonthlyProjectionIncome: 'MonthlyProjectionIncome',
   MonthlyProjectionFixedExpense: 'MonthlyProjectionFixedExpense',
   MonthlyProjectionCardPayment: 'MonthlyProjectionCardPayment'
@@ -412,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "fixedExpense" | "projection" | "monthlyProjection" | "monthlyProjectionIncome" | "monthlyProjectionFixedExpense" | "monthlyProjectionCardPayment"
+    modelProps: "user" | "account" | "monthlySummary" | "category" | "transaction" | "budget" | "savingsGoal" | "fixedExpense" | "projection" | "monthlyProjection" | "monthlyProjectionExcludedTransaction" | "monthlyProjectionIncome" | "monthlyProjectionFixedExpense" | "monthlyProjectionCardPayment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1156,6 +1157,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MonthlyProjectionExcludedTransaction: {
+      payload: Prisma.$MonthlyProjectionExcludedTransactionPayload<ExtArgs>
+      fields: Prisma.MonthlyProjectionExcludedTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MonthlyProjectionExcludedTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MonthlyProjectionExcludedTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.MonthlyProjectionExcludedTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MonthlyProjectionExcludedTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.MonthlyProjectionExcludedTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.MonthlyProjectionExcludedTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.MonthlyProjectionExcludedTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MonthlyProjectionExcludedTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.MonthlyProjectionExcludedTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        update: {
+          args: Prisma.MonthlyProjectionExcludedTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MonthlyProjectionExcludedTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MonthlyProjectionExcludedTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MonthlyProjectionExcludedTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.MonthlyProjectionExcludedTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MonthlyProjectionExcludedTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.MonthlyProjectionExcludedTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonthlyProjectionExcludedTransaction>
+        }
+        groupBy: {
+          args: Prisma.MonthlyProjectionExcludedTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionExcludedTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MonthlyProjectionExcludedTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MonthlyProjectionExcludedTransactionCountAggregateOutputType> | number
+        }
+      }
+    }
     MonthlyProjectionIncome: {
       payload: Prisma.$MonthlyProjectionIncomePayload<ExtArgs>
       fields: Prisma.MonthlyProjectionIncomeFieldRefs
@@ -1585,6 +1660,15 @@ export const MonthlyProjectionScalarFieldEnum = {
 export type MonthlyProjectionScalarFieldEnum = (typeof MonthlyProjectionScalarFieldEnum)[keyof typeof MonthlyProjectionScalarFieldEnum]
 
 
+export const MonthlyProjectionExcludedTransactionScalarFieldEnum = {
+  id: 'id',
+  projectionId: 'projectionId',
+  transactionId: 'transactionId'
+} as const
+
+export type MonthlyProjectionExcludedTransactionScalarFieldEnum = (typeof MonthlyProjectionExcludedTransactionScalarFieldEnum)[keyof typeof MonthlyProjectionExcludedTransactionScalarFieldEnum]
+
+
 export const MonthlyProjectionIncomeScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1866,6 +1950,7 @@ export type GlobalOmitConfig = {
   fixedExpense?: Prisma.FixedExpenseOmit
   projection?: Prisma.ProjectionOmit
   monthlyProjection?: Prisma.MonthlyProjectionOmit
+  monthlyProjectionExcludedTransaction?: Prisma.MonthlyProjectionExcludedTransactionOmit
   monthlyProjectionIncome?: Prisma.MonthlyProjectionIncomeOmit
   monthlyProjectionFixedExpense?: Prisma.MonthlyProjectionFixedExpenseOmit
   monthlyProjectionCardPayment?: Prisma.MonthlyProjectionCardPaymentOmit

@@ -7,6 +7,7 @@ import {
   duplicateMonthlyProjection,
   deleteMonthlyProjection,
   updateSpendingPlan,
+  updateExcludedTransactions,
 } from '../services/financeService';
 import {
   CreateMonthlyProjectionDto,
@@ -81,6 +82,18 @@ export const useDeleteMonthlyProjection = () => {
     mutationFn: (id: string) => deleteMonthlyProjection(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monthly-projections'] });
+    },
+  });
+};
+
+export const useUpdateExcludedTransactions = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, excludedTransactionIds }: { id: string; excludedTransactionIds: string[] }) =>
+      updateExcludedTransactions(id, excludedTransactionIds),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['monthly-projections', variables.id] });
     },
   });
 };
