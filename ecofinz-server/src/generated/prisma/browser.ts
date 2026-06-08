@@ -62,3 +62,28 @@ export type FixedExpense = Prisma.FixedExpenseModel
  * 
  */
 export type Projection = Prisma.ProjectionModel
+/**
+ * Model MonthlyProjection
+ * 
+ */
+export type MonthlyProjection = Prisma.MonthlyProjectionModel
+/**
+ * Model MonthlyProjectionExcludedTransaction
+ * 
+ */
+export type MonthlyProjectionExcludedTransaction = Prisma.MonthlyProjectionExcludedTransactionModel
+/**
+ * Model MonthlyProjectionIncome
+ * 
+ */
+export type MonthlyProjectionIncome = Prisma.MonthlyProjectionIncomeModel
+/**
+ * Model MonthlyProjectionFixedExpense
+ * 
+ */
+export type MonthlyProjectionFixedExpense = Prisma.MonthlyProjectionFixedExpenseModel
+/**
+ * Model MonthlyProjectionCardPayment
+ * 
+ */
+export type MonthlyProjectionCardPayment = Prisma.MonthlyProjectionCardPaymentModel

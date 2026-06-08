@@ -1,5 +1,11 @@
 import { Transaction, Projection } from "../types/finance";
 
+/** Parse a transaction's ISO date string as local midnight for consistent comparisons */
+function parseTxDate(tx: Transaction): Date {
+  const [y, m, d] = tx.date.slice(0, 10).split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 export interface BillingPeriod {
   start: Date;
   end: Date;
@@ -61,7 +67,7 @@ export function getNextBillingPeriod(closingDay: number): BillingPeriod {
   return { start: nextStart, end: nextEnd };
 }
 
-function getInstallmentMonth(projection: Projection, index: number): { month: number; year: number } {
+export function getInstallmentMonth(projection: Projection, index: number): { month: number; year: number } {
   let month = projection.startMonth + index;
   let year = projection.startYear;
   while (month > 12) {
@@ -117,7 +123,7 @@ export function getBilledAmountWithProjections(
         }
       }
     } else {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       if (txDate >= start && txDate <= end) {
         total += Number(tx.amount);
       }
@@ -155,7 +161,7 @@ export function getUnbilledAmountWithProjections(
         }
       }
     } else {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       if (txDate > currentEnd) {
         total += Number(tx.amount);
       }
@@ -172,7 +178,7 @@ export function getBilledAmount(
   const { start, end } = getBillingPeriod(closingDay);
   return transactions
     .filter((tx) => {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       return tx.type === "EGRESO" && txDate >= start && txDate <= end;
     })
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -185,8 +191,77 @@ export function getUnbilledAmount(
   const { end } = getBillingPeriod(closingDay);
   return transactions
     .filter((tx) => {
-      const txDate = new Date(tx.date);
+      const txDate = parseTxDate(tx);
       return tx.type === "EGRESO" && txDate > end;
     })
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
+}
+
+/**
+ * Returns the billing period whose due date falls in the target month/year.
+ * Assumes the due date is after the closing day (typical flow: closing in month M-1, due in month M).
+ */
+export function getBillingPeriodForMonth(
+  closingDay: number,
+  targetMonth: number,
+  targetYear: number
+): BillingPeriod {
+  // The statement that is due in (targetMonth, targetYear) closed in the prior month
+  let closeMonth = targetMonth - 1;
+  let closeYear = targetYear;
+  if (closeMonth < 1) {
+    closeMonth = 12;
+    closeYear = targetYear - 1;
+  }
+
+  const periodEnd = new Date(closeYear, closeMonth - 1, closingDay, 23, 59, 59, 999);
+
+  let startMonth = closeMonth - 1;
+  let startYear = closeYear;
+  if (startMonth < 1) {
+    startMonth = 12;
+    startYear = closeYear - 1;
+  }
+  const periodStart = new Date(startYear, startMonth - 1, closingDay + 1);
+
+  return { start: periodStart, end: periodEnd };
+}
+
+/**
+ * Calculates billed amount for a specific billing period, including installments.
+ */
+export function getBilledAmountForPeriod(
+  transactions: Transaction[],
+  projections: Projection[],
+  accountId: string,
+  period: BillingPeriod
+): number {
+  const statementMonth = period.end.getMonth() + 1;
+  const statementYear = period.end.getFullYear();
+
+  let total = 0;
+
+  for (const tx of transactions) {
+    if (tx.type !== "EGRESO") continue;
+
+    const projection = findProjection(projections, accountId, tx);
+
+    if (projection) {
+      const quotaAmount = Number(projection.amount) / projection.installments;
+      for (let i = 0; i < projection.installments; i++) {
+        const { month, year } = getInstallmentMonth(projection, i);
+        if (month === statementMonth && year === statementYear) {
+          total += quotaAmount;
+          break;
+        }
+      }
+    } else {
+      const txDate = parseTxDate(tx);
+      if (txDate >= period.start && txDate <= period.end) {
+        total += Number(tx.amount);
+      }
+    }
+  }
+
+  return total;
 }

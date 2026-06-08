@@ -20,6 +20,10 @@ import {
   CreateProjectionDto,
   UpdateProjectionDto,
   IncomeProjection,
+  MonthlyProjection,
+  CreateMonthlyProjectionDto,
+  UpdateMonthlyProjectionDto,
+  MonthlyProjectionFilters,
 } from '../types/finance';
 
 // ========== Account Endpoints ==========
@@ -151,6 +155,46 @@ export const syncProjections = (): Promise<AxiosResponse<{ success: boolean; mes
 
 export const getIncomeProjection = (period: 'current' | '3m' | '6m'): Promise<AxiosResponse<IncomeProjection>> => {
   return apiClient.get<IncomeProjection>('/finance/income-projection', { params: { period } });
+};
+
+// ========== Monthly Projection Endpoints ==========
+
+export const getMonthlyProjections = (filters?: MonthlyProjectionFilters): Promise<AxiosResponse<MonthlyProjection[]>> => {
+  return apiClient.get<MonthlyProjection[]>('/finance/monthly-projection', { params: filters });
+};
+
+export const getMonthlyProjection = (id: string): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.get<MonthlyProjection>(`/finance/monthly-projection/${id}`);
+};
+
+export const createMonthlyProjection = (data: CreateMonthlyProjectionDto): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.post<MonthlyProjection>('/finance/monthly-projection', data);
+};
+
+export const updateMonthlyProjection = (id: string, data: UpdateMonthlyProjectionDto): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}`, data);
+};
+
+export const duplicateMonthlyProjection = (id: string): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.post<MonthlyProjection>(`/finance/monthly-projection/${id}/duplicate`);
+};
+
+export const deleteMonthlyProjection = (id: string): Promise<AxiosResponse<void>> => {
+  return apiClient.delete(`/finance/monthly-projection/${id}`);
+};
+
+export const updateSpendingPlan = (id: string, data: {
+  variableExpensesAccountId?: string;
+  spendingPlanPattern?: string;
+  spendingDays?: string;
+  variableExpenseDistribution?: string;
+  variableExpenseWeeks?: number;
+}): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/spending-plan`, data);
+};
+
+export const updateExcludedTransactions = (id: string, excludedTransactionIds: string[]): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/excluded-transactions`, { excludedTransactionIds });
 };
 
 

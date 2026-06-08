@@ -10,9 +10,10 @@ import { BudgetModule } from './budget/budget.module';
 import { ProjectionModule } from './projection/projection.module';
 import { SavingsGoalModule } from './savings-goal/savings-goal.module';
 import { FixedExpenseModule } from './fixed-expense/fixed-expense.module';
+import { MonthlyProjectionModule } from './monthly-projection/monthly-projection.module';
 
 @Module({
-  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule, ProjectionModule, SavingsGoalModule, FixedExpenseModule],
+  imports: [PrismaModule, AccountModule, TransactionModule, BudgetModule, ProjectionModule, SavingsGoalModule, FixedExpenseModule, MonthlyProjectionModule],
   controllers: [FinanceController, CategoryController],
   providers: [FinanceService, CategoryService],
 })

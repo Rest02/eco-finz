@@ -127,6 +127,58 @@ export interface Projection {
 export type CreateProjectionDto = Omit<Projection, "id" | "userId" | "account" | "category" | "createdAt" | "updatedAt">;
 export type UpdateProjectionDto = Partial<CreateProjectionDto>;
 
+// ========== Monthly Projection Types ==========
+
+export type ProjectionStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
+
+export interface MonthlyProjection {
+  id: string;
+  name: string;
+  period: string;
+  status: ProjectionStatus;
+  payDay: number;
+  totalSelectedIncome: number;
+  totalFixedExpenses: number;
+  totalCardPayments: number;
+  realAvailableMoney: number;
+  savingsPercentage: number;
+  variableExpensesPercentage: number;
+  projectedSavings: number;
+  projectedVariableExpenses: number;
+  incomeSnapshot: { name: string; amount: number }[];
+  fixedExpenseSnapshot: { name: string; amount: number }[];
+  cardPaymentSnapshot: { name: string; amount: number }[];
+  variableExpensesAccountId?: string;
+  variableExpensesAccount?: Account;
+  spendingPlanPattern?: string;
+  spendingDays?: string;
+  variableExpenseDistribution?: string;
+  variableExpenseWeeks?: number;
+  excludedTransactionIds?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMonthlyProjectionDto {
+  name: string;
+  period: string;
+  payDay: number;
+  savingsPercentage: number;
+  variableExpensesPercentage: number;
+  incomeSnapshot: { name: string; amount: number }[];
+  fixedExpenseSnapshot: { name: string; amount: number }[];
+  cardPaymentSnapshot: { name: string; amount: number }[];
+}
+
+export type UpdateMonthlyProjectionDto = Partial<CreateMonthlyProjectionDto>;
+
+export interface MonthlyProjectionFilters {
+  month?: number;
+  year?: number;
+  status?: ProjectionStatus;
+  search?: string;
+}
+
 // ========== Income Projection ==========
 
 export interface IncomeProjection {

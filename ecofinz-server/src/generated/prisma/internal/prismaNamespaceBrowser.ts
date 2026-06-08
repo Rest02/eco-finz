@@ -59,7 +59,12 @@ export const ModelName = {
   Budget: 'Budget',
   SavingsGoal: 'SavingsGoal',
   FixedExpense: 'FixedExpense',
-  Projection: 'Projection'
+  Projection: 'Projection',
+  MonthlyProjection: 'MonthlyProjection',
+  MonthlyProjectionExcludedTransaction: 'MonthlyProjectionExcludedTransaction',
+  MonthlyProjectionIncome: 'MonthlyProjectionIncome',
+  MonthlyProjectionFixedExpense: 'MonthlyProjectionFixedExpense',
+  MonthlyProjectionCardPayment: 'MonthlyProjectionCardPayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -217,6 +222,72 @@ export const ProjectionScalarFieldEnum = {
 } as const
 
 export type ProjectionScalarFieldEnum = (typeof ProjectionScalarFieldEnum)[keyof typeof ProjectionScalarFieldEnum]
+
+
+export const MonthlyProjectionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  period: 'period',
+  status: 'status',
+  payDay: 'payDay',
+  totalSelectedIncome: 'totalSelectedIncome',
+  totalFixedExpenses: 'totalFixedExpenses',
+  totalCardPayments: 'totalCardPayments',
+  realAvailableMoney: 'realAvailableMoney',
+  savingsPercentage: 'savingsPercentage',
+  variableExpensesPercentage: 'variableExpensesPercentage',
+  projectedSavings: 'projectedSavings',
+  projectedVariableExpenses: 'projectedVariableExpenses',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  variableExpensesAccountId: 'variableExpensesAccountId',
+  spendingPlanPattern: 'spendingPlanPattern',
+  spendingDays: 'spendingDays',
+  variableExpenseDistribution: 'variableExpenseDistribution',
+  variableExpenseWeeks: 'variableExpenseWeeks'
+} as const
+
+export type MonthlyProjectionScalarFieldEnum = (typeof MonthlyProjectionScalarFieldEnum)[keyof typeof MonthlyProjectionScalarFieldEnum]
+
+
+export const MonthlyProjectionExcludedTransactionScalarFieldEnum = {
+  id: 'id',
+  projectionId: 'projectionId',
+  transactionId: 'transactionId'
+} as const
+
+export type MonthlyProjectionExcludedTransactionScalarFieldEnum = (typeof MonthlyProjectionExcludedTransactionScalarFieldEnum)[keyof typeof MonthlyProjectionExcludedTransactionScalarFieldEnum]
+
+
+export const MonthlyProjectionIncomeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionIncomeScalarFieldEnum = (typeof MonthlyProjectionIncomeScalarFieldEnum)[keyof typeof MonthlyProjectionIncomeScalarFieldEnum]
+
+
+export const MonthlyProjectionFixedExpenseScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionFixedExpenseScalarFieldEnum = (typeof MonthlyProjectionFixedExpenseScalarFieldEnum)[keyof typeof MonthlyProjectionFixedExpenseScalarFieldEnum]
+
+
+export const MonthlyProjectionCardPaymentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  projectionId: 'projectionId'
+} as const
+
+export type MonthlyProjectionCardPaymentScalarFieldEnum = (typeof MonthlyProjectionCardPaymentScalarFieldEnum)[keyof typeof MonthlyProjectionCardPaymentScalarFieldEnum]
 
 
 export const SortOrder = {
