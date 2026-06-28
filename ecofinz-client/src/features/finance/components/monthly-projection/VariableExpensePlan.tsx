@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { itemVariants } from "@/lib/animations";
-import { CreditCard, CalendarDays, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag, Save } from "lucide-react";
-import { MonthlyProjection, Account } from "../../types/finance";
+import { CreditCard, CalendarDays, Check, ChevronDown, ChevronUp, CheckSquare, Square, Tag, Save, AlertTriangle, ArrowRight, Trash2, Pencil, Clock } from "lucide-react";
+import { MonthlyProjection, Account, WeekAdjustment } from "../../types/finance";
 import { useTransactions } from "../../hooks/useTransactions";
-import { useUpdateSpendingPlan, useUpdateExcludedTransactions } from "../../hooks/useMonthlyProjections";
+import { useUpdateSpendingPlan, useUpdateExcludedTransactions, useSaveWeeklyAdjustments } from "../../hooks/useMonthlyProjections";
 import { useCategories } from "../../hooks/useCategories";
 import type { Transaction } from "../../types/finance";
 import toast from "react-hot-toast";
@@ -118,6 +118,22 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       : new Set<string>();
   });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const { mutate: saveAdjustments, isPending: isSavingAdjustments } = useSaveWeeklyAdjustments();
+  const adjustTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [adjustments, setAdjustments] = useState<WeekAdjustment[]>(() => {
+    const raw = (projection as any).weeklyAdjustments;
+    return raw && Array.isArray(raw) ? raw : [];
+  });
+
+  const [newAdjSource, setNewAdjSource] = useState<number | null>(null);
+  const [newAdjTarget, setNewAdjTarget] = useState<number | null>(null);
+  const [newAdjAmount, setNewAdjAmount] = useState("");
+  const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
+  const [editAdjTarget, setEditAdjTarget] = useState<number | null>(null);
+  const [editAdjAmount, setEditAdjAmount] = useState("");
+
   const [weekEgresoCatFilter, setWeekEgresoCatFilter] = useState<Record<number, string | null>>({});
   const [weekIngresoCatFilter, setWeekIngresoCatFilter] = useState<Record<number, string | null>>({});
 
@@ -153,6 +169,22 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
 
   const effectiveWeeks = customWeeks ?? maxWeeks;
   const weeklyBudget = effectiveWeeks > 0 ? totalBudget / effectiveWeeks : 0;
+
+  const incomingDeductions = useMemo(() => {
+    const map: Record<number, number> = {};
+    for (const adj of adjustments) {
+      map[adj.targetWeekIndex] = (map[adj.targetWeekIndex] || 0) + adj.amount;
+    }
+    return map;
+  }, [adjustments]);
+
+  const outgoingAssigned = useMemo(() => {
+    const map: Record<number, number> = {};
+    for (const adj of adjustments) {
+      map[adj.sourceWeekIndex] = (map[adj.sourceWeekIndex] || 0) + adj.amount;
+    }
+    return map;
+  }, [adjustments]);
 
   const weeks = useMemo(
     () => buildCalendarWeeks(prevYear, prevMonth, currYear, currMonth, payDay, totalBudget, effectiveWeeks),
@@ -237,11 +269,17 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
       }
 
       const netOutflow = egresoTotal - ingresoTotal;
-      const weekPct = w.totalBudget > 0 ? Math.max(0, netOutflow) / w.totalBudget * 100 : 0;
+      const baseBudget = w.totalBudget;
+      const deduction = incomingDeductions[idx] || 0;
+      const adjustedBudget = baseBudget - deduction;
+      const effectiveBudget = Math.max(0, adjustedBudget);
+      const weekPct = effectiveBudget > 0 ? Math.max(0, netOutflow) / effectiveBudget * 100 : 0;
+      const weekAhorro = effectiveBudget - netOutflow;
+      const excess = Math.max(0, netOutflow - baseBudget);
 
-      return { ...w, weekEgresos: egresoTotal, weekIngresos: ingresoTotal, weekNet: netOutflow, weekPct, weekAhorro: w.totalBudget - netOutflow };
+      return { ...w, weekEgresos: egresoTotal, weekIngresos: ingresoTotal, weekNet: netOutflow, weekPct, weekAhorro, baseBudget, adjustedBudget: effectiveBudget, deduction, excess };
     });
-  }, [weeks, transactionsByWeek, deselectedTxIds, spendingByDate]);
+  }, [weeks, transactionsByWeek, deselectedTxIds, spendingByDate, incomingDeductions]);
 
   const getFilteredEgresos = useCallback((weekIdx: number) => {
     const txs = egresosByWeek[weekIdx] || [];
@@ -337,6 +375,111 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     });
     setHasUnsavedChanges(true);
   }, [egresosByWeek, ingresosByWeek]);
+
+  // --- Adjustment helpers ---
+
+  const persistAdjustments = useCallback((next: WeekAdjustment[]) => {
+    if (adjustTimerRef.current) clearTimeout(adjustTimerRef.current);
+    adjustTimerRef.current = setTimeout(() => {
+      saveAdjustments(
+        {
+          id: projection.id,
+          adjustments: next.map(a => ({
+            sourceWeekIndex: a.sourceWeekIndex,
+            targetWeekIndex: a.targetWeekIndex,
+            amount: a.amount,
+          })),
+        },
+        {
+          onError: () => toast.error("Error al guardar ajustes de semanas"),
+        }
+      );
+    }, 500);
+  }, [projection.id, saveAdjustments]);
+
+  const handleAddAdjustment = useCallback((sourceIdx: number) => {
+    const target = newAdjTarget;
+    const amount = parseFloat(newAdjAmount);
+    if (target === null || target === sourceIdx || !amount || amount <= 0) {
+      toast.error("Selecciona una semana destino y un monto válido");
+      return;
+    }
+    const maxAvailable = Math.max(0, weekProgress[sourceIdx]?.excess || 0) - (outgoingAssigned[sourceIdx] || 0);
+    if (amount > maxAvailable) {
+      toast.error(`Solo puedes asignar hasta $${Math.round(maxAvailable).toLocaleString("es-CL")}`);
+      return;
+    }
+    const next = [...adjustments, {
+      id: crypto.randomUUID(),
+      projectionId: projection.id,
+      sourceWeekIndex: sourceIdx,
+      targetWeekIndex: target,
+      amount,
+    }];
+    setAdjustments(next);
+    persistAdjustments(next);
+    setNewAdjTarget(null);
+    setNewAdjAmount("");
+    setNewAdjSource(null);
+  }, [adjustments, newAdjTarget, newAdjAmount, weekProgress, outgoingAssigned, projection.id, persistAdjustments]);
+
+  const handleRemoveAdjustment = useCallback((adjId: string) => {
+    const next = adjustments.filter(a => a.id !== adjId);
+    setAdjustments(next);
+    persistAdjustments(next);
+  }, [adjustments, persistAdjustments]);
+
+  const handleUpdateAdjustment = useCallback((adjId: string) => {
+    const adj = adjustments.find(a => a.id === adjId);
+    if (!adj) return;
+    const target = editAdjTarget;
+    const amount = parseFloat(editAdjAmount);
+    if (target === null || target === adj.sourceWeekIndex || !amount || amount <= 0) {
+      toast.error("Selecciona una semana destino y un monto válido");
+      return;
+    }
+    const maxAvailable = Math.max(0, weekProgress[adj.sourceWeekIndex]?.excess || 0) - (outgoingAssigned[adj.sourceWeekIndex] || 0) + adj.amount;
+    if (amount > maxAvailable) {
+      toast.error(`Solo puedes asignar hasta $${Math.round(maxAvailable).toLocaleString("es-CL")}`);
+      return;
+    }
+    const next = adjustments.map(a => a.id === adjId ? { ...a, targetWeekIndex: target, amount } : a);
+    setAdjustments(next);
+    persistAdjustments(next);
+    setEditingAdjId(null);
+    setEditAdjTarget(null);
+    setEditAdjAmount("");
+  }, [adjustments, editAdjTarget, editAdjAmount, weekProgress, outgoingAssigned, persistAdjustments]);
+
+  const startEditing = useCallback((adj: WeekAdjustment) => {
+    setEditingAdjId(adj.id);
+    setEditAdjTarget(adj.targetWeekIndex);
+    setEditAdjAmount(String(adj.amount));
+  }, []);
+
+  const cancelEditing = useCallback(() => {
+    setEditingAdjId(null);
+    setEditAdjTarget(null);
+    setEditAdjAmount("");
+  }, []);
+
+  // Sync adjustments from server after refetch
+  useEffect(() => {
+    const raw = (projection as any)?.weeklyAdjustments;
+    if (raw && Array.isArray(raw) && raw.length > 0) {
+      setAdjustments(raw);
+    }
+  }, [(projection as any)?.weeklyAdjustments]);
+
+  // Reset adjustments when weeks change
+  useEffect(() => {
+    const maxIdx = weeks.length - 1;
+    const invalid = adjustments.some(a => a.sourceWeekIndex > maxIdx || a.targetWeekIndex > maxIdx);
+    if (invalid) {
+      setAdjustments([]);
+      persistAdjustments([]);
+    }
+  }, [weeks.length]);
 
   // --- Render ---
 
@@ -497,13 +640,19 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                         <p className={`text-[10px] ${w.weekNet < 0 ? 'text-emerald-600 font-bold' : 'text-zinc-400'}`}>
                           {w.weekNet < 0
                             ? `Excedente +${formatCurrency(Math.abs(w.weekNet))}`
-                            : `${formatCurrency(w.weekNet)} neto de ${formatCurrency(w.totalBudget)}`
+                            : `${formatCurrency(w.weekNet)} neto de ${formatCurrency(w.adjustedBudget)}`
                           }
                         </p>
                         {w.weekIngresos > 0 && (
                           <span className="text-[10px] font-bold text-emerald-500">+{formatCurrency(w.weekIngresos)}</span>
                         )}
                       </div>
+                      {w.deduction > 0 && (
+                        <p className="text-[10px] font-bold text-amber-600 mt-1">
+                          🎯 Presupuesto ajustado: {formatCurrency(w.adjustedBudget)}
+                          <span className="text-zinc-400 font-normal"> ({formatCurrency(w.deduction)} descontado de semanas anteriores)</span>
+                        </p>
+                      )}
                       {w.weekAhorro > 0 && (
                         <p className="text-[10px] font-bold text-emerald-600 mt-1">
                           🏦 {formatCurrency(w.weekAhorro)} ahorrado
@@ -511,6 +660,153 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                       )}
                     </div>
                   )}
+                  {/* --- Week Adjustments Section --- */}
+                  {linkedAccount && (
+                    <div className="mt-3 space-y-2">
+                      {/* Incoming adjustments display */}
+                      {w.deduction > 0 && (
+                        <div className="px-2.5 py-2 rounded-lg bg-amber-50 border border-amber-200">
+                          <p className="text-[10px] font-bold text-amber-700">Ajustes entrantes -{formatCurrency(w.deduction)}</p>
+                          {adjustments.filter(a => a.targetWeekIndex === idx).map(adj => {
+                            const srcWeek = weekProgress[adj.sourceWeekIndex];
+                            return (
+                              <div key={adj.id} className="flex items-center text-[10px] text-zinc-600 mt-1">
+                                <span>-{formatCurrency(adj.amount)} de {srcWeek?.weekLabel || `Semana ${adj.sourceWeekIndex + 1}`}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Source: overspend → create adjustment */}
+                      {w.excess > 0 && idx < weeks.length - 1 && (
+                        <div className="px-2.5 py-2 rounded-lg bg-red-50 border border-red-200">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <AlertTriangle className="w-3 h-3 text-red-500" />
+                            <span className="text-[10px] font-bold text-red-600">
+                              Exceso: {formatCurrency(w.excess)}
+                            </span>
+                          </div>
+
+                          {/* Existing outgoing adjustments */}
+                          {adjustments.filter(a => a.sourceWeekIndex === idx).map(adj => {
+                            const isEditing = editingAdjId === adj.id;
+                            return (
+                              <div key={adj.id} className="flex items-center gap-1 mt-1 text-[10px] text-zinc-600">
+                                {isEditing ? (
+                                  <>
+                                    <span className="text-zinc-400 shrink-0">-</span>
+                                    <input
+                                      type="number"
+                                      value={editAdjAmount}
+                                      onChange={e => setEditAdjAmount(e.target.value)}
+                                      className="w-20 px-1.5 py-0.5 rounded border border-zinc-200 text-[10px] outline-none focus:ring-1 focus:ring-amber-200"
+                                    />
+                                    <span className="text-zinc-400">→</span>
+                                    <select
+                                      value={editAdjTarget ?? adj.targetWeekIndex}
+                                      onChange={e => setEditAdjTarget(Number(e.target.value))}
+                                      className="text-[10px] px-1 py-0.5 rounded border border-zinc-200 outline-none"
+                                    >
+                                      {weeks.map((_, wi) =>
+                                        wi > adj.sourceWeekIndex ? (
+                                          <option key={wi} value={wi}>Semana {wi + 1}</option>
+                                        ) : null
+                                      )}
+                                    </select>
+                                    <button onClick={() => handleUpdateAdjustment(adj.id)} className="text-emerald-600 hover:text-emerald-700 font-bold">
+                                      ✓
+                                    </button>
+                                    <button onClick={cancelEditing} className="text-zinc-400 hover:text-zinc-600">✕</button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <ArrowRight className="w-3 h-3 text-amber-500" />
+                                    <span>-{formatCurrency(adj.amount)} → Semana {adj.targetWeekIndex + 1}</span>
+                                    <button onClick={() => startEditing(adj)} className="text-zinc-400 hover:text-zinc-600 ml-auto">
+                                      <Pencil className="w-3 h-3" />
+                                    </button>
+                                    <button onClick={() => handleRemoveAdjustment(adj.id)} className="text-red-400 hover:text-red-600">
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })}
+
+                          {/* Assign new adjustment form */}
+                          {newAdjSource === idx ? (
+                            <div className="flex items-center gap-1 mt-1.5">
+                              <input
+                                type="number"
+                                placeholder="Monto"
+                                value={newAdjAmount}
+                                onChange={e => setNewAdjAmount(e.target.value)}
+                                className="w-20 px-1.5 py-0.5 rounded border border-zinc-200 text-[10px] outline-none focus:ring-1 focus:ring-amber-200"
+                              />
+                              <span className="text-[10px] text-zinc-400">→</span>
+                              <select
+                                value={newAdjTarget ?? ""}
+                                onChange={e => setNewAdjTarget(e.target.value ? Number(e.target.value) : null)}
+                                className="text-[10px] px-1 py-0.5 rounded border border-zinc-200 outline-none"
+                              >
+                                <option value="">Semana...</option>
+                                {weeks.map((_, wi) =>
+                                  wi > idx ? (
+                                    <option key={wi} value={wi}>Semana {wi + 1}</option>
+                                  ) : null
+                                )}
+                              </select>
+                              <button
+                                onClick={() => handleAddAdjustment(idx)}
+                                className="text-[10px] font-bold text-white bg-amber-500 hover:bg-amber-600 px-2 py-0.5 rounded transition-colors"
+                              >
+                                Asignar
+                              </button>
+                              <button
+                                onClick={() => { setNewAdjSource(null); setNewAdjTarget(null); setNewAdjAmount(""); }}
+                                className="text-[10px] text-zinc-400 hover:text-zinc-600"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setNewAdjSource(idx)}
+                              className="flex items-center gap-1 text-[10px] font-bold text-amber-600 hover:text-amber-700 mt-1 transition-colors"
+                            >
+                              <ArrowRight className="w-3 h-3" /> Asignar a otra semana
+                            </button>
+                          )}
+
+                          {/* Pending display */}
+                          {(outgoingAssigned[idx] || 0) < w.excess && w.excess > 0 && (
+                            <div className="flex items-center gap-1 mt-1.5 text-[10px] text-zinc-400">
+                              <Clock className="w-3 h-3" />
+                              <span>Pendiente por asignar: {formatCurrency(w.excess - (outgoingAssigned[idx] || 0))}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Last week overspend - can't assign */}
+                      {w.excess > 0 && idx === weeks.length - 1 && (
+                        <div className="px-2.5 py-2 rounded-lg bg-red-50 border border-red-200">
+                          <div className="flex items-center gap-1.5">
+                            <AlertTriangle className="w-3 h-3 text-red-500" />
+                            <span className="text-[10px] font-bold text-red-600">
+                              Exceso: {formatCurrency(w.excess)}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-zinc-400 mt-1">
+                            No hay semana siguiente para descontar. Considera ajustar el % de gastos variables.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <AnimatePresence initial={false}>
                   {isExpanded && linkedAccount && hasTransactions && (
                     <motion.div
@@ -643,11 +939,14 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
 
                       {/* Net footer */}
                       <div className={`flex justify-between pt-3 mt-3 border-t border-zinc-200 text-xs font-bold ${
-                        netSum > w.totalBudget ? 'text-red-500' : netSum <= 0 ? 'text-emerald-600' : 'text-zinc-700'
+                        netSum > w.adjustedBudget ? 'text-red-500' : netSum <= 0 ? 'text-emerald-600' : 'text-zinc-700'
                       }`}>
                         <span>Neto semanal</span>
                         <span>
-                          {formatCurrency(netSum)} de {formatCurrency(w.totalBudget)}
+                          {formatCurrency(netSum)} de {formatCurrency(w.adjustedBudget)}
+                          {w.deduction > 0 && (
+                            <span className="text-amber-500 text-[10px] ml-1">({formatCurrency(w.totalBudget)} - {formatCurrency(w.deduction)})</span>
+                          )}
                           {selectedIngresoSum > 0 && (
                             <span className="text-emerald-500 ml-1">(+{formatCurrency(selectedIngresoSum)})</span>
                           )}
@@ -681,6 +980,55 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
         </div>
       )}
 
+      {/* --- Adjustments Summary --- */}
+      {adjustments.length > 0 && linkedAccount && (
+        <div className="mb-6 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+          <h4 className="text-xs font-bold text-zinc-500 flex items-center gap-1.5 mb-3">
+            <ArrowRight className="w-3.5 h-3.5" />
+            Resumen de Ajustes entre Semanas
+          </h4>
+          <div className="space-y-1.5">
+            {adjustments.map(adj => {
+              const src = weekProgress[adj.sourceWeekIndex];
+              const tgt = weekProgress[adj.targetWeekIndex];
+              return (
+                <div key={adj.id} className="flex items-center justify-between text-[11px] text-zinc-600">
+                  <span>
+                    <span className="font-bold text-zinc-700">{src?.weekLabel || `Semana ${adj.sourceWeekIndex + 1}`}</span>
+                    <ArrowRight className="w-3 h-3 inline mx-1 text-amber-400" />
+                    <span className="font-bold text-zinc-700">{tgt?.weekLabel || `Semana ${adj.targetWeekIndex + 1}`}</span>
+                  </span>
+                  <span className="font-bold text-red-400">-{formatCurrency(adj.amount)}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {weekProgress.some((w, i) => w.excess > 0 && (outgoingAssigned[i] || 0) < w.excess) && (
+            <div className="mt-2 pt-2 border-t border-zinc-200">
+              <p className="text-[10px] text-zinc-400 flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                Excesos pendientes por asignar:
+              </p>
+              {weekProgress.map((w, i) => {
+                const pending = w.excess - (outgoingAssigned[i] || 0);
+                return pending > 0 ? (
+                  <p key={i} className="text-[10px] text-zinc-500 ml-4">
+                    {w.weekLabel}: {formatCurrency(pending)} sin asignar
+                  </p>
+                ) : null;
+              })}
+            </div>
+          )}
+
+          <div className="mt-2 pt-2 border-t border-zinc-200 text-[10px] text-zinc-400 flex items-center justify-between">
+            <span>Presupuesto total original: {formatCurrency(totalBudget)}</span>
+            <span className="font-bold text-zinc-600">
+              Ajustado: {formatCurrency(weekProgress.reduce((s, w) => s + w.adjustedBudget, 0))}
+            </span>
+          </div>
+        </div>
+      )}
 
     </motion.div>
   );

@@ -15,6 +15,7 @@ import { CreateMonthlyProjectionDto } from './dto/create-monthly-projection.dto'
 import { UpdateMonthlyProjectionDto } from './dto/update-monthly-projection.dto';
 import { UpdateSpendingPlanDto } from './dto/update-spending-plan.dto';
 import { UpdateExcludedTransactionsDto } from './dto/update-excluded-transactions.dto';
+import { UpdateWeeklyAdjustmentsDto } from './dto/update-weekly-adjustments.dto';
 import { QueryMonthlyProjectionDto } from './dto/query-monthly-projection.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -68,6 +69,15 @@ export class MonthlyProjectionController {
   @Post(':id/duplicate')
   duplicate(@Param('id') id: string, @Request() req) {
     return this.service.duplicate(req.user.id, id);
+  }
+
+  @Patch(':id/weekly-adjustments')
+  updateWeeklyAdjustments(
+    @Param('id') id: string,
+    @Body() dto: UpdateWeeklyAdjustmentsDto,
+    @Request() req,
+  ) {
+    return this.service.updateWeeklyAdjustments(req.user.id, id, dto);
   }
 
   @Delete(':id')

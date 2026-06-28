@@ -8,6 +8,7 @@ import {
   deleteMonthlyProjection,
   updateSpendingPlan,
   updateExcludedTransactions,
+  updateWeeklyAdjustments,
 } from '../services/financeService';
 import {
   CreateMonthlyProjectionDto,
@@ -92,6 +93,18 @@ export const useUpdateExcludedTransactions = () => {
   return useMutation({
     mutationFn: ({ id, excludedTransactionIds }: { id: string; excludedTransactionIds: string[] }) =>
       updateExcludedTransactions(id, excludedTransactionIds),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['monthly-projections', variables.id] });
+    },
+  });
+};
+
+export const useSaveWeeklyAdjustments = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, adjustments }: { id: string; adjustments: { sourceWeekIndex: number; targetWeekIndex: number; amount: number }[] }) =>
+      updateWeeklyAdjustments(id, adjustments),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['monthly-projections', variables.id] });
     },
