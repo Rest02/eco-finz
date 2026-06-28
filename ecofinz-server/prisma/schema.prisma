@@ -226,6 +226,7 @@ model MonthlyProjection {
   variableExpenseWeeks       Int?
 
   excludedTransactions     MonthlyProjectionExcludedTransaction[]
+  weeklyAdjustments        MonthlyProjectionWeekAdjustment[]
 
   @@map("monthly_projections")
 }
@@ -268,5 +269,19 @@ model MonthlyProjectionCardPayment {
   projection   MonthlyProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
 
   @@map("monthly_projection_card_payments")
+}
+
+model MonthlyProjectionWeekAdjustment {
+  id              String            @id @default(cuid())
+  projectionId    String
+  sourceWeekIndex Int
+  targetWeekIndex Int
+  amount          Decimal           @db.Decimal(12, 2)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  projection      MonthlyProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectionId, sourceWeekIndex, targetWeekIndex])
+  @@map("monthly_projection_week_adjustments")
 }
 

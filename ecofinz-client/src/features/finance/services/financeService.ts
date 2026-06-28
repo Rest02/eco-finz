@@ -197,4 +197,8 @@ export const updateExcludedTransactions = (id: string, excludedTransactionIds: s
   return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/excluded-transactions`, { excludedTransactionIds });
 };
 
+export const updateWeeklyAdjustments = (id: string, adjustments: { sourceWeekIndex: number; targetWeekIndex: number; amount: number }[]): Promise<AxiosResponse<MonthlyProjection>> => {
+  return apiClient.patch<MonthlyProjection>(`/finance/monthly-projection/${id}/weekly-adjustments`, { adjustments });
+};
+
 

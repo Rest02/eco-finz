@@ -155,6 +155,7 @@ export interface MonthlyProjection {
   variableExpenseDistribution?: string;
   variableExpenseWeeks?: number;
   excludedTransactionIds?: string[];
+  weeklyAdjustments?: WeekAdjustment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -177,6 +178,14 @@ export interface MonthlyProjectionFilters {
   year?: number;
   status?: ProjectionStatus;
   search?: string;
+}
+
+export interface WeekAdjustment {
+  id: string;
+  projectionId: string;
+  sourceWeekIndex: number;
+  targetWeekIndex: number;
+  amount: number;
 }
 
 // ========== Income Projection ==========

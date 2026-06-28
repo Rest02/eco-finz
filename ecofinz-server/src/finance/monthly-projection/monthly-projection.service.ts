@@ -4,6 +4,7 @@ import { CreateMonthlyProjectionDto } from './dto/create-monthly-projection.dto'
 import { UpdateMonthlyProjectionDto } from './dto/update-monthly-projection.dto';
 import { UpdateSpendingPlanDto } from './dto/update-spending-plan.dto';
 import { UpdateExcludedTransactionsDto } from './dto/update-excluded-transactions.dto';
+import { UpdateWeeklyAdjustmentsDto } from './dto/update-weekly-adjustments.dto';
 import { QueryMonthlyProjectionDto } from './dto/query-monthly-projection.dto';
 import { ProjectionStatus } from 'src/generated/prisma/enums';
 
@@ -86,6 +87,7 @@ export class MonthlyProjectionService {
         cardPaymentSnapshot: true,
         variableExpensesAccount: true,
         excludedTransactions: true,
+        weeklyAdjustments: true,
       },
     });
 
@@ -242,6 +244,41 @@ export class MonthlyProjectionService {
               data: dto.excludedTransactionIds.map(transactionId => ({
                 projectionId: id,
                 transactionId,
+              })),
+            }),
+          ]
+        : []),
+    ]);
+
+    return this.findOne(userId, id);
+  }
+
+  async updateWeeklyAdjustments(userId: string, id: string, dto: UpdateWeeklyAdjustmentsDto) {
+    await this.findOne(userId, id);
+
+    const sourceIndexes = dto.adjustments.map(a => a.sourceWeekIndex);
+    const allTargetsAfterSource = dto.adjustments.every(a => a.targetWeekIndex > a.sourceWeekIndex);
+    if (!allTargetsAfterSource) {
+      throw new Error('targetWeekIndex must be greater than sourceWeekIndex');
+    }
+
+    const noSelfAssign = dto.adjustments.every(a => a.sourceWeekIndex !== a.targetWeekIndex);
+    if (!noSelfAssign) {
+      throw new Error('source and target week cannot be the same');
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.monthlyProjectionWeekAdjustment.deleteMany({
+        where: { projectionId: id },
+      }),
+      ...(dto.adjustments.length > 0
+        ? [
+            this.prisma.monthlyProjectionWeekAdjustment.createMany({
+              data: dto.adjustments.map(a => ({
+                projectionId: id,
+                sourceWeekIndex: a.sourceWeekIndex,
+                targetWeekIndex: a.targetWeekIndex,
+                amount: a.amount,
               })),
             }),
           ]
