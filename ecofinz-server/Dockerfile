@@ -14,8 +14,9 @@ COPY . .
 # Variable de entorno temporal para pasar la validación durante la compilación del cliente Prisma
 ENV DATABASE_URL="postgresql://postgres:postgrespassword@localhost:5432/dummy"
 
-# Generar el cliente de Prisma
-RUN npx prisma generate
+# El directorio src/generated/prisma puede quedar obsoleto del build anterior,
+# se elimina para que Prisma lo regenere limpio desde el schema actual.
+RUN rm -rf src/generated/prisma && npx prisma generate
 
 EXPOSE 3001
 
