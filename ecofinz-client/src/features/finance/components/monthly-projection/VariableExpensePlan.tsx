@@ -463,14 +463,6 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
     setEditAdjAmount("");
   }, []);
 
-  // Sync adjustments from server after refetch
-  useEffect(() => {
-    const raw = (projection as any)?.weeklyAdjustments;
-    if (raw && Array.isArray(raw) && raw.length > 0) {
-      setAdjustments(raw);
-    }
-  }, [(projection as any)?.weeklyAdjustments]);
-
   // Reset adjustments when weeks change
   useEffect(() => {
     const maxIdx = weeks.length - 1;
@@ -697,9 +689,10 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                                   <>
                                     <span className="text-zinc-400 shrink-0">-</span>
                                     <input
-                                      type="number"
+                                      type="text"
+                                      inputMode="numeric"
                                       value={editAdjAmount}
-                                      onChange={e => setEditAdjAmount(e.target.value)}
+                                      onChange={e => setEditAdjAmount(e.target.value.replace(/[^0-9]/g, ''))}
                                       className="w-20 px-1.5 py-0.5 rounded border border-zinc-200 text-[10px] outline-none focus:ring-1 focus:ring-amber-200"
                                     />
                                     <span className="text-zinc-400">→</span>
@@ -739,10 +732,11 @@ export function VariableExpensePlan({ projection, accounts }: VariableExpensePla
                           {newAdjSource === idx ? (
                             <div className="flex items-center gap-1 mt-1.5">
                               <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
                                 placeholder="Monto"
                                 value={newAdjAmount}
-                                onChange={e => setNewAdjAmount(e.target.value)}
+                                onChange={e => setNewAdjAmount(e.target.value.replace(/[^0-9]/g, ''))}
                                 className="w-20 px-1.5 py-0.5 rounded border border-zinc-200 text-[10px] outline-none focus:ring-1 focus:ring-amber-200"
                               />
                               <span className="text-[10px] text-zinc-400">→</span>
